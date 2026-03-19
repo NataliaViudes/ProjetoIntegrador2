@@ -16,19 +16,23 @@ public class Beneficiario {
     private String telefone;
     private String celular;
     private String celularRecado;
-    private Beneficiario beneficiario;
+    //private Familiares familiares;
+    
     //infos gerais - fazer
     private String alergias;
     private String tratamentos;
-    private String medicamentos;
+    //private String medicamentos;
+    private String participacao;
     private String situacao;
 
 
-    //construtor vazio
 
-    public Beneficiario(int id, String nome, String nascimento, int idade, String rg, String cpf, String nis, double renda, String endereco, String bairro,
-                        String tipoResidencia, String telefone, String celular, String celularRecado, Beneficiario beneficiario, String alergias, String tratamentos,
-                        String medicamentos, String situacao) {
+    public Beneficiario(){
+
+    }
+
+
+    public Beneficiario(int id, String nome, String nascimento, int idade, String rg, String cpf, String nis, double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -43,14 +47,11 @@ public class Beneficiario {
         this.telefone = telefone;
         this.celular = celular;
         this.celularRecado = celularRecado;
-        this.beneficiario = beneficiario;
         this.alergias = alergias;
         this.tratamentos = tratamentos;
-        this.medicamentos = medicamentos;
+        this.participacao = participacao;
         this.situacao = situacao;
     }
-
-
 
     public int getId() {
         return id;
@@ -164,14 +165,6 @@ public class Beneficiario {
         this.celularRecado = celularRecado;
     }
 
-    public Beneficiario getResponsavel() {
-        return beneficiario;
-    }
-
-    public void setResponsavel(Beneficiario beneficiario) {
-        this.beneficiario = beneficiario;
-    }
-
     public String getAlergias() {
         return alergias;
     }
@@ -188,12 +181,12 @@ public class Beneficiario {
         this.tratamentos = tratamentos;
     }
 
-    public String getMedicamentos() {
-        return medicamentos;
+    public String getParticipacao() {
+        return participacao;
     }
 
-    public void setMedicamentos(String medicamentos) {
-        this.medicamentos = medicamentos;
+    public void setParticipacao(String participacao) {
+        this.participacao = participacao;
     }
 
     public String getSituacao() {
