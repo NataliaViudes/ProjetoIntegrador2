@@ -27,7 +27,7 @@ public  class DALEvento  {
     }
 
 
-
+/*
     public Evento get(int id, Conexao bd) {
         Evento eve = null;
         DALEvento dale = new DALEvento();
@@ -44,7 +44,7 @@ public  class DALEvento  {
         }
         return eve;
     }
-
+*/
     /*public Cidade get(int cod)
     {   Cidade cid=null;
         DALEstado dale = new DALEstado();
