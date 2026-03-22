@@ -3,10 +3,9 @@ package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import pi2.example.back_end.Modelo.Evento;
+import pi2.example.back_end.DAO.FuncionarioDAOImpl;
 import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Banco;
-import pi2.example.back_end.db.DALFuncionarios;
 
 import java.util.List;
 
@@ -14,13 +13,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/funcionario")
 public class FuncionarioRestController {
-    private final DALFuncionarios dalFuncionarios;
+    private final FuncionarioDAOImpl dalFuncionarios;
 
     public FuncionarioRestController (){
         if (!Banco.conectar()) {
             throw new RuntimeException("Erro ao conectar com o banco");
         }
-        this.dalFuncionarios = new DALFuncionarios(pi2.example.back_end.db.Banco.getCon());
+        this.dalFuncionarios = new FuncionarioDAOImpl(pi2.example.back_end.db.Banco.getCon());
     }
 
     @GetMapping("{id}")
