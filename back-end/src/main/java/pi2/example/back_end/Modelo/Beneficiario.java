@@ -2,14 +2,14 @@ package pi2.example.back_end.Modelo;
 
 public class Beneficiario {
 
-    private int id;
+    private Integer id;
     private String nome;
     private String nascimento;
-    private int idade;
+    private Integer idade;
     private String rg;
     private String cpf;
     private String nis;
-    private double renda;
+    private Double renda;
     private String endereco;
     private String bairro;
     private String tipoResidencia;
@@ -53,7 +53,7 @@ public class Beneficiario {
         this.situacao = situacao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -77,7 +77,7 @@ public class Beneficiario {
         this.nascimento = nascimento;
     }
 
-    public int getIdade() {
+    public Integer getIdade() {
         return idade;
     }
 
@@ -109,7 +109,7 @@ public class Beneficiario {
         this.nis = nis;
     }
 
-    public double getRenda() {
+    public Double getRenda() {
         return renda;
     }
 
