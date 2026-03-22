@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DALAlimento implements IDAL<Evento> {
+public class DALAlimento implements IDAL<Alimento> {
     private final Conexao bd;
 
     public DALAlimento(Conexao bd) {
@@ -33,16 +33,16 @@ public class DALAlimento implements IDAL<Evento> {
         }
     }
 
-
     @Override
-    public boolean alterar(Evento entidade) {
-        String sql = "UPDATE evento SET nome = ?, descricao = ? WHERE id_evento = ?";
+    public boolean alterar(Alimento entidade) {
+        String sql = "UPDATE alimento SET nome = ?, tipo = ?, descricao = ? WHERE id_alimento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, entidade.getNome());
-            stmt.setString(2, entidade.getDescricao());
-            stmt.setInt(3, entidade.getId());
+            stmt.setString(2, entidade.getTipo());
+            stmt.setString(3, entidade.getDescricao());
+            stmt.setInt(4, entidade.getId());
 
             return stmt.executeUpdate() > 0;
 
@@ -53,8 +53,8 @@ public class DALAlimento implements IDAL<Evento> {
     }
 
     @Override
-    public boolean apagar(Evento entidade) {
-        String sql = "DELETE FROM evento WHERE id_evento = ?";
+    public boolean apagar(Alimento entidade) {
+        String sql = "DELETE FROM evento WHERE id_alimento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -68,10 +68,25 @@ public class DALAlimento implements IDAL<Evento> {
         }
     }
 
+    public boolean apagarPorID(int id) {
+        String sql = "DELETE FROM alimento WHERE id_alimento = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setInt(1, id);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
+    }
+
     @Override
-    public Evento get(int id) {
-        Evento eve = null;
-        String sql = "SELECT * FROM evento WHERE id_evento = ?";
+    public Alimento get(int id) {
+        Alimento eve = null;
+        String sql = "SELECT * FROM alimento WHERE id_alimento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -79,9 +94,10 @@ public class DALAlimento implements IDAL<Evento> {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                eve = new Evento(
-                        rs.getInt("id_evento"),
+                eve = new Alimento(
+                        rs.getInt("id_alimento"),
                         rs.getString("nome"),
+                        rs.getString("tipo"),
                         rs.getString("descricao")
                 );
             }
@@ -94,9 +110,9 @@ public class DALAlimento implements IDAL<Evento> {
     }
 
     @Override
-    public List<Evento> get(String filtro) {
-        List<Evento> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento";
+    public List<Alimento> get(String filtro) {
+        List<Alimento> lista = new ArrayList<>();
+        String sql = "SELECT * FROM alimento";
         if (filtro != null && !filtro.isEmpty()) {
             sql += " WHERE " + filtro;
         }
@@ -104,34 +120,35 @@ public class DALAlimento implements IDAL<Evento> {
         try {
             if (rs != null) {
                 while (rs.next()) {
-                    Evento eve = new Evento(rs.getInt("id_evento"), rs.getString("nome"),rs.getString("descricao"));
+                    Alimento eve = new Alimento(rs.getInt("id_alimento"), rs.getString("nome"),rs.getString("tipo"), rs.getString("descricao"));
                     lista.add(eve);
                 }
                 rs.close();
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar lista de eventos: " + e);
+            System.out.println("Erro ao buscar lista de alimentos: " + e);
         }
         return lista;
     }
 
 
-    public List<Evento> buscarPorNome(String nome) {
-        List<Evento> lista = new ArrayList<>();
+    public List<Alimento> buscarPorNome(String nome) {
+        List<Alimento> lista = new ArrayList<>();
         String sql;
 
         // 🔥 regra: se vazio ou null → traz tudo
         if (nome == null || nome.isEmpty()) {
-            sql = "SELECT * FROM evento ORDER BY id_evento ASC";
+            sql = "SELECT * FROM alimento ORDER BY id_alimento ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    lista.add(new Evento(
-                            rs.getInt("id_evento"),
+                    lista.add(new Alimento(
+                            rs.getInt("id_alimento"),
                             rs.getString("nome"),
+                            rs.getString("tipo"),
                             rs.getString("descricao")
                     ));
                 }
@@ -141,7 +158,7 @@ public class DALAlimento implements IDAL<Evento> {
             }
 
         } else {
-            sql = "SELECT * FROM evento WHERE nome ILIKE '%' || ? || '%' ORDER BY id_evento ASC";
+            sql = "SELECT * FROM alimento WHERE nome ILIKE '%' || ? || '%' ORDER BY id_alimento ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -149,9 +166,10 @@ public class DALAlimento implements IDAL<Evento> {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    lista.add(new Evento(
-                            rs.getInt("id_evento"),
+                    lista.add(new Alimento(
+                            rs.getInt("id_alimento"),
                             rs.getString("nome"),
+                            rs.getString("tipo"),
                             rs.getString("descricao")
                     ));
                 }

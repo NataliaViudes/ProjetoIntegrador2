@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS ALIMENTO(
+	id_alimento SERIAL,
+	nome varchar(50),
+	tipo varchar(50),
+	descricao varchar(200),
+	CONSTRAINT PK_ALIMENTO PRIMARY KEY (id_alimento)
+);
+
+INSERT INTO ALIMENTO(nome,tipo,descricao) VALUES('Pastel de queijo','salgado', 'pastel');
+INSERT INTO ALIMENTO(nome,tipo,descricao) VALUES('Café','bebida', 'café');

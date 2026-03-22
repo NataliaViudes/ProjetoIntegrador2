@@ -2,6 +2,8 @@ package pi2.example.back_end.RestController;
 
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Modelo.Alimento;
+import pi2.example.back_end.db.Banco;
+import pi2.example.back_end.db.DALAlimento;
 
 
 import java.util.List;
@@ -11,11 +13,11 @@ import java.util.List;
 
 public class AlimentoController {
 
-    DALAlimento dao = new DALAlimento();
+    DALAlimento dao = new DALAlimento(Banco.getCon());
 
     @PostMapping
     public String salvar(@RequestBody Alimento a) {
-        if(dao.salvar(a))
+        if(dao.gravar(a))
             return "Salvo com sucesso";
         else
             return "Erro ao salvar";
@@ -23,7 +25,7 @@ public class AlimentoController {
 
     @GetMapping
     public List<Alimento> listar() {
-        return dao.listar();
+        return dao.buscarPorNome("");
     }
 
     @GetMapping("/buscar")
@@ -34,7 +36,7 @@ public class AlimentoController {
     @DeleteMapping("/{id}")
     public String excluir(@PathVariable int id) {
 
-        if(dao.excluir(id))
+        if(dao.apagarPorID(id))
             return "Excluído com sucesso";
         else
             return "Erro ao excluir";
@@ -43,7 +45,7 @@ public class AlimentoController {
     @PutMapping
     public String atualizar(@RequestBody Alimento a) {
 
-        if(dao.atualizar(a))
+        if(dao.alterar(a))
             return "Atualizado com sucesso";
         else
             return "Erro ao atualizar";
