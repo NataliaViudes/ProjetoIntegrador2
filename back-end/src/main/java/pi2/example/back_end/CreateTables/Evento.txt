@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS EVENTO(
+	id_evento SERIAL,
+	nome varchar(50),
+	descricao varchar(200),
+	CONSTRAINT PK_EVENTO PRIMARY KEY (id_evento)
+);
+
+INSERT INTO EVENTO(nome,descricao) VALUES('Reunião dos funcionarios','Todos os funcionarios presentes');
+INSERT INTO EVENTO(nome,descricao) VALUES('Sla1','Todos os funcionarios presentes menos o Savoldi');
