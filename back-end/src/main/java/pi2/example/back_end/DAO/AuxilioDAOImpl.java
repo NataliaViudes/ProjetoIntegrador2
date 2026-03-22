@@ -27,22 +27,27 @@ public class AuxilioDAOImpl implements AuxilioDAO {
         List<Auxilio> lista = new ArrayList<>();
 
         String sql = """
-            SELECT a.id, a.descricao,
-                   b.id as ben_id, b.nome as ben_nome,
-                   c.id as cat_id, c.nome as cat_nome
-            FROM auxilio a
-            JOIN beneficiario b ON a.id_beneficiario = b.id
-            JOIN categoria c ON a.id_categoria = c.id
-        """;
+    SELECT a.id, a.descricao,
+           b.id as ben_id, b.nome as ben_nome, b.cpf as ben_cpf,
+           c.id as cat_id, c.nome as cat_nome
+    FROM auxilio a
+    JOIN beneficiario b ON a.id_beneficiario = b.id
+    JOIN categoria_auxilio c ON a.id_categoria = c.id
+""";
 
         ResultSet rs = Banco.getCon().consultar(sql);
+        if (rs == null) {
+            System.out.println("Erro ao listar auxilios: " + Banco.getCon().getMensagemErro());
+            return lista;
+        }
 
         try {
-            while(rs.next()) {
+            while (rs.next()) {
 
                 Beneficiario b = new Beneficiario();
                 b.setId(rs.getInt("ben_id"));
                 b.setNome(rs.getString("ben_nome"));
+                b.setCpf(rs.getString("ben_cpf"));
 
                 CategoriaAuxilio c = new CategoriaAuxilio();
                 c.setId(rs.getInt("cat_id"));

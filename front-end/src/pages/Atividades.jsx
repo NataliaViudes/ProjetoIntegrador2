@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import Menu from "../components/Menu";
 import "./Atividades.css";
+
 
 function Atividades() {
   const [descricao, setDescricao] = useState("");
@@ -99,19 +101,8 @@ function Atividades() {
   );
 
   return (
-    <div className="pagina-atividades">
-      <header className="topo-menu">
-        <div className="grupo-botoes">
-          <button>Cadastros</button>
-          <button>Vincular</button>
-          <button>Agendador</button>
-          <button>Relatórios</button>
-        </div>
-
-        <div className="area-pesquisa-topo">
-          <input type="text" placeholder="Pesquisar..." />
-        </div>
-      </header>
+    <div className="pagina-atividades" translate="no">
+      <Menu />
 
       <main className="conteudo-atividades">
         <section className="painel-esquerdo">

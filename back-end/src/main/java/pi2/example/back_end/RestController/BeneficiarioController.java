@@ -1,15 +1,12 @@
 package pi2.example.back_end.RestController;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.DAO.BeneficiarioDAO;
 import pi2.example.back_end.DAO.BeneficiarioDAOImpl;
 import pi2.example.back_end.Modelo.Beneficiario;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/beneficiarios")
 public class BeneficiarioController {

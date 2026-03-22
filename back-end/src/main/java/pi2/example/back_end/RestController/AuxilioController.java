@@ -6,7 +6,7 @@ import pi2.example.back_end.DAO.AuxilioDAOImpl;
 import pi2.example.back_end.Modelo.Auxilio;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/auxilios")
 public class AuxilioController {

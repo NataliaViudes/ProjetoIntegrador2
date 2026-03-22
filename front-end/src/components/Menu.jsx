@@ -1,15 +1,28 @@
+import { Link } from "react-router-dom";
+import "./Menu.css";
+
 function Menu() {
   return (
-    <div className="menu">
-      <button>Cadastros</button>
-      <button>Vincular</button>
-      <button>Agendar</button>
-      <button>Relatórios</button>
+    <header className="topo-menu">
+      <div className="grupo-botoes">
+        <div className="menu-dropdown">
+          <button>Cadastros</button>
 
-      <div className="menu-direita">
-        <input placeholder="Pesquisar..." />
+          <div className="dropdown-conteudo">
+            <Link to="/atividades">Atividades</Link>
+            <Link to="/auxilios">Auxílios</Link>
+          </div>
+        </div>
+
+        <button type="button">Vincular</button>
+        <button type="button">Agendador</button>
+        <button type="button">Relatórios</button>
       </div>
-    </div>
+
+      <div className="area-pesquisa-topo">
+        <input type="text" placeholder="Pesquisar..." />
+      </div>
+    </header>
   );
 }
 
