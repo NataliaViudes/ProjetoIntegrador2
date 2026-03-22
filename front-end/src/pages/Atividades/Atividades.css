@@ -1,0 +1,138 @@
+.pagina-atividades {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.topo-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a6a6a6;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #8d8d8d;
+}
+
+.grupo-botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.grupo-botoes button,
+.acoes-formulario button,
+.botoes-item button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.area-pesquisa-topo input,
+.painel-esquerdo input,
+.painel-esquerdo select,
+.cabecalho-lista input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.area-pesquisa-topo {
+  width: 220px;
+}
+
+.conteudo-atividades {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-esquerdo,
+.painel-direito {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+}
+
+.painel-esquerdo h2,
+.painel-direito h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.painel-esquerdo label {
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.acoes-formulario {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cabecalho-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lista-atividades {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-atividade {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+}
+
+.info-atividade {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.botoes-item {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .conteudo-atividades {
+    grid-template-columns: 1fr;
+  }
+
+  .topo-menu {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .grupo-botoes {
+    flex-wrap: wrap;
+  }
+
+  .area-pesquisa-topo {
+    width: 100%;
+  }
+
+  .item-atividade {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
