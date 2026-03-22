@@ -18,7 +18,6 @@ public class EventosRestControler {
 
     private final EventoService service = new EventoService();
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Evento> getId(@PathVariable int id) {
         Evento model= service.buscarPorId(id,Banco.getCon());
@@ -38,7 +37,7 @@ public class EventosRestControler {
     }
 
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Evento>> getAll(@RequestParam(required = false) String filtro) {
         List<Evento> eventos =service.buscarPorNome("",Banco.getCon());
         return ResponseEntity.ok(eventos);
@@ -48,6 +47,20 @@ public class EventosRestControler {
     public ResponseEntity<Evento> salvar(@RequestBody Evento evento) {
         return service.salvar(evento,Banco.getCon()) ?
                 ResponseEntity.ok(evento)
+                : ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Evento> update(@RequestBody Evento evento) {
+        return service.alterar(evento,Banco.getCon()) ?
+                ResponseEntity.ok(evento)
+                : ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        return service.deletar(id,Banco.getCon()) ?
+                ResponseEntity.ok().body("Evento "+id+" Deletado!")
                 : ResponseEntity.badRequest().build();
     }
 

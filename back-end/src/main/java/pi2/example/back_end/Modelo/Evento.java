@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonPropertyOrder({ "id", "nome", "descricao" })
 public class Evento {
-    private int id;
+    private Integer id;
     private String nome;
     private String descricao;
 
@@ -35,7 +35,7 @@ public class Evento {
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -81,4 +81,14 @@ public class Evento {
         return dao.gravar(this);
     }
 
+    public boolean alterar(Conexao con)
+    {
+        DALEvento dao = new DALEvento(con);
+        return dao.alterar(this);
+    }
+
+    public boolean deletar(Conexao con) {
+        DALEvento dao = new DALEvento(con);
+       return dao.apagar(this);
+    }
 }

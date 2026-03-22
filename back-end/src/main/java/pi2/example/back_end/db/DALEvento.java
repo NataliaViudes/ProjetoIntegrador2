@@ -117,23 +117,47 @@ public class DALEvento implements IDAL<Evento> {
 
     public List<Evento> buscarPorNome(String nome) {
         List<Evento> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento WHERE nome ILIKE '%' || ? || '%'";
+        String sql;
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        // 🔥 regra: se vazio ou null → traz tudo
+        if (nome == null || nome.isEmpty()) {
+            sql = "SELECT * FROM evento ORDER BY id_evento ASC";
 
-            stmt.setString(1, nome);
-            ResultSet rs = stmt.executeQuery();
+            try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            while (rs.next()) {
-                lista.add(new Evento(
-                        rs.getInt("id_evento"),
-                        rs.getString("nome"),
-                        rs.getString("descricao")
-                ));
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(new Evento(
+                            rs.getInt("id_evento"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
+                    ));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
             }
 
-        } catch (SQLException e) {
-            System.out.println("Erro: " + e);
+        } else {
+            sql = "SELECT * FROM evento WHERE nome ILIKE '%' || ? || '%' ORDER BY id_evento ASC";
+
+            try (PreparedStatement stmt = bd.preparar(sql)) {
+
+                stmt.setString(1, nome);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(new Evento(
+                            rs.getInt("id_evento"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
+                    ));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
+            }
         }
 
         return lista;
