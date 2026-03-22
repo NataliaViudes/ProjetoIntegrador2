@@ -1,7 +1,8 @@
 import Atividades from "./pages/Atividades";
+import Funcionario from "./pages/Funcionario";
 
 function App() {
-  return <Atividades />;
+  return <Funcionario />;
 }
 
 export default App;

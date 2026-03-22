@@ -1,15 +1,16 @@
-package pi2.example.back_end.db;
+package pi2.example.back_end.DAO;
 
 import pi2.example.back_end.Modelo.Funcionario;
+import pi2.example.back_end.db.Conexao;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DALFuncionarios implements IDAL<Funcionario> {
+public class FuncionarioDAOImpl implements FuncionarioDAO {
     private final Conexao bd;
 
-    public DALFuncionarios(Conexao bd) {
+    public FuncionarioDAOImpl(Conexao bd) {
         this.bd = bd;
     }
 
