@@ -1,19 +1,22 @@
 package pi2.example.back_end.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Conexao 
 {
     private Connection connect;
     private String erro;
+
+
     public Conexao()
     {   erro="";
         connect=null;
     }
+
+    public PreparedStatement preparar(String sql) throws SQLException {
+        return connect.prepareStatement(sql);
+    }
+
     public boolean conectar(String local,String usuario,String senha)
     {   boolean conectado=false;
         try {
@@ -34,6 +37,7 @@ public class Conexao
     public boolean getEstadoConexao() {
         return (connect!=null);
     }
+
     public boolean manipular(String sql) // inserir, alterar,excluir
     {   boolean executou=false;
         try {

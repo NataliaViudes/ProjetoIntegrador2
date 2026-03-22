@@ -2,7 +2,9 @@ package pi2.example.back_end.db;
 
 public class Banco  // classe Singleton
 {
-    static private Conexao con=new Conexao();
+
+    static private final Conexao con=new Conexao();
+
     static public boolean conectar() {
         boolean ok = con.conectar("jdbc:postgresql://localhost:5432/SCFV",  "postgres", "postgres123"); //mudar rota conforme seu banco
         if(!ok) {
@@ -18,5 +20,5 @@ public class Banco  // classe Singleton
 
     private Banco() {
     }
-    
+
 }
