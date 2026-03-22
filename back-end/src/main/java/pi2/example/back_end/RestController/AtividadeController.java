@@ -6,7 +6,7 @@ import pi2.example.back_end.DAO.AtividadeDAOImpl;
 import pi2.example.back_end.Modelo.Atividade;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/atividades")
 public class AtividadeController {

@@ -27,18 +27,23 @@ public class AtividadeDAOImpl implements AtividadeDAO {
         List<Atividade> lista = new ArrayList<>();
 
         String sql = """
-        SELECT a.id, a.descricao,
-               c.id as cat_id, c.nome as cat_nome,
-               f.id as func_id, f.nome as func_nome
+        SELECT a.id_atividade, a.descricao,
+               c.id_categoria as cat_id, c.nome as cat_nome,
+               f.id_funcionario as func_id, f.nome as func_nome
         FROM atividade a
-        JOIN categoria c ON a.id_categoria = c.id
-        JOIN funcionario f ON a.id_funcionario = f.id
+        JOIN categoria c ON a.id_categoria = c.id_categoria
+        JOIN funcionario f ON a.id_funcionario = f.id_funcionario
     """;
 
         ResultSet rs = Banco.getCon().consultar(sql);
 
+        if (rs == null) {
+            System.out.println("Erro ao listar atividades: " + Banco.getCon().getMensagemErro());
+            return lista;
+        }
+
         try {
-            while(rs.next()) {
+            while (rs.next()) {
 
                 CategoriaAtividade c = new CategoriaAtividade();
                 c.setId(rs.getInt("cat_id"));
@@ -49,7 +54,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
                 f.setNome(rs.getString("func_nome"));
 
                 Atividade a = new Atividade();
-                a.setId(rs.getInt("id"));
+                a.setId(rs.getInt("id_atividade"));
                 a.setDescricao(rs.getString("descricao"));
                 a.setCategoria(c);
                 a.setFuncionario(f);
@@ -57,7 +62,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
                 lista.add(a);
             }
         } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro ao percorrer atividades: " + e.getMessage());
         }
 
         return lista;
@@ -69,18 +74,23 @@ public class AtividadeDAOImpl implements AtividadeDAO {
         List<Atividade> lista = new ArrayList<>();
 
         String sql = """
-        SELECT a.id, a.descricao,
-               c.id as cat_id, c.nome as cat_nome,
-               f.id as func_id, f.nome as func_nome
+        SELECT a.id_atividade, a.descricao,
+               c.id_categoria as cat_id, c.nome as cat_nome,
+               f.id_funcionario as func_id, f.nome as func_nome
         FROM atividade a
-        JOIN categoria c ON a.id_categoria = c.id
-        JOIN funcionario f ON a.id_funcionario = f.id
+        JOIN categoria c ON a.id_categoria = c.id_categoria
+        JOIN funcionario f ON a.id_funcionario = f.id_funcionario
         WHERE a.descricao LIKE '%""" + nome + "%'";
 
         ResultSet rs = Banco.getCon().consultar(sql);
 
+        if (rs == null) {
+            System.out.println("Erro ao buscar atividades: " + Banco.getCon().getMensagemErro());
+            return lista;
+        }
+
         try {
-            while(rs.next()) {
+            while (rs.next()) {
 
                 CategoriaAtividade c = new CategoriaAtividade();
                 c.setId(rs.getInt("cat_id"));
@@ -91,7 +101,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
                 f.setNome(rs.getString("func_nome"));
 
                 Atividade a = new Atividade();
-                a.setId(rs.getInt("id"));
+                a.setId(rs.getInt("id_atividade"));
                 a.setDescricao(rs.getString("descricao"));
                 a.setCategoria(c);
                 a.setFuncionario(f);
@@ -99,7 +109,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
                 lista.add(a);
             }
         } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro ao percorrer busca de atividades: " + e.getMessage());
         }
 
         return lista;
@@ -108,7 +118,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
     @Override
     public boolean excluir(int id) {
 
-        String sql = "DELETE FROM atividade WHERE id=" + id;
+        String sql = "DELETE FROM atividade WHERE id_atividade=" + id;
 
         return Banco.getCon().manipular(sql);
     }
@@ -120,7 +130,7 @@ public class AtividadeDAOImpl implements AtividadeDAO {
                 "descricao = '" + a.getDescricao() + "', " +
                 "id_categoria = " + a.getCategoria().getId() + ", " +
                 "id_funcionario = " + a.getFuncionario().getId() +
-                " WHERE id = " + a.getId();
+                " WHERE id_atividade = " + a.getId();
 
         return Banco.getCon().manipular(sql);
     }

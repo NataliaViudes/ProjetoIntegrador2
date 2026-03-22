@@ -1,55 +1,78 @@
-//SQL CADASTRO DE ATIVIDADES
+//SQLS ATUALIZADOS
+
 CREATE TABLE categoria (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100)
+    id_categoria SERIAL,
+    nome VARCHAR(100) NOT NULL,
+
+    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+    CONSTRAINT un_categoria_nome UNIQUE (nome)
 );
 
 CREATE TABLE funcionario (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100)
+    id_funcionario SERIAL,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    cargo VARCHAR(50),
+
+    CONSTRAINT pk_funcionario PRIMARY KEY (id_funcionario),
+    CONSTRAINT un_cpf UNIQUE (cpf),
+    CONSTRAINT un_nis UNIQUE (nis),
+
+    CONSTRAINT chk_sexo CHECK (sexo IN ('M', 'F', 'O')),
+    CONSTRAINT chk_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_nis_format CHECK (nis ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
 );
 
 CREATE TABLE atividade (
-    id SERIAL PRIMARY KEY,
-    descricao VARCHAR(255),
-    id_categoria INT,
-    id_funcionario INT,
-    FOREIGN KEY (id_categoria) REFERENCES categoria(id),
-    FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
-);
-===========================================================================================
-//SQL CAD AUXILIO
-CREATE TABLE beneficiario (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100),
-    nascimento DATE,
-    idade INT,
-    rg VARCHAR(20),
-    cpf VARCHAR(20),
-    nis VARCHAR(20),
-    renda NUMERIC(10,2),
-    endereco VARCHAR(150),
-    bairro VARCHAR(100),
-    tipo_residencia VARCHAR(50),
-    telefone VARCHAR(20),
-    celular VARCHAR(20),
-    celular_recado VARCHAR(20)
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
 );
 
-CREATE TABLE categoria_auxilio (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL
-);
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
 
-CREATE TABLE auxilio (
-    id SERIAL PRIMARY KEY,
-    descricao TEXT,
-    id_beneficiario INT,
-    id_categoria INT,
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Maria Oliveira', '98765432100', '18988888888', '22222222222', '1985-08-20', 'F', 'Rua B, 456', 'Analista');
 
-    FOREIGN KEY (id_beneficiario) REFERENCES beneficiario(id),
-    FOREIGN KEY (id_categoria) REFERENCES categoria_auxilio(id)
-);
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Carlos Souza', '11122233344', '18977777777', '33333333333', '1992-12-01', 'M', 'Rua C, 789', 'Supervisor');
+
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Ana Costa', '55566677788', '18966666666', '44444444444', '1998-03-15', 'F', 'Rua D, 321', 'Assistente');
+
+INSERT INTO categoria (nome) VALUES
+('Educação'),
+('Saúde'),
+('Esporte'),
+('Cultura'),
+('Assistência Social');
+
+INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
+('Oficina de leitura para crianças', 1, 2),
+('Palestra sobre saúde preventiva', 2, 3),
+('Treinamento funcional em grupo', 3, 4),
+('Reforço escolar de matemática', 1, 2),
+('Roda de conversa sobre bem-estar', 2, 3),
+('Campeonato recreativo interno', 3, 4);
+
 
 
 

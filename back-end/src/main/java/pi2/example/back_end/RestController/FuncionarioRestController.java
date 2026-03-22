@@ -10,7 +10,7 @@ import pi2.example.back_end.db.DALFuncionarios;
 
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/funcionario")
 public class FuncionarioRestController {
