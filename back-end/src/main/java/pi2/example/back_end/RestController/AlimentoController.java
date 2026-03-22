@@ -1,8 +1,6 @@
 package pi2.example.back_end.RestController;
 
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.DAO.AlimentoDAO;
-import pi2.example.back_end.DAO.AlimentoDAOlmpl;
 import pi2.example.back_end.Modelo.Alimento;
 
 
@@ -13,7 +11,7 @@ import java.util.List;
 
 public class AlimentoController {
 
-    AlimentoDAO dao = new AlimentoDAOlmpl();
+    DALAlimento dao = new DALAlimento();
 
     @PostMapping
     public String salvar(@RequestBody Alimento a) {
