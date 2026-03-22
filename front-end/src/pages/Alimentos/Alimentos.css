@@ -1,4 +1,4 @@
-.pagina-atividades {
+.pagina-alimentos {
   min-height: 100vh;
   background-color: #d9d9d9;
   padding: 16px;
@@ -45,7 +45,7 @@
   width: 220px;
 }
 
-.conteudo-atividades {
+.conteudo-alimentos {
   display: grid;
   grid-template-columns: 1fr 1.4fr;
   gap: 20px;
@@ -85,13 +85,13 @@
   margin-bottom: 16px;
 }
 
-.lista-atividades {
+.lista-alimentos {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.item-atividade {
+.item-alimento {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -100,7 +100,7 @@
   padding: 12px;
 }
 
-.info-atividade {
+.info-alimento {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -112,7 +112,7 @@
 }
 
 @media (max-width: 900px) {
-  .conteudo-atividades {
+  .conteudo-alimentos {
     grid-template-columns: 1fr;
   }
 
@@ -130,7 +130,7 @@
     width: 100%;
   }
 
-  .item-atividade {
+  .item-alimento {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
