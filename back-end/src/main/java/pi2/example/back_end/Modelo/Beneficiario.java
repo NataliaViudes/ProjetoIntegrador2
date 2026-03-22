@@ -32,7 +32,7 @@ public class Beneficiario {
     }
 
 
-    public Beneficiario(int id, String nome, String nascimento, int idade, String rg, String cpf, String nis, double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
+    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;

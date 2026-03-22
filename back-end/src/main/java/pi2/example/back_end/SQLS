@@ -18,6 +18,38 @@ CREATE TABLE atividade (
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
 );
 ===========================================================================================
+//SQL CAD AUXILIO
+CREATE TABLE beneficiario (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100),
+    nascimento DATE,
+    idade INT,
+    rg VARCHAR(20),
+    cpf VARCHAR(20),
+    nis VARCHAR(20),
+    renda NUMERIC(10,2),
+    endereco VARCHAR(150),
+    bairro VARCHAR(100),
+    tipo_residencia VARCHAR(50),
+    telefone VARCHAR(20),
+    celular VARCHAR(20),
+    celular_recado VARCHAR(20)
+);
+
+CREATE TABLE categoria_auxilio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE auxilio (
+    id SERIAL PRIMARY KEY,
+    descricao TEXT,
+    id_beneficiario INT,
+    id_categoria INT,
+
+    FOREIGN KEY (id_beneficiario) REFERENCES beneficiario(id),
+    FOREIGN KEY (id_categoria) REFERENCES categoria_auxilio(id)
+);
 
 
 

@@ -7,7 +7,7 @@ public class CategoriaAuxilio {
     public CategoriaAuxilio() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

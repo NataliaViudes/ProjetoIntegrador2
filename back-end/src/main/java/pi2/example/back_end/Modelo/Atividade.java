@@ -15,7 +15,7 @@ public class Atividade {
         this.funcionario = funcionario;
     }
 
-    public int getId() { return id; }
+    public Integer getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public String getDescricao() { return descricao; }
