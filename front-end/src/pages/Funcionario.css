@@ -1,0 +1,144 @@
+.pagina-funcionario {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.topo {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #a6a6a6;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #8d8d8d;
+}
+
+.topo input {
+  width: 220px;
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.tabela {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 10px;
+}
+
+td {
+  border: 1px solid #8f8f8f;
+  padding: 10px;
+  background-color: #dcdcdc;
+}
+
+button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d0d0d0;
+}
+
+.rodape {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.form-funcionario {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-funcionario input {
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.botoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 6px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.campo select {
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.titulo-form {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.campo.full {
+  grid-column: span 2;
+}
+
+.input-erro {
+  border: 2px solid red !important;
+}
+
+.erro-texto {
+  color: red;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .topo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .topo input {
+    width: 100%;
+  }
+}
