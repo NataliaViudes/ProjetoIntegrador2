@@ -33,6 +33,7 @@ public class AlimentoController {
 
     @DeleteMapping("/{id}")
     public String excluir(@PathVariable int id) {
+
         if(dao.excluir(id))
             return "Excluído com sucesso";
         else
