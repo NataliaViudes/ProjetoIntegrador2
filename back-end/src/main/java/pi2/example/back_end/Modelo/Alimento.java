@@ -1,19 +1,31 @@
 package pi2.example.back_end.Modelo;
 
 public class Alimento {
+    private int id;
     private String nome;
     private String tipo;
-    private int codigo;
+    private String descricao;
 
+
+    //os tipos vão ser: Salgado, Doce, Bebida
 
     public Alimento() {
-        this("", "", 0);
+        this(0, "", "", "");
     }
 
-    public Alimento(String nome, String tipo, int codigo) {
+    public Alimento( int id, String nome, String tipo, String descricao) {
+        this.id = id;
         this.nome = nome;
         this.tipo = tipo;
-        this.codigo = codigo;
+        this.descricao = descricao;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -32,11 +44,11 @@ public class Alimento {
         this.tipo = tipo;
     }
 
-    public int getCodigo() {
-        return codigo;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 }

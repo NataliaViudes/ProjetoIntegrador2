@@ -9,7 +9,6 @@ import java.util.List;
 
 public class BeneficiarioDAOImpl implements BeneficiarioDAO {
 
-    // 📋 LISTAGEM SIMPLES (ID, NOME, CPF)
     @Override
     public List<Beneficiario> listar() {
 
@@ -42,7 +41,6 @@ public class BeneficiarioDAOImpl implements BeneficiarioDAO {
         return lista;
     }
 
-    // 🔎 BUSCAR POR CPF
     @Override
     public Beneficiario buscarPorCpf(String cpf) {
 
@@ -73,7 +71,6 @@ public class BeneficiarioDAOImpl implements BeneficiarioDAO {
         return null;
     }
 
-    // ➕ SALVAR COMPLETO
     @Override
     public boolean salvar(Beneficiario b) {
 
@@ -101,7 +98,6 @@ public class BeneficiarioDAOImpl implements BeneficiarioDAO {
         return Banco.getCon().manipular(sql);
     }
 
-    // ❌ EXCLUIR
     @Override
     public boolean excluir(int id) {
 
@@ -110,7 +106,6 @@ public class BeneficiarioDAOImpl implements BeneficiarioDAO {
         return Banco.getCon().manipular(sql);
     }
 
-    // ✏️ ATUALIZAR
     @Override
     public boolean atualizar(Beneficiario b) {
 
