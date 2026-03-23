@@ -46,6 +46,46 @@ CREATE TABLE atividade (
         REFERENCES funcionario(id_funcionario)
 );
 
+CREATE TABLE beneficiario (
+    id SERIAL,
+
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE NOT NULL,
+    idade INTEGER,
+
+    rg VARCHAR(20),
+    cpf CHAR(11) NOT NULL,
+    nis CHAR(11),
+
+    renda NUMERIC(10,2),
+
+    endereco VARCHAR(200),
+    bairro VARCHAR(100),
+    tipo_residencia VARCHAR(50),
+
+    telefone VARCHAR(15),
+    celular VARCHAR(15),
+    celular_recado VARCHAR(15),
+
+    alergias VARCHAR(255),
+    tratamentos VARCHAR(255),
+
+    participacao VARCHAR(100),
+    situacao VARCHAR(50),
+
+    CONSTRAINT pk_beneficiario PRIMARY KEY (id),
+
+    CONSTRAINT un_beneficiario_cpf UNIQUE (cpf),
+    CONSTRAINT un_beneficiario_nis UNIQUE (nis),
+
+    CONSTRAINT chk_beneficiario_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_beneficiario_nis_format CHECK (nis IS NULL OR nis ~ '^[0-9]{11}$'),
+
+    CONSTRAINT chk_beneficiario_telefone CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular CHECK (celular IS NULL OR celular ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular_recado CHECK (celular_recado IS NULL OR celular_recado ~ '^[0-9]+$')
+);
+
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
 
@@ -73,7 +113,65 @@ INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
 ('Roda de conversa sobre bem-estar', 2, 3),
 ('Campeonato recreativo interno', 3, 4);
 
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'José Pereira', '1950-04-10', 75, '1234567', '12345678901',
+    '99999999999', 1200.50, 'Rua A, 100', 'Centro',
+    'Alvenaria', '18999999999', '18988888888', '18977777777',
+    'Diabetes', 'Uso de insulina', 'Volei', 'Regular'
+);
 
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Maria Souza', '1965-08-22', 60, '7654321',
+    '98765432100', '88888888888', 950.00, 'Rua B, 200',
+    'Vila Nova', 'Madeira', '18991111111', '18992222222',
+    '18993333333', 'Nenhuma', 'Hipertensão', 'Natação', 'Regular'
+);
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Carlos Mendes', '1972-01-15', 62, '1112223',
+    '11122233344', '77777777777', 1800.75, 'Rua C, 300',
+    'Jardim Paulista', 'Alvenaria', '18994444444', '18995555555',
+    '18996666666', 'Poeira', 'Asma', 'Volei', 'Regular'
+);
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Ana Lima', '1980-12-05', 74, '9988776',
+    '55566677788', '66666666666', 2100.00, 'Rua D, 400',
+    'Centro', 'Apartamento', '18997777777', '18998888888',
+    '18999900000', 'Glúten', 'Dieta controlada', 'Volei', 'Regular'
+);
+
+INSERT INTO beneficiario (
+    nome, nascimento, idade, rg, cpf, nis, renda,
+    endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado,
+    alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Paulo Henrique', '1995-06-18', 81, '5544332',
+    '22233344455', '55555555555', 1300.00, 'Rua E, 500',
+    'Vila Esperança', 'Alvenaria', '18990000000', '18991112222',
+    '18992223333', 'Nenhuma', 'Nenhum', 'Volei', 'Irregular'
+);
+
+INSERT INTO beneficiario (
+    nome, nascimento, idade, rg, cpf, nis, renda,
+    endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado,
+    alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Fernanda Rocha', '1978-03-30', 65, '2233445',
+    '33344455566', '44444444444', 1700.90, 'Rua F, 600',
+    'Jardim das Flores', 'Casa', '18993334444', '18994445555',
+    '18995556666', 'Lactose', 'Suplementação', 'Natação', 'Acompanhamento'
+);
 
 
 
