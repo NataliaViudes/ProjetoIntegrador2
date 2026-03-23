@@ -14,7 +14,7 @@ public class Conexao
     }
 
     public PreparedStatement preparar(String sql) throws SQLException {
-        return connect.prepareStatement(sql);
+        return connect.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
     }
 
     public boolean conectar(String local,String usuario,String senha)

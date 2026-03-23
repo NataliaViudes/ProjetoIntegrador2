@@ -7,10 +7,10 @@ import pi2.example.back_end.db.DALEvento;
 
 import java.util.List;
 
-@JsonPropertyOrder({ "id", "nome", "descricao" })
+@JsonPropertyOrder({ "id", "categoria", "descricao" })
 public class Evento {
     private Integer id;
-    private String nome;
+    private String categoria;
     private String descricao;
 
     public Evento() {
@@ -19,19 +19,19 @@ public class Evento {
 
     public Evento(int id) {
         this.id = id;
-        this.nome = "";
+        this.categoria = "";
         this.descricao = "";
     }
 
-    public Evento(String nome, String descricao) {
+    public Evento(String categoria, String descricao) {
         this.id=0;
-        this.nome = nome;
+        this.categoria = categoria;
         this.descricao = descricao;
     }
 
-    public Evento(int id, String nome, String descricao) {
+    public Evento(int id, String categoria, String descricao) {
         this.id = id;
-        this.nome = nome;
+        this.categoria = categoria;
         this.descricao = descricao;
     }
 
@@ -43,12 +43,16 @@ public class Evento {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getDescricao() {
@@ -59,29 +63,23 @@ public class Evento {
         this.descricao = descricao;
     }
 
-
-    public List<Evento> consultarTodos(Conexao con) {
+    public List<Evento> consultarCategoria(String termo,Conexao con) {
         DALEvento dao = new DALEvento(con);
-        return dao.get("");
+        return dao.buscarPorCategoria(termo);
     }
 
-    public List<Evento> consultarNome(String termo,Conexao con) {
-        DALEvento dao = new DALEvento(con);
-        return dao.buscarPorNome(termo);
-    }
-
-    public Evento consultarId(int termo,Conexao con) {
+    public Evento consultarId(Integer termo,Conexao con) {
         DALEvento dao = new DALEvento(con);
         return dao.get(termo);
     }
 
-    public boolean incluir(Conexao con)
+    public Evento incluir(Conexao con)
     {
         DALEvento dao = new DALEvento(con);
         return dao.gravar(this);
     }
 
-    public boolean alterar(Conexao con)
+    public Evento alterar(Conexao con)
     {
         DALEvento dao = new DALEvento(con);
         return dao.alterar(this);

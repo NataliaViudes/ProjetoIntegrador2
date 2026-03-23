@@ -1,5 +1,6 @@
 package pi2.example.back_end.db;
 
+import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Evento;
 
 import java.sql.PreparedStatement;
@@ -7,7 +8,9 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.sql.SQLException;
 import java.util.ArrayList;
-public class DALEvento implements IDAL<Evento> {
+import java.util.Objects;
+
+public class DALEvento {
 
     private final Conexao bd;
 
@@ -15,43 +18,50 @@ public class DALEvento implements IDAL<Evento> {
         this.bd = bd;
     }
 
-    @Override
-    public boolean gravar(Evento entidade) {
-        String sql = "INSERT INTO evento ( nome, descricao) VALUES ( ?, ?)";
+
+    public Evento gravar(Evento entidade) {
+        String sql = "INSERT INTO evento ( categoria, descricao) VALUES ( ?, ?)";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            stmt.setString(1, entidade.getNome());
+            stmt.setString(1, entidade.getCategoria());
             stmt.setString(2, entidade.getDescricao());
-
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                int id = rs.getInt(1);
+                entidade.setId(id);
+            }
+            return entidade;
 
         } catch (SQLException e) {
             System.out.println("Erro: " + e);
-            return false;
+            return null;
         }
     }
 
 
-    @Override
-    public boolean alterar(Evento entidade) {
-        String sql = "UPDATE evento SET nome = ?, descricao = ? WHERE id_evento = ?";
+
+    public Evento alterar(Evento entidade) {
+        String sql = "UPDATE evento SET categoria = ?, descricao = ? WHERE id_evento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            stmt.setString(1, entidade.getNome());
+            stmt.setString(1, entidade.getCategoria());
             stmt.setString(2, entidade.getDescricao());
             stmt.setInt(3, entidade.getId());
+            stmt.executeUpdate();
 
-            return stmt.executeUpdate() > 0;
+
+            return entidade;
 
         } catch (SQLException e) {
             System.out.println("Erro: " + e);
-            return false;
+            return null;
         }
     }
 
-    @Override
+
     public boolean apagar(Evento entidade) {
         String sql = "DELETE FROM evento WHERE id_evento = ?";
 
@@ -67,8 +77,8 @@ public class DALEvento implements IDAL<Evento> {
         }
     }
 
-    @Override
-    public Evento get(int id) {
+
+    public Evento get(Integer id) {
         Evento eve = null;
         String sql = "SELECT * FROM evento WHERE id_evento = ?";
 
@@ -80,7 +90,7 @@ public class DALEvento implements IDAL<Evento> {
             if (rs.next()) {
                 eve = new Evento(
                         rs.getInt("id_evento"),
-                        rs.getString("nome"),
+                        rs.getString("categoria"),
                         rs.getString("descricao")
                 );
             }
@@ -92,35 +102,14 @@ public class DALEvento implements IDAL<Evento> {
         return eve;
     }
 
-    @Override
-    public List<Evento> get(String filtro) {
-        List<Evento> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento";
-        if (filtro != null && !filtro.isEmpty()) {
-            sql += " WHERE " + filtro;
-        }
-        ResultSet rs = bd.consultar(sql);
-        try {
-            if (rs != null) {
-                while (rs.next()) {
-                    Evento eve = new Evento(rs.getInt("id_evento"), rs.getString("nome"),rs.getString("descricao"));
-                    lista.add(eve);
-                }
-                rs.close();
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao buscar lista de eventos: " + e);
-        }
-        return lista;
-    }
 
 
-    public List<Evento> buscarPorNome(String nome) {
+    public List<Evento> buscarPorCategoria(String categoria) {
         List<Evento> lista = new ArrayList<>();
         String sql;
 
         // 🔥 regra: se vazio ou null → traz tudo
-        if (nome == null || nome.isEmpty()) {
+        if (categoria == null || categoria.isEmpty()) {
             sql = "SELECT * FROM evento ORDER BY id_evento ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -130,7 +119,7 @@ public class DALEvento implements IDAL<Evento> {
                 while (rs.next()) {
                     lista.add(new Evento(
                             rs.getInt("id_evento"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }
@@ -140,17 +129,17 @@ public class DALEvento implements IDAL<Evento> {
             }
 
         } else {
-            sql = "SELECT * FROM evento WHERE nome ILIKE '%' || ? || '%' ORDER BY id_evento ASC";
+            sql = "SELECT * FROM evento WHERE categoria ILIKE '%' || ? || '%' ORDER BY id_evento ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
-                stmt.setString(1, nome);
+                stmt.setString(1, categoria);
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
                     lista.add(new Evento(
                             rs.getInt("id_evento"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }
@@ -159,7 +148,6 @@ public class DALEvento implements IDAL<Evento> {
                 System.out.println("Erro: " + e);
             }
         }
-
         return lista;
     }
 

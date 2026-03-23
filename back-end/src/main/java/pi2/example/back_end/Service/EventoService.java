@@ -8,10 +8,9 @@ import pi2.example.back_end.db.Conexao;
 import java.util.List;
 public class EventoService { // É uma classe intermediaria só para desacoplar as regras de negocio das rotas do spring boot q estão no restController
 
-    public boolean salvar(Evento evento,Conexao conexao) {
-
+    public Evento salvar(Evento evento, Conexao conexao) {
         //  REGRA DE NEGÓCIO
-        if (evento.getNome() == null || evento.getNome().isEmpty()) {
+        if (evento.getCategoria() == null || evento.getCategoria().isEmpty()) {
             throw new RuntimeException("Nome é obrigatório");
         }
         return evento.incluir(conexao);
@@ -26,18 +25,16 @@ public class EventoService { // É uma classe intermediaria só para desacoplar 
         return model.consultarId(id, conexao);
     }
 
-    public List<Evento> buscarPorNome(String nome, Conexao conexao) {
-
+    public List<Evento> buscaPorCategoria(String categoria, Conexao conexao) {
         Evento model = new Evento();
-        if (nome == null || nome.isEmpty()) {
-            return model.consultarNome("", conexao);
+        if (categoria == null || categoria.isEmpty()) {
+            return model.consultarCategoria("", conexao);
         }
-
-        return model.consultarNome(nome, conexao);
+        return model.consultarCategoria(categoria, conexao);
     }
 
 
-    public boolean alterar(Evento evento, Conexao conexao) {
+    public Evento alterar(Evento evento, Conexao conexao) {
 
         // ID obrigatório
         if (evento.getId() == null) {
@@ -48,7 +45,7 @@ public class EventoService { // É uma classe intermediaria só para desacoplar 
             throw new RuntimeException("ID inválido");
         }
         // nome obrigatório
-        if (evento.getNome() == null || evento.getNome().isEmpty()) {
+        if (evento.getCategoria() == null || evento.getCategoria().isEmpty()) {
             throw new RuntimeException("Nome é obrigatório");
         }
         // verificar se existe no banco

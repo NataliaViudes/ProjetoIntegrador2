@@ -1,9 +1,15 @@
 CREATE TABLE IF NOT EXISTS EVENTO(
 	id_evento SERIAL,
-	nome varchar(50),
+	categoria varchar(50),
 	descricao varchar(200),
 	CONSTRAINT PK_EVENTO PRIMARY KEY (id_evento)
+	-- CONSTRAINT UNCAT_EVENTO UNIQUE (categoria)
 );
 
-INSERT INTO EVENTO(nome,descricao) VALUES('Reunião dos funcionarios','Todos os funcionarios presentes');
-INSERT INTO EVENTO(nome,descricao) VALUES('Sla1','Todos os funcionarios presentes menos o Savoldi');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Reunião','Todos os funcionarios presentes');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Reunião PAIF','Todos os funcionarios presentes menos o Savoldi');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Reunião Socioeducativa','Venham todos');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Festa','Festa de Carnaval');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Festa','Festa Junina');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Palestra','Palestra sobre o meio ambiente');
+INSERT INTO EVENTO(categoria,descricao) VALUES('Festa de Carnaval','Venha curtir o Carnaval ak no Cras');
