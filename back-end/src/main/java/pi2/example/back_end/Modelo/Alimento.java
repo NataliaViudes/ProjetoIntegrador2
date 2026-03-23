@@ -1,7 +1,7 @@
 package pi2.example.back_end.Modelo;
 
 public class Alimento {
-    private int id;
+    private Integer id;
     private String nome;
     private String tipo;
     private String descricao;
@@ -13,18 +13,18 @@ public class Alimento {
         this(0, "", "", "");
     }
 
-    public Alimento( int id, String nome, String tipo, String descricao) {
+    public Alimento( Integer id, String nome, String tipo, String descricao) {
         this.id = id;
         this.nome = nome;
         this.tipo = tipo;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

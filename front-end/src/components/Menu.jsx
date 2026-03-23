@@ -11,6 +11,7 @@ function Menu() {
           <div className="dropdown-conteudo">
             <Link to="/atividades">Atividades</Link>
             <Link to="/auxilios">Auxílios</Link>
+            <Link to="/alimentos">Alimentos</Link>
           </div>
         </div>
 

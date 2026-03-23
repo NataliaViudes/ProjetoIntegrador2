@@ -68,7 +68,7 @@ public class DALAlimento implements IDAL<Alimento> {
         }
     }
 
-    public boolean apagarPorID(int id) {
+    public boolean apagarPorID(Integer id) {
         String sql = "DELETE FROM alimento WHERE id_alimento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {

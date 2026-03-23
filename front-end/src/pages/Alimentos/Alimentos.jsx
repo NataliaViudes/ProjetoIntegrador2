@@ -3,148 +3,119 @@ import api from "../../services/api";
 import Menu from "../../components/Menu";
 import "./Alimentos.css";
 
-
-function Atividades() {
+function Alimentos() {
+  const [nome, setNome] = useState("");
+  const [tipo, setTipo] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [funcionarios, setFuncionarios] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const [atividades, setAtividades] = useState([]);
   const [busca, setBusca] = useState("");
-
-  const [funcionarioId, setFuncionarioId] = useState("");
-  const [categoriaId, setCategoriaId] = useState("");
-
-  const [atividadeEditando, setAtividadeEditando] = useState(null);
+  const [alimentos, setAlimentos] = useState([]);
+  const [alimentoEditando, setAlimentoEditando] = useState(null);
 
   useEffect(() => {
     carregarTudo();
   }, []);
 
   async function carregarTudo() {
-  try {
-    const respAtividades = await api.get("/atividades");
-  
-
-    const respFuncionarios = await api.get("/funcionario");
-   
-
-    const respCategorias = await api.get("/categoriaAtividade");
-    
-
-    setAtividades(Array.isArray(respAtividades.data) ? respAtividades.data : []);
-    setFuncionarios(Array.isArray(respFuncionarios.data) ? respFuncionarios.data : []);
-    setCategorias(Array.isArray(respCategorias.data) ? respCategorias.data : []);
-  } catch (error) {
-    console.error("Erro ao carregar dados:", error);
+    try {
+      const resp = await api.get("/alimentos");
+      setAlimentos(Array.isArray(resp.data) ? resp.data : []);
+    } catch (error) {
+      console.error("Erro ao carregar alimentos:", error);
+    }
   }
-}
 
   async function salvarOuAtualizar() {
-    if (!descricao || !funcionarioId || !categoriaId) {
-      alert("Preencha nome, funcionário e categoria.");
+    if (!nome || !tipo || !descricao) {
+      alert("Preencha nome, tipo e descrição.");
       return;
     }
 
-    const payload = {
-      descricao: descricao,
-      funcionario: { id: Number(funcionarioId) },
-      categoria: { id: Number(categoriaId) }
-    };
+    const payload = { nome, tipo, descricao };
 
     try {
-      if (atividadeEditando) {
-        await api.put("/atividades", {
-          id: atividadeEditando.id,
-          ...payload
+      if (alimentoEditando) {
+        await api.put("/alimentos", {
+          id: alimentoEditando.id,
+          ...payload,
         });
       } else {
-        await api.post("/atividades", payload);
+        await api.post("/alimentos", payload);
       }
 
       limparFormulario();
       carregarTudo();
     } catch (error) {
-      console.error("Erro ao salvar/atualizar:", error);
-      alert("Erro ao salvar atividade.");
+      console.error("Erro ao salvar:", error);
+      alert("Erro ao salvar alimento.");
     }
   }
 
-  function editarAtividade(atividade) {
-    setAtividadeEditando(atividade);
-    setDescricao(atividade.descricao || "");
-    setFuncionarioId(atividade.funcionario?.id || "");
-    setCategoriaId(atividade.categoria?.id || "");
+  function editarAlimento(alimento) {
+    setAlimentoEditando(alimento);
+    setNome(alimento.nome || "");
+    setTipo(alimento.tipo || "");
+    setDescricao(alimento.descricao || "");
   }
 
-  async function excluirAtividade(id) {
+  async function excluirAlimento(id) {
     try {
-      await api.delete(`/atividades/${id}`);
-      if (atividadeEditando && atividadeEditando.id === id) {
+      await api.delete(`/alimentos/${id}`);
+      if (alimentoEditando && alimentoEditando.id === id) {
         limparFormulario();
       }
       carregarTudo();
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir atividade.");
+      alert("Erro ao excluir alimento.");
     }
   }
 
   function limparFormulario() {
-    setAtividadeEditando(null);
+    setAlimentoEditando(null);
+    setNome("");
+    setTipo("");
     setDescricao("");
-    setFuncionarioId("");
-    setCategoriaId("");
   }
 
-  const atividadesFiltradas = atividades.filter((atividade) =>
-    (atividade.descricao || "").toLowerCase().includes(busca.toLowerCase())
+  const alimentosFiltrados = alimentos.filter((alimento) =>
+    (alimento.nome || "").toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
-    <div className="pagina-atividades" translate="no">
+    <div className="pagina-alimentos" translate="no">
       <Menu />
 
-      <main className="conteudo-atividades">
+      <main className="conteudo-alimentos">
         <section className="painel-esquerdo">
-          <h2>Cadastro de Atividade</h2>
+          <h2>Cadastro de Alimentos</h2>
 
-          <label>Nome da atividade</label>
+          <label>Nome</label>
           <input
             type="text"
-            placeholder="Digite o nome da atividade"
+            placeholder="Digite o nome do alimento"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
+
+          <label>Tipo</label>
+          <input
+            type="text"
+            placeholder="Ex: Prato, Salgado, Doce, Bebida..."
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
+          />
+
+          <label>Descrição</label>
+          <input
+            type="text"
+            placeholder="Descrição do alimento"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
           />
 
-          <label>Funcionário</label>
-          <select
-            value={funcionarioId}
-            onChange={(e) => setFuncionarioId(e.target.value)}
-          >
-            <option value="">Selecione um funcionário</option>
-            {funcionarios.map((funcionario) => (
-              <option key={funcionario.id} value={funcionario.id}>
-                {funcionario.nome}
-              </option>
-            ))}
-          </select>
-
-          <label>Categoria</label>
-          <select
-            value={categoriaId}
-            onChange={(e) => setCategoriaId(e.target.value)}
-          >
-            <option value="">Selecione uma categoria</option>
-            {categorias.map((categoria) => (
-              <option key={categoria.id} value={categoria.id}>
-                {categoria.nome}
-              </option>
-            ))}
-          </select>
-
           <div className="acoes-formulario">
             <button onClick={salvarOuAtualizar}>
-              {atividadeEditando ? "Atualizar" : "Confirmar"}
+              {alimentoEditando ? "Atualizar" : "Confirmar"}
             </button>
 
             <button type="button" onClick={limparFormulario}>
@@ -155,7 +126,7 @@ function Atividades() {
 
         <section className="painel-direito">
           <div className="cabecalho-lista">
-            <h2>Atividades cadastradas</h2>
+            <h2>Alimentos cadastrados</h2>
             <input
               type="text"
               placeholder="Buscar por nome..."
@@ -164,27 +135,23 @@ function Atividades() {
             />
           </div>
 
-          <div className="lista-atividades">
-            {atividadesFiltradas.length === 0 ? (
-              <p>Nenhuma atividade encontrada.</p>
+          <div className="lista-alimentos">
+            {alimentosFiltrados.length === 0 ? (
+              <p>Nenhum alimento encontrado.</p>
             ) : (
-              atividadesFiltradas.map((atividade) => (
-                <div className="item-atividade" key={atividade.id}>
-                  <div className="info-atividade">
-                    <strong>{atividade.descricao}</strong>
-                    <span>
-                      Funcionário: {atividade.funcionario?.nome || "Não informado"}
-                    </span>
-                    <span>
-                      Categoria: {atividade.categoria?.nome || "Não informada"}
-                    </span>
+              alimentosFiltrados.map((alimento) => (
+                <div className="item-alimento" key={alimento.id}>
+                  <div className="info-alimento">
+                    <strong>{alimento.nome}</strong>
+                    <span>Tipo: {alimento.tipo}</span>
+                    <span>Descrição: {alimento.descricao}</span>
                   </div>
 
                   <div className="botoes-item">
-                    <button onClick={() => editarAtividade(atividade)}>
+                    <button onClick={() => editarAlimento(alimento)}>
                       Editar
                     </button>
-                    <button onClick={() => excluirAtividade(atividade.id)}>
+                    <button onClick={() => excluirAlimento(alimento.id)}>
                       Excluir
                     </button>
                   </div>
@@ -198,4 +165,4 @@ function Atividades() {
   );
 }
 
-export default Atividades;
+export default Alimentos;
