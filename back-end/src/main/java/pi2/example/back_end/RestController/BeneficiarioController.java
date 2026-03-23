@@ -9,7 +9,7 @@ import pi2.example.back_end.db.DALBeneficiario;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
 @RequestMapping("/beneficiario")
 public class BeneficiarioController {

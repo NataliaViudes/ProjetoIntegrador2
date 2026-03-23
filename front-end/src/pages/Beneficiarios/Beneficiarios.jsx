@@ -28,13 +28,76 @@ function Beneficiario() {
         tipoResidencia: "",
         nis: "",
         renda: "",
-        participacao: ""
+        participacao: "",
+        alergias: "",
+        tratamentos: ""
     });
 
     useEffect(() => {
         carregar();
     }, []);
 
+    // ================= UTIL =================
+    function limparNumero(valor) {
+        return String(valor || "").replace(/\D/g, "");
+    }
+
+    // ================= MÁSCARAS =================
+    function mascaraTelefone(valor) {
+        valor = limparNumero(valor).slice(0, 11);
+
+        if (valor.length <= 2) return valor;
+        if (valor.length <= 7) return `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+        return `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+    }
+
+    function mascaraCPF(valor) {
+        valor = limparNumero(valor).slice(0, 11);
+
+        return valor
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+
+    function mascaraRG(valor) {
+        valor = limparNumero(valor).slice(0, 9);
+
+        return valor
+            .replace(/(\d{2})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1})$/, "$1-$2");
+    }
+
+    function mascaraNIS(valor) {
+        valor = limparNumero(valor).slice(0, 11);
+
+        return valor
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+
+    function mascaraRenda(valor) {
+        valor = limparNumero(valor);
+
+        if (!valor) return "";
+
+        valor = (parseInt(valor) / 100).toFixed(2) + "";
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        return "R$ " + valor;
+    }
+
+    // ================= FORMATAR =================
+    const formatarCPF = (v) => mascaraCPF(v);
+    const formatarRG = (v) => mascaraRG(v);
+    const formatarTelefone = (v) => mascaraTelefone(v);
+    const formatarNIS = (v) => mascaraNIS(v);
+    const formatarRenda = (v) => mascaraRenda(v);
+
+    // ================= API =================
     async function carregar() {
         try {
             const resp = await api.get("/beneficiario");
@@ -44,47 +107,82 @@ function Beneficiario() {
         }
     }
 
+    // ================= HANDLE =================
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        let novoValor = value;
+
+        if (name === "telefone" || name === "celular" || name === "celularRecado") {
+            novoValor = mascaraTelefone(value);
+        }
+
+        if (name === "cpf") novoValor = mascaraCPF(value);
+        if (name === "rg") novoValor = mascaraRG(value);
+        if (name === "nis") novoValor = mascaraNIS(value);
+        if (name === "renda") novoValor = mascaraRenda(value);
+
+        setForm({ ...form, [name]: novoValor });
     }
 
     function verDetalhes(b) {
-        setForm(b);
+        setForm({
+            ...b,
+            cpf: formatarCPF(b.cpf),
+            rg: formatarRG(b.rg),
+            telefone: formatarTelefone(b.telefone),
+            celular: formatarTelefone(b.celular),
+            celularRecado: formatarTelefone(b.celularRecado),
+            nis: formatarNIS(b.nis),
+            renda: formatarRenda(b.renda)
+        });
+
         setEditando(false);
         setTela("detalhes");
     }
 
     function novo() {
         setForm({
-            nome: "", cpf: "", telefone: "",
-            nascimento: "", endereco: "",
-            bairro: "", situacao: ""
+            nome: "", cpf: "", rg: "", telefone: "",
+            nascimento: "", endereco: "", bairro: "",
+            situacao: "", idade: "", celular: "",
+            celularRecado: "", tipoResidencia: "",
+            nis: "", renda: "", participacao: "",
+            alergias: "", tratamentos: ""
         });
         setEditando(true);
         setTela("cadastro");
     }
 
-    function limparNumero(valor) {
-        return valor.replace(/\D/g, "");
-    }
-
-    async function salvar() {
-
+    // ================= VALIDAÇÃO =================
+    function validarCampos() {
         let novosErros = {};
 
-        if (!form.nome) novosErros.nome = "Nome obrigatório";
-        if (!form.cpf) novosErros.cpf = "CPF obrigatório";
+        Object.keys(form).forEach(campo => {
+            if (campo !== "id") {
+                if (!form[campo] || form[campo].toString().trim() === "") {
+                    novosErros[campo] = "Campo obrigatório";
+                }
+            }
+        });
 
-        if (Object.keys(novosErros).length > 0) {
-            setErros(novosErros);
-            return;
-        }
+        setErros(novosErros);
+        return Object.keys(novosErros).length === 0;
+    }
+
+    // ================= SALVAR =================
+    async function salvar() {
+
+        if (!validarCampos()) return;
 
         const payload = {
             ...form,
             cpf: limparNumero(form.cpf),
-            telefone: limparNumero(form.telefone)
+            rg: limparNumero(form.rg),
+            telefone: limparNumero(form.telefone),
+            celular: limparNumero(form.celular),
+            celularRecado: limparNumero(form.celularRecado),
+            nis: limparNumero(form.nis),
+            renda: limparNumero(form.renda)
         };
 
         try {
@@ -143,7 +241,7 @@ function Beneficiario() {
                             {filtrados.map(b => (
                                 <tr key={b.id}>
                                     <td>{b.nome}</td>
-                                    <td>{b.cpf}</td>
+                                    <td>{formatarCPF(b.cpf)}</td>
                                     <td>{b.situacao}</td>
                                     <td>
                                         <button onClick={() => verDetalhes(b)}>Ver</button>
@@ -177,118 +275,99 @@ function Beneficiario() {
 
             <div className="form-grid">
 
-                {/* ===== DADOS PESSOAIS ===== */}
                 <div className="campo grande">
                     <label>Nome</label>
-                    <input name="nome" value={form.nome || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="nome" value={form.nome} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>CPF</label>
-                    <input name="cpf" value={form.cpf || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="cpf" value={form.cpf} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>RG</label>
-                    <input name="rg" value={form.rg || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="rg" value={form.rg} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo pequeno">
                     <label>Nascimento</label>
-                    <input type="date" name="nascimento" value={form.nascimento || ""} disabled={!editando} onChange={handleChange} />
+                    <input type="date" name="nascimento" value={form.nascimento} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo mini">
                     <label>Idade</label>
-                    <input name="idade" value={form.idade || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="idade" value={form.idade} disabled={!editando} onChange={handleChange} />
                 </div>
 
-                {/* ===== CONTATO ===== */}
                 <div className="campo medio">
                     <label>Telefone</label>
-                    <input name="telefone" value={form.telefone || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="telefone" value={form.telefone} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Celular</label>
-                    <input name="celular" value={form.celular || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="celular" value={form.celular} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Celular Recado</label>
-                    <input name="celularRecado" value={form.celularRecado || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="celularRecado" value={form.celularRecado} disabled={!editando} onChange={handleChange} />
                 </div>
 
-                {/* ===== ENDEREÇO ===== */}
                 <div className="campo grande">
                     <label>Endereço</label>
-                    <input name="endereco" value={form.endereco || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="endereco" value={form.endereco} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Bairro</label>
-                    <input name="bairro" value={form.bairro || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="bairro" value={form.bairro} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Tipo de Residência</label>
-                    <input name="tipoResidencia" value={form.tipoResidencia || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="tipoResidencia" value={form.tipoResidencia} disabled={!editando} onChange={handleChange} />
                 </div>
 
-                {/* ===== SOCIAL ===== */}
                 <div className="campo medio">
                     <label>NIS</label>
-                    <input name="nis" value={form.nis || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="nis" value={form.nis} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Renda</label>
-                    <input name="renda" value={form.renda || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="renda" value={form.renda} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Participação</label>
-                    <input name="participacao" value={form.participacao || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="participacao" value={form.participacao} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo medio">
                     <label>Situação</label>
-                    <input name="situacao" value={form.situacao || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="situacao" value={form.situacao} disabled={!editando} onChange={handleChange} />
                 </div>
 
-                {/* ===== SAÚDE ===== */}
                 <div className="campo grande">
                     <label>Alergias</label>
-                    <input name="alergias" value={form.alergias || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="alergias" value={form.alergias} disabled={!editando} onChange={handleChange} />
                 </div>
 
                 <div className="campo grande">
                     <label>Tratamentos</label>
-                    <input name="tratamentos" value={form.tratamentos || ""} disabled={!editando} onChange={handleChange} />
+                    <input name="tratamentos" value={form.tratamentos} disabled={!editando} onChange={handleChange} />
                 </div>
 
-                
             </div>
 
             <div className="botoes">
-
-                {!editando && (
-                    <button onClick={() => setEditando(true)}>
-                        Alterar
-                    </button>
-                )}
-
-                {editando && (
-                    <button onClick={salvar}>
-                        Salvar
-                    </button>
-                )}
-
-                <button onClick={() => setTela("tabela")}>
-                    Voltar
-                </button>
-
+                {!editando && <button onClick={() => setEditando(true)}>Alterar</button>}
+                {editando && <button onClick={salvar}>Salvar</button>}
+                <button onClick={() => setTela("tabela")}>Voltar</button>
             </div>
+
         </div>
     );
 }

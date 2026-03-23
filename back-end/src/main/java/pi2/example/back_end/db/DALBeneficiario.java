@@ -1,11 +1,12 @@
 package pi2.example.back_end.db;
 
+import pi2.example.back_end.Modelo.Beneficiario;
+
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-
-import pi2.example.back_end.Modelo.Beneficiario;
 
 public class DALBeneficiario implements IDAL<Beneficiario> {
 
@@ -16,75 +17,107 @@ public class DALBeneficiario implements IDAL<Beneficiario> {
     }
 
     @Override
-    public boolean gravar(Beneficiario entidade) {
+    public boolean gravar(Beneficiario b) {
         String sql = "INSERT INTO beneficiario (" +
-                "id, nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia, " +
-                "telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao) VALUES (" +
-                entidade.getId() + ", '" +
-                entidade.getNome() + "', '" +
-                entidade.getNascimento() + "', " +
-                entidade.getIdade() + ", '" +
-                entidade.getRg() + "', '" +
-                entidade.getCpf() + "', '" +
-                entidade.getNis() + "', " +
-                entidade.getRenda() + ", '" +
-                entidade.getEndereco() + "', '" +
-                entidade.getBairro() + "', '" +
-                entidade.getTipoResidencia() + "', '" +
-                entidade.getTelefone() + "', '" +
-                entidade.getCelular() + "', '" +
-                entidade.getCelularRecado() + "', '" +
-                entidade.getAlergias() + "', '" +
-                entidade.getTratamentos() + "', '" +
-                entidade.getParticipacao() + "', '" +
-                entidade.getSituacao() + "')";
-        
-        return bd.manipular(sql);
+                "nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia, " +
+                "telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setString(1, b.getNome());
+            stmt.setDate(2, b.getNascimento());
+            stmt.setInt(3, b.getIdade());
+            stmt.setString(4, b.getRg());
+            stmt.setString(5, b.getCpf());
+            stmt.setString(6, b.getNis());
+            stmt.setDouble(7, b.getRenda());
+            stmt.setString(8, b.getEndereco());
+            stmt.setString(9, b.getBairro());
+            stmt.setString(10, b.getTipoResidencia());
+            stmt.setString(11, b.getTelefone());
+            stmt.setString(12, b.getCelular());
+            stmt.setString(13, b.getCelularRecado());
+            stmt.setString(14, b.getAlergias());
+            stmt.setString(15, b.getTratamentos());
+            stmt.setString(16, b.getParticipacao());
+            stmt.setString(17, b.getSituacao());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
     }
 
     @Override
-    public boolean alterar(Beneficiario entidade) {
+    public boolean alterar(Beneficiario b) {
         String sql = "UPDATE beneficiario SET " +
-                "nome = '" + entidade.getNome() + "', " +
-                "nascimento = '" + entidade.getNascimento() + "', " +
-                "idade = " + entidade.getIdade() + ", " +
-                "rg = '" + entidade.getRg() + "', " +
-                "cpf = '" + entidade.getCpf() + "', " +
-                "nis = '" + entidade.getNis() + "', " +
-                "renda = " + entidade.getRenda() + ", " +
-                "endereco = '" + entidade.getEndereco() + "', " +
-                "bairro = '" + entidade.getBairro() + "', " +
-                "tipo_residencia = '" + entidade.getTipoResidencia() + "', " +
-                "telefone = '" + entidade.getTelefone() + "', " +
-                "celular = '" + entidade.getCelular() + "', " +
-                "celular_recado = '" + entidade.getCelularRecado() + "', " +
-                "alergias = '" + entidade.getAlergias() + "', " +
-                "tratamentos = '" + entidade.getTratamentos() + "', " +
-                "participacao = '" + entidade.getParticipacao() + "', " +
-                "situacao = '" + entidade.getSituacao() + "' " +
-                "WHERE id = " + entidade.getId();
+                "nome=?, nascimento=?, idade=?, rg=?, cpf=?, nis=?, renda=?, endereco=?, bairro=?, tipo_residencia=?, " +
+                "telefone=?, celular=?, celular_recado=?, alergias=?, tratamentos=?, participacao=?, situacao=? " +
+                "WHERE id = ?";
 
-        return bd.manipular(sql);
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setString(1, b.getNome());
+            stmt.setDate(2, b.getNascimento());
+            stmt.setInt(3, b.getIdade());
+            stmt.setString(4, b.getRg());
+            stmt.setString(5, b.getCpf());
+            stmt.setString(6, b.getNis());
+            stmt.setDouble(7, b.getRenda());
+            stmt.setString(8, b.getEndereco());
+            stmt.setString(9, b.getBairro());
+            stmt.setString(10, b.getTipoResidencia());
+            stmt.setString(11, b.getTelefone());
+            stmt.setString(12, b.getCelular());
+            stmt.setString(13, b.getCelularRecado());
+            stmt.setString(14, b.getAlergias());
+            stmt.setString(15, b.getTratamentos());
+            stmt.setString(16, b.getParticipacao());
+            stmt.setString(17, b.getSituacao());
+            stmt.setInt(18, b.getId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
     }
 
     @Override
-    public boolean apagar(Beneficiario entidade) {
-        String sql = "DELETE FROM beneficiario WHERE id = " + entidade.getId();
-        return bd.manipular(sql);
+    public boolean apagar(Beneficiario b) {
+        String sql = "DELETE FROM beneficiario WHERE id = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setInt(1, b.getId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
     }
 
     @Override
     public Beneficiario get(int id) {
         Beneficiario b = null;
-        String sql = "SELECT * FROM beneficiario WHERE id = " + id;
-        ResultSet rs = bd.consultar(sql);
+        String sql = "SELECT * FROM beneficiario WHERE id = ?";
 
-        try {
-            if (rs != null && rs.next()) {
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
                 b = new Beneficiario(
                         rs.getInt("id"),
                         rs.getString("nome"),
-                        rs.getString("nascimento"),
+                        rs.getDate("nascimento"),
                         rs.getInt("idade"),
                         rs.getString("rg"),
                         rs.getString("cpf"),
@@ -102,9 +135,9 @@ public class DALBeneficiario implements IDAL<Beneficiario> {
                         rs.getString("situacao")
                 );
             }
-            if (rs != null) rs.close();
+
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar beneficiário: " + e);
+            System.out.println("Erro: " + e);
         }
 
         return b;
@@ -127,7 +160,7 @@ public class DALBeneficiario implements IDAL<Beneficiario> {
                     Beneficiario b = new Beneficiario(
                             rs.getInt("id"),
                             rs.getString("nome"),
-                            rs.getString("nascimento"),
+                            rs.getDate("nascimento"),
                             rs.getInt("idade"),
                             rs.getString("rg"),
                             rs.getString("cpf"),
@@ -148,8 +181,48 @@ public class DALBeneficiario implements IDAL<Beneficiario> {
                 }
                 rs.close();
             }
+
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar lista de beneficiários: " + e);
+            System.out.println("Erro ao buscar beneficiários: " + e);
+        }
+
+        return lista;
+    }
+
+    public List<Beneficiario> buscarPorNome(String nome) {
+        List<Beneficiario> lista = new ArrayList<>();
+        String sql;
+
+        if (nome == null || nome.isEmpty()) {
+            sql = "SELECT * FROM beneficiario ORDER BY id ASC";
+
+            try (PreparedStatement stmt = bd.preparar(sql)) {
+
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(get(rs.getInt("id")));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
+            }
+
+        } else {
+            sql = "SELECT * FROM beneficiario WHERE nome ILIKE '%' || ? || '%' ORDER BY id ASC";
+
+            try (PreparedStatement stmt = bd.preparar(sql)) {
+
+                stmt.setString(1, nome);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(get(rs.getInt("id")));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
+            }
         }
 
         return lista;

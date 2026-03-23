@@ -1,24 +1,27 @@
 package pi2.example.back_end.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-public class Conexao 
+public class Conexao
 {
     private Connection connect;
     private String erro;
+
+
     public Conexao()
     {   erro="";
         connect=null;
     }
+
+    public PreparedStatement preparar(String sql) throws SQLException {
+        return connect.prepareStatement(sql);
+    }
+
     public boolean conectar(String local,String usuario,String senha)
     {   boolean conectado=false;
         try {
             //Class.forName(driver); "org.postgresql.Driver");
-             //"jdbc:postgresql://localhost/"+banco;
+            //"jdbc:postgresql://localhost/"+banco;
             connect = DriverManager.getConnection( local, usuario,senha);
             conectado=true;
         }
@@ -34,6 +37,7 @@ public class Conexao
     public boolean getEstadoConexao() {
         return (connect!=null);
     }
+
     public boolean manipular(String sql) // inserir, alterar,excluir
     {   boolean executou=false;
         try {
@@ -51,32 +55,32 @@ public class Conexao
     public ResultSet consultar(String sql)
     {   ResultSet rs=null;
         try {
-           Statement statement = connect.createStatement();
-             //ResultSet.TYPE_SCROLL_INSENSITIVE,
-             //ResultSet.CONCUR_READ_ONLY);
-           rs = statement.executeQuery( sql );
-           //statement.close();
+            Statement statement = connect.createStatement();
+            //ResultSet.TYPE_SCROLL_INSENSITIVE,
+            //ResultSet.CONCUR_READ_ONLY);
+            rs = statement.executeQuery( sql );
+            //statement.close();
         }
         catch ( SQLException sqlex )
         { erro="Erro: "+sqlex.toString();
-          rs = null;
+            rs = null;
         }
         return rs;
     }
-    public int getMaxPK(String tabela,String chave) 
+    public int getMaxPK(String tabela,String chave)
     {
         String sql="select max("+chave+") from "+tabela;
         int max=0;
         ResultSet rs= consultar(sql);
-        try 
+        try
         {
             if(rs.next())
                 max=rs.getInt(1);
         }
         catch (SQLException sqlex)
-        { 
-             erro="Erro: " + sqlex.toString();
-             max = -1;
+        {
+            erro="Erro: " + sqlex.toString();
+            max = -1;
         }
         return max;
     }

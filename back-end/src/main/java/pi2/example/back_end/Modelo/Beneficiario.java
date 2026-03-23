@@ -1,10 +1,13 @@
 package pi2.example.back_end.Modelo;
 
+
+import java.sql.Date;
+
 public class Beneficiario {
 
     private Integer id;
     private String nome;
-    private String nascimento;
+    private Date nascimento;
     private Integer idade;
     private String rg;
     private String cpf;
@@ -21,6 +24,7 @@ public class Beneficiario {
     //infos gerais - fazer
     private String alergias;
     private String tratamentos;
+
     //private String medicamentos;
     private String participacao;
     private String situacao;
@@ -32,7 +36,7 @@ public class Beneficiario {
     }
 
 
-    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
+    public Beneficiario(Integer id, String nome, Date nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -57,7 +61,7 @@ public class Beneficiario {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,11 +73,11 @@ public class Beneficiario {
         this.nome = nome;
     }
 
-    public String getNascimento() {
+    public Date getNascimento() {
         return nascimento;
     }
 
-    public void setNascimento(String nascimento) {
+    public void setNascimento(Date nascimento) {
         this.nascimento = nascimento;
     }
 
@@ -81,7 +85,7 @@ public class Beneficiario {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(Integer idade) {
         this.idade = idade;
     }
 
@@ -113,7 +117,7 @@ public class Beneficiario {
         return renda;
     }
 
-    public void setRenda(double renda) {
+    public void setRenda(Double renda) {
         this.renda = renda;
     }
 
