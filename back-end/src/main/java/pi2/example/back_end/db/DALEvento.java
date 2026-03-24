@@ -108,9 +108,9 @@ public class DALEvento {
         List<Evento> lista = new ArrayList<>();
         String sql;
 
-        // 🔥 regra: se vazio ou null → traz tudo
+        // regra: se vazio ou null → traz tudo
         if (categoria == null || categoria.isEmpty()) {
-            sql = "SELECT * FROM evento ORDER BY id_evento ASC";
+            sql = "SELECT * FROM evento ORDER BY categoria ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -129,11 +129,59 @@ public class DALEvento {
             }
 
         } else {
-            sql = "SELECT * FROM evento WHERE categoria ILIKE '%' || ? || '%' ORDER BY id_evento ASC";
+            sql = "SELECT * FROM evento WHERE categoria ILIKE '%' || ? || '%' ORDER BY categoria ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
                 stmt.setString(1, categoria);
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(new Evento(
+                            rs.getInt("id_evento"),
+                            rs.getString("categoria"),
+                            rs.getString("descricao")
+                    ));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
+            }
+        }
+        return lista;
+    }
+
+
+    public List<Evento> buscarPorDescricao(String descricao) {
+        List<Evento> lista = new ArrayList<>();
+        String sql;
+
+        // regra: se vazio ou null → traz tudo
+        if (descricao == null || descricao.isEmpty()) {
+            sql = "SELECT * FROM evento ORDER BY descricao ASC";
+
+            try (PreparedStatement stmt = bd.preparar(sql)) {
+
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(new Evento(
+                            rs.getInt("id_evento"),
+                            rs.getString("categoria"),
+                            rs.getString("descricao")
+                    ));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e);
+            }
+
+        } else {
+            sql = "SELECT * FROM evento WHERE descricao ILIKE '%' || ? || '%' ORDER BY descricao ASC";
+
+            try (PreparedStatement stmt = bd.preparar(sql)) {
+
+                stmt.setString(1, descricao);
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {

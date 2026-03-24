@@ -94,3 +94,27 @@
   background-color: #dcdcdc;
   cursor: pointer;
 }
+/* caixa do filtro colada */
+.filtro-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #dcdcdc;
+  font-size: 16px;
+  border: 1px solid #888;
+}
+
+/* radio alinhado */
+.filtro-box label {
+  padding: 5px 15px;
+  border: 1px solid #888;
+  background-color: #dcdcdc;
+  cursor: pointer;
+}
+
+.filtro-box span {
+  padding: 5px 15px;
+  border: 1px solid #888;
+  background-color: #dcdcdc;
+}
