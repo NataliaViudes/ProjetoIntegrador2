@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.Modelo.Cat_Evento;
-import pi2.example.back_end.db.DAOEvento;
+import pi2.example.back_end.DAO.DAOEvento;
 
 import java.util.List;
 

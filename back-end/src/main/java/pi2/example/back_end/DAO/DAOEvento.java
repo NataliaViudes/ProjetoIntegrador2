@@ -1,6 +1,7 @@
-package pi2.example.back_end.db;
+package pi2.example.back_end.DAO;
 
 import pi2.example.back_end.Modelo.Cat_Evento;
+import pi2.example.back_end.db.Conexao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
