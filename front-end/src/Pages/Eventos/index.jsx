@@ -5,7 +5,7 @@ import "animate.css";
 import Swal from "sweetalert2";
 import style from "./styles.module.css";
 export default function Eventos() {
-  const [categoria, setCategoria] = useState("");
+  const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [busca, setBusca] = useState("");
   const [eventos, setEventos] = useState([]);
@@ -44,7 +44,7 @@ export default function Eventos() {
   };
 
   async function salvarOuAtualizar() {
-    if (!categoria || !descricao) {
+    if (!nome || !descricao) {
       Swal.fire({
         title: "Atenção!",
         text: "Preencha todos os campos!",
@@ -56,39 +56,55 @@ export default function Eventos() {
       });
       return;
     }
+    const dados = { nome, descricao };
 
-    const payload = { categoria, descricao };
+    Swal.fire({
+      title: `Tem certeza que deseja ${eventoEditando ? "atualizar" : "cadastrar"} a categoria: [${nome}]`,
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: `${eventoEditando ? "Atualizar" : "Cadastrar"}`,
+      denyButtonText: `Cancelar`,
+    }).then(async (result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        try {
+          if (eventoEditando) {
+            await api.put("/eventos", {
+              id: eventoEditando.id,
+              ...dados,
+            });
+          } else {
+            await api.post("/eventos", dados);
+          }
+          limparFormulario();
+          carregarTudo();
+        } catch (error) {
+          console.error("Erro ao salvar:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Algo deu errado!",
+          });
+        }
 
-    try {
-      if (eventoEditando) {
-        await api.put("/eventos", {
-          id: eventoEditando.id,
-          ...payload,
-        });
-      } else {
-        await api.post("/eventos", payload);
+        Swal.fire(
+          `Categoria do evento foi ${eventoEditando ? "atualizada" : "cadastrada"}!`,
+          "",
+          "success",
+        );
+      } else if (result.isDenied) {
+        Swal.fire(
+          `Categoria do evento não foi ${eventoEditando ? "atualizada" : "cadastrada"}!`,
+          "",
+          "info",
+        );
       }
-
-      Swal.fire({
-        title: "Sucesso!",
-        text: "Evento cadastrado com sucesso!",
-        icon: "success",
-        background: "#ffffff",
-        color: "#111111",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "OK",
-      });
-      limparFormulario();
-      carregarTudo();
-    } catch (error) {
-      console.error("Erro ao salvar:", error);
-      alert("Erro ao salvar evento.");
-    }
+    });
   }
 
   function editarEvento(evento) {
     setEventoEditando(evento);
-    setCategoria(evento.categoria || "");
+    setNome(evento.nome || "");
     setDescricao(evento.descricao || "");
   }
 
@@ -107,16 +123,14 @@ export default function Eventos() {
 
   function limparFormulario() {
     setEventoEditando(null);
-    setCategoria("");
+    setNome("");
     setDescricao("");
   }
 
   const eventosFiltrados = eventos
     .filter((evento) => {
-      if (filtro === "categoria") {
-        return (evento.categoria || "")
-          .toLowerCase()
-          .includes(busca.toLowerCase());
+      if (filtro === "nome") {
+        return (evento.nome || "").toLowerCase().includes(busca.toLowerCase());
       } else {
         return (evento.descricao || "")
           .toLowerCase()
@@ -124,8 +138,8 @@ export default function Eventos() {
       }
     })
     .sort((a, b) => {
-      if (filtro === "categoria") {
-        return (a.categoria || "").localeCompare(b.categoria || "");
+      if (filtro === "nome") {
+        return (a.nome || "").localeCompare(b.nome || "");
       } else {
         return (a.descricao || "").localeCompare(b.descricao || "");
       }
@@ -141,9 +155,9 @@ export default function Eventos() {
           <div className={style["form-linha"]}>
             <input
               type="text"
-              placeholder="Categoria"
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
+              placeholder="Nome"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
             />
 
             <input
@@ -158,9 +172,7 @@ export default function Eventos() {
             <input
               type="text"
               placeholder={
-                filtro === "categoria"
-                  ? "Pesquisar Categoria"
-                  : "Pesquisar Descrição"
+                filtro === "nome" ? "Pesquisar Nome" : "Pesquisar Descrição"
               }
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
@@ -181,11 +193,11 @@ export default function Eventos() {
               <label>
                 <input
                   type="radio"
-                  value="categoria"
-                  checked={filtro === "categoria"}
+                  value="nome"
+                  checked={filtro === "nome"}
                   onChange={(e) => setFiltro(e.target.value)}
                 />
-                Categoria
+                Nome
               </label>
             </div>
           </div>
@@ -193,7 +205,7 @@ export default function Eventos() {
           <div className={style["lista"]}>
             {eventosFiltrados.map((evento) => (
               <div key={evento.id} className={style["item"]}>
-                {evento.categoria} - {evento.descricao}
+                {evento.nome} - {evento.descricao}
                 <div className={style["acoes"]}>
                   <button onClick={() => editarEvento(evento)}>Editar</button>
                   <button
