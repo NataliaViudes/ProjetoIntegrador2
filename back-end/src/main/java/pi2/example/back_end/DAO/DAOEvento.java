@@ -29,7 +29,7 @@ public class DAOEvento {
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 int id = rs.getInt(1);
-                entidade.setId(id);
+                entidade.setCat_evento_id(id);
             }
             return entidade;
 
@@ -42,7 +42,7 @@ public class DAOEvento {
 
 
     public Cat_Evento alterar(Cat_Evento entidade) {
-        String sql = "UPDATE CAT_EVENTO SET cat_nome = ?, cat_descricao = ? WHERE id_evento = ?";
+        String sql = "UPDATE CAT_EVENTO SET cat_nome = ?, cat_descricao = ? WHERE cat_evento_id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 

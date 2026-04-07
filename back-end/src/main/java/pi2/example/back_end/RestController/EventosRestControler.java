@@ -18,7 +18,7 @@ public class EventosRestControler {
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {
         if (id < 0) {
-            return ResponseEntity.badRequest().body(new Erro("Id invalido"));
+            return ResponseEntity.badRequest().body(new Erro("Id(cat_evento_id) invalido"));
         }
         else
         {
@@ -27,66 +27,60 @@ public class EventosRestControler {
             if(eve!=null)
                 return ResponseEntity.ok(eve);
             else
-                return ResponseEntity.badRequest().body(new Erro("Id não encontrado"));
+                return ResponseEntity.badRequest().body(new Erro("Id(cat_evento_id) não encontrado"));
         }
     }
 
     @GetMapping
     public ResponseEntity<?> getCategoria(@RequestParam (required = false) String categoria) {
-        if (categoria != null) {
-            List<Cat_Evento> eventos;
-            if(!categoria.isEmpty())
+        List<Cat_Evento> eventos;
+        if(categoria != null && !categoria.isEmpty())
+        {
+            eventos = dao.buscarPorCategoria(categoria);
+            if(!eventos.isEmpty())
             {
-                eventos = dao.buscarPorCategoria(categoria);
-                if(!eventos.isEmpty())
-                {
-                    return ResponseEntity.ok(eventos);
-                }
-                else
-                {
-                    return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria!"));
-                }
+                return ResponseEntity.ok(eventos);
             }
             else
             {
-                eventos = dao.buscarPorCategoria("");
-                if(!eventos.isEmpty())
-                {
-                    return ResponseEntity.ok(eventos);
-                }
-                else
-                {
-                    return ResponseEntity.badRequest().body(new Erro("Nenhum evento cadastrado"));
-                }
-
+                return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria!"));
             }
         }
         else
         {
-            return ResponseEntity.badRequest().body(new Erro("Categoria é obrigatoria"));
+            eventos = dao.buscarPorCategoria("");
+            if(!eventos.isEmpty())
+            {
+                return ResponseEntity.ok(eventos);
+            }
+            else
+            {
+                return ResponseEntity.badRequest().body(new Erro("Nenhum evento cadastrado"));
+            }
+
         }
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody Cat_Evento evento) {
-        if (evento.getNome() == null && !evento.getNome().isEmpty()) {
+    public ResponseEntity<?> salvar(@RequestBody Cat_Evento cat_evento) {
+        if (cat_evento.getNome() != null && !cat_evento.getNome().isEmpty()) {
 
-            if (evento.getDescricao() == null && !evento.getDescricao().isEmpty()) {
-                Cat_Evento eve = dao.gravar(evento);
+            if (cat_evento.getDescricao() != null && !cat_evento.getDescricao().isEmpty()) {
+                Cat_Evento eve = dao.gravar(cat_evento);
                 if(eve!=null)
-                    return ResponseEntity.ok(evento);
+                    return ResponseEntity.ok(cat_evento);
                 else
                     return ResponseEntity.badRequest().body(new Erro("Erro ao cadastrar Evento"));
             }
             else
             {
-                return ResponseEntity.badRequest().body(new Erro("Descricao é obrigatoria"));
+                return ResponseEntity.badRequest().body(new Erro("Descricao(cat_descricao) é obrigatoria"));
             }
 
         }
         else
         {
-            return ResponseEntity.badRequest().body(new Erro("Categoria é obrigatoria"));
+            return ResponseEntity.badRequest().body(new Erro("Nome da categoria(cat_nome) é obrigatoria"));
         }
     }
 
