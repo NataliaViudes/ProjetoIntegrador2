@@ -94,27 +94,57 @@
   background-color: #dcdcdc;
   cursor: pointer;
 }
-/* caixa do filtro colada */
+/* CSS DO COMPONENTE REUTILIZAVEL - CAMPO FILTRO  */
 .filtro-box {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  border: 1px solid #888;
   padding: 10px;
   background-color: #dcdcdc;
-  font-size: 16px;
-  border: 1px solid #888;
 }
 
-/* radio alinhado */
-.filtro-box label {
-  padding: 5px 15px;
+/* Label "Filtros:" */
+.filtro-box span {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Select igual input */
+.filtro-box select {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #888;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Input do filtro */
+.filtro-box input {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #888;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+}
+
+/* Estado desabilitado */
+.filtro-box input:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+.btn-ordem {
+  height: 38px;
+  padding: 0 10px;
   border: 1px solid #888;
   background-color: #dcdcdc;
   cursor: pointer;
+  border-radius: 4px;
 }
 
-.filtro-box span {
-  padding: 5px 15px;
-  border: 1px solid #888;
-  background-color: #dcdcdc;
+.btn-ordem:hover {
+  background-color: #eaeaea;
 }
