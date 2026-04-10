@@ -3,17 +3,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.db.Banco;
-import pi2.example.back_end.Modelo.Cat_Evento;
-import pi2.example.back_end.DAO.DAOEvento;
+import pi2.example.back_end.Modelo.Remedio;
+import pi2.example.back_end.DAO.DAORemedio;
 
 import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/eventos")
+@RequestMapping("/remedios")
 public class EventosRestControler {
 
-    private DAOEvento dao = new DAOEvento(Banco.getCon());
+    private DAORemedio dao = new DAORemedio(Banco.getCon());
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {
@@ -22,7 +22,7 @@ public class EventosRestControler {
         }
         else
         {
-            Cat_Evento eve= new Cat_Evento(id);
+            Remedio eve= new Remedio(id);
             eve = dao.get(id);
             if(eve!=null)
                 return ResponseEntity.ok(eve);
@@ -32,11 +32,11 @@ public class EventosRestControler {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCategoria(@RequestParam (required = false) String categoria) {
-        List<Cat_Evento> eventos;
-        if(categoria != null && !categoria.isEmpty())
+    public ResponseEntity<?> getNome(@RequestParam (required = false) String nome) {
+        List<Remedio> eventos;
+        if(nome != null && !nome.isEmpty())
         {
-            eventos = dao.buscarPorCategoria(categoria);
+            eventos = dao.buscarPorCategoria(nome);
             if(!eventos.isEmpty())
             {
                 return ResponseEntity.ok(eventos);
@@ -62,13 +62,13 @@ public class EventosRestControler {
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody Cat_Evento cat_evento) {
-        if (cat_evento.getNome() != null && !cat_evento.getNome().isEmpty()) {
+    public ResponseEntity<?> salvar(@RequestBody Remedio remedio) {
+        if (remedio.getNome() != null && !remedio.getNome().isEmpty()) {
 
-            if (cat_evento.getDescricao() != null && !cat_evento.getDescricao().isEmpty()) {
-                Cat_Evento eve = dao.gravar(cat_evento);
+            if (remedio.getDescricao() != null && !remedio.getDescricao().isEmpty()) {
+                Remedio eve = dao.gravar(remedio);
                 if(eve!=null)
-                    return ResponseEntity.ok(cat_evento);
+                    return ResponseEntity.ok(remedio);
                 else
                     return ResponseEntity.badRequest().body(new Erro("Erro ao cadastrar Evento"));
             }
@@ -85,7 +85,7 @@ public class EventosRestControler {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody Cat_Evento evento) {
+    public ResponseEntity<?> update(@RequestBody Remedio evento) {
         //id invalido
         if (evento.getId() != null && evento.getId()>0) {
 
@@ -93,9 +93,9 @@ public class EventosRestControler {
             if (evento.getNome() != null && !evento.getNome().isEmpty()) {
 
                 // verificar se existe no banco
-                Cat_Evento existente = dao.get(evento.getId());
+                Remedio existente = dao.get(evento.getId());
                 if (existente != null) {
-                    Cat_Evento eve = dao.alterar(evento);
+                    Remedio eve = dao.alterar(evento);
                     if(eve!=null)
                         return ResponseEntity.ok(evento);
                     else
@@ -113,7 +113,7 @@ public class EventosRestControler {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        Cat_Evento eve = new Cat_Evento(id);
+        Remedio eve = new Remedio(id);
         if(dao.apagar(eve))
             return ResponseEntity.ok(String.format("Evento id:[%d] apagado com sucesso!",id));
         else

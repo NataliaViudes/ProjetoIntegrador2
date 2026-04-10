@@ -3,28 +3,28 @@ package pi2.example.back_end.Modelo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "id", "nome", "descricao" })
-public class Cat_Evento {
+public class Remedio {
     private Integer id;
     private String nome;
     private String descricao;
 
-    public Cat_Evento() {
+    public Remedio() {
     }
 
 
-    public Cat_Evento(int id) {
+    public Remedio(int id) {
         this.id = id;
         this.nome = "";
         this.descricao = "";
     }
 
-    public Cat_Evento(String categoria, String descricao) {
+    public Remedio(String categoria, String descricao) {
         this.id =0;
         this.nome = categoria;
         this.descricao = descricao;
     }
 
-    public Cat_Evento(int id, String categoria, String descricao) {
+    public Remedio(int id, String categoria, String descricao) {
         this.id = id;
         this.nome = categoria;
         this.descricao = descricao;
