@@ -1,10 +1,8 @@
 package pi2.example.back_end.RestController;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Banco;
-import pi2.example.back_end.Modelo.Evento;
 import pi2.example.back_end.Modelo.Funcionario;
+import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.DALFuncionarios;
 
 import java.util.List;
