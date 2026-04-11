@@ -9,6 +9,7 @@ export default function Menu() {
           <button>Cadastros</button>
 
           <div className={styles["dropdown-conteudo"]}>
+            <Link to="/eventos">Eventos</Link>
             <Link to="/remedios">Remédios</Link>
           </div>
         </div>

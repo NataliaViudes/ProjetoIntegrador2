@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Menu from "./Components/Menu";
+import Eventos from "./Pages/Eventos";
 import Remedios from "./Pages/Remedios";
 import { Toaster } from "react-hot-toast";
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/menu" />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/remedios" element={<Remedios />} />
+        <Route path="/eventos" element={<Eventos />} />
       </Routes>
 
       <Toaster
