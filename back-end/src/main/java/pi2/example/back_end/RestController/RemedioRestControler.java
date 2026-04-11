@@ -11,47 +11,47 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/remedios")
-public class EventosRestControler {
+public class RemedioRestControler {
 
     private DAORemedio dao = new DAORemedio(Banco.getCon());
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {
         if (id < 0) {
-            return ResponseEntity.badRequest().body(new Erro("Id(cat_evento_id) invalido"));
+            return ResponseEntity.badRequest().body(new Erro("Id(id) invalido"));
         }
         else
         {
-            Remedio eve= new Remedio(id);
-            eve = dao.get(id);
-            if(eve!=null)
-                return ResponseEntity.ok(eve);
+            Remedio rem= new Remedio(id);
+            rem = dao.get(id);
+            if(rem!=null)
+                return ResponseEntity.ok(rem);
             else
-                return ResponseEntity.badRequest().body(new Erro("Id(cat_evento_id) não encontrado"));
+                return ResponseEntity.badRequest().body(new Erro("Id(id) não encontrado"));
         }
     }
 
     @GetMapping
     public ResponseEntity<?> getNome(@RequestParam (required = false) String nome) {
-        List<Remedio> eventos;
+        List<Remedio> remedios;
         if(nome != null && !nome.isEmpty())
         {
-            eventos = dao.buscarPorCategoria(nome);
-            if(!eventos.isEmpty())
+            remedios = dao.buscarPorNome(nome);
+            if(!remedios.isEmpty())
             {
-                return ResponseEntity.ok(eventos);
+                return ResponseEntity.ok(remedios);
             }
             else
             {
-                return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria!"));
+                return ResponseEntity.badRequest().body(new Erro("Nenhum remedio com esse nome: "+nome));
             }
         }
         else
         {
-            eventos = dao.buscarPorCategoria("");
-            if(!eventos.isEmpty())
+            remedios = dao.buscarPorNome("");
+            if(!remedios.isEmpty())
             {
-                return ResponseEntity.ok(eventos);
+                return ResponseEntity.ok(remedios);
             }
             else
             {
@@ -66,21 +66,21 @@ public class EventosRestControler {
         if (remedio.getNome() != null && !remedio.getNome().isEmpty()) {
 
             if (remedio.getDescricao() != null && !remedio.getDescricao().isEmpty()) {
-                Remedio eve = dao.gravar(remedio);
-                if(eve!=null)
+                Remedio rem = dao.gravar(remedio);
+                if(rem!=null)
                     return ResponseEntity.ok(remedio);
                 else
-                    return ResponseEntity.badRequest().body(new Erro("Erro ao cadastrar Evento"));
+                    return ResponseEntity.badRequest().body(new Erro("Erro ao cadastrar Remedio"));
             }
             else
             {
-                return ResponseEntity.badRequest().body(new Erro("Descricao(cat_descricao) é obrigatoria"));
+                return ResponseEntity.badRequest().body(new Erro("Descricao(descricao) é obrigatoria"));
             }
 
         }
         else
         {
-            return ResponseEntity.badRequest().body(new Erro("Nome da categoria(cat_nome) é obrigatoria"));
+            return ResponseEntity.badRequest().body(new Erro("Nome do Remedio(nome) é obrigatoria"));
         }
     }
 
@@ -95,17 +95,17 @@ public class EventosRestControler {
                 // verificar se existe no banco
                 Remedio existente = dao.get(evento.getId());
                 if (existente != null) {
-                    Remedio eve = dao.alterar(evento);
-                    if(eve!=null)
-                        return ResponseEntity.ok(evento);
+                    Remedio rem = dao.alterar(evento);
+                    if(rem!=null)
+                        return ResponseEntity.ok(rem);
                     else
-                        return ResponseEntity.badRequest().body(new Erro("Erro ao alterar evento"));
+                        return ResponseEntity.badRequest().body(new Erro("Erro ao alterar remedio"));
                 }
                 else
-                    return ResponseEntity.badRequest().body(new Erro("Categoria é obrigatória para alteração"));
+                    return ResponseEntity.badRequest().body(new Erro("Nome é obrigatória para alteração"));
             }
             else
-                return ResponseEntity.badRequest().body(new Erro("Categoria é obrigatória para alteração"));
+                return ResponseEntity.badRequest().body(new Erro("Nome é obrigatória para alteração"));
         }
          else
             return ResponseEntity.badRequest().body(new Erro("ID é obrigatório para alteração"));
@@ -113,8 +113,8 @@ public class EventosRestControler {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        Remedio eve = new Remedio(id);
-        if(dao.apagar(eve))
+        Remedio rem = new Remedio(id);
+        if(dao.apagar(rem))
             return ResponseEntity.ok(String.format("Evento id:[%d] apagado com sucesso!",id));
         else
             return ResponseEntity.badRequest().body(new Erro("id não encontrado"));

@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS REMEDIO(
+	id SERIAL,
+	nome varchar(50),
+	descricao varchar(200),
+	CONSTRAINT pk_remedio PRIMARY KEY (id)
+	-- CONSTRAINT UNREMEDIO UNIQUE (categoria)
+);
+
+INSERT INTO REMEDIO(nome,descricao) VALUES('Dipicona','Generico do dipirona');
+INSERT INTO REMEDIO(nome,descricao) VALUES('Paracetamal','Generico do paracetamol');

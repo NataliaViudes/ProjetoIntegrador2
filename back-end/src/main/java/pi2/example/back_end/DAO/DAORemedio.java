@@ -51,7 +51,6 @@ public class DAORemedio {
             stmt.setInt(3, entidade.getId());
             stmt.executeUpdate();
 
-
             return entidade;
 
         } catch (SQLException e) {
@@ -103,13 +102,13 @@ public class DAORemedio {
 
 
 
-    public List<Remedio> buscarPorCategoria(String categoria) {
+    public List<Remedio> buscarPorNome(String categoria) {
         List<Remedio> lista = new ArrayList<>();
         String sql;
 
         // regra: se vazio ou null → traz tudo
         if (categoria == null || categoria.isEmpty()) {
-            sql = "SELECT * FROM REMEDIO ORDER BY cat_nome ASC";
+            sql = "SELECT * FROM REMEDIO ORDER BY nome ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
