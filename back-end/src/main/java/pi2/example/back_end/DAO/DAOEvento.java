@@ -19,7 +19,7 @@ public class DAOEvento {
 
 
     public Cat_Evento gravar(Cat_Evento entidade) {
-        String sql = "INSERT INTO CAT_EVENTO ( cat_nome, cat_descricao) VALUES ( ?, ?)";
+        String sql = "INSERT INTO CAT_EVENTO ( nome, descricao) VALUES ( ?, ?)";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -29,7 +29,7 @@ public class DAOEvento {
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 int id = rs.getInt(1);
-                entidade.setCat_evento_id(id);
+                entidade.setId(id);
             }
             return entidade;
 
@@ -42,7 +42,7 @@ public class DAOEvento {
 
 
     public Cat_Evento alterar(Cat_Evento entidade) {
-        String sql = "UPDATE CAT_EVENTO SET cat_nome = ?, cat_descricao = ? WHERE cat_evento_id = ?";
+        String sql = "UPDATE CAT_EVENTO SET nome = ?, descricao = ? WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -62,7 +62,7 @@ public class DAOEvento {
 
 
     public boolean apagar(Cat_Evento entidade) {
-        String sql = "DELETE FROM CAT_EVENTO WHERE cat_evento_id = ?";
+        String sql = "DELETE FROM CAT_EVENTO WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -79,7 +79,7 @@ public class DAOEvento {
 
     public Cat_Evento get(Integer id) {
         Cat_Evento eve = null;
-        String sql = "SELECT * FROM CAT_EVENTO WHERE cat_evento_id = ?";
+        String sql = "SELECT * FROM CAT_EVENTO WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -88,9 +88,9 @@ public class DAOEvento {
 
             if (rs.next()) {
                 eve = new Cat_Evento(
-                        rs.getInt("cat_evento_id"),
-                        rs.getString("cat_nome"),
-                        rs.getString("cat_descricao")
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getString("descricao")
                 );
             }
 
@@ -103,13 +103,13 @@ public class DAOEvento {
 
 
 
-    public List<Cat_Evento> buscarPorCategoria(String categoria) {
+    public List<Cat_Evento> buscarPorNome(String categoria) {
         List<Cat_Evento> lista = new ArrayList<>();
         String sql;
 
         // regra: se vazio ou null → traz tudo
         if (categoria == null || categoria.isEmpty()) {
-            sql = "SELECT * FROM CAT_EVENTO ORDER BY cat_nome ASC";
+            sql = "SELECT * FROM CAT_EVENTO ORDER BY nome ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -117,9 +117,9 @@ public class DAOEvento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("cat_evento_id"),
-                            rs.getString("cat_nome"),
-                            rs.getString("cat_descricao")
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
                     ));
                 }
 
@@ -128,7 +128,7 @@ public class DAOEvento {
             }
 
         } else {
-            sql = "SELECT * FROM CAT_EVENTO WHERE cat_nome ILIKE '%' || ? || '%' ORDER BY cat_nome ASC";
+            sql = "SELECT * FROM CAT_EVENTO WHERE nome ILIKE '%' || ? || '%' ORDER BY nome ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -137,9 +137,9 @@ public class DAOEvento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("cat_evento_id"),
-                            rs.getString("cat_nome"),
-                            rs.getString("cat_descricao")
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
                     ));
                 }
 
@@ -157,7 +157,7 @@ public class DAOEvento {
 
         // regra: se vazio ou null → traz tudo
         if (descricao == null || descricao.isEmpty()) {
-            sql = "SELECT * FROM CAT_EVENTO ORDER BY cat_descricao ASC";
+            sql = "SELECT * FROM CAT_EVENTO ORDER BY descricao ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -165,9 +165,9 @@ public class DAOEvento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("cat_evento_id"),
-                            rs.getString("cat_nome"),
-                            rs.getString("cat_descricao")
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
                     ));
                 }
 
@@ -176,7 +176,7 @@ public class DAOEvento {
             }
 
         } else {
-            sql = "SELECT * FROM CAT_EVENTO WHERE cat_descricao ILIKE '%' || ? || '%' ORDER BY cat_descricao ASC";
+            sql = "SELECT * FROM CAT_EVENTO WHERE descricao ILIKE '%' || ? || '%' ORDER BY descricao ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -185,9 +185,9 @@ public class DAOEvento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("cat_evento_id"),
-                            rs.getString("cat_nome"),
-                            rs.getString("cat_descricao")
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("descricao")
                     ));
                 }
 

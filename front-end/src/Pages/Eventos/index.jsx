@@ -19,7 +19,7 @@ export default function Eventos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/eventos");
+      const resp = await api.get("/eventos/nome");
       const dados = Array.isArray(resp.data) ? resp.data : [];
 
       setEventos(dados);

@@ -31,24 +31,24 @@ public class EventosRestControler {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getCategoria(@RequestParam (required = false) String categoria) {
+    @GetMapping("nome")
+    public ResponseEntity<?> getNome(@RequestParam (required = false) String nome) {
         List<Cat_Evento> eventos;
-        if(categoria != null && !categoria.isEmpty())
+        if(nome != null && !nome.isEmpty())
         {
-            eventos = dao.buscarPorCategoria(categoria);
+            eventos = dao.buscarPorNome(nome);
             if(!eventos.isEmpty())
             {
                 return ResponseEntity.ok(eventos);
             }
             else
             {
-                return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria!"));
+                return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria: ")+nome);
             }
         }
         else
         {
-            eventos = dao.buscarPorCategoria("");
+            eventos = dao.buscarPorNome("");
             if(!eventos.isEmpty())
             {
                 return ResponseEntity.ok(eventos);
@@ -60,6 +60,37 @@ public class EventosRestControler {
 
         }
     }
+
+    @GetMapping("descricao")
+    public ResponseEntity<?> getDescricao(@RequestParam (required = false) String nome) {
+        List<Cat_Evento> eventos;
+        if(nome != null && !nome.isEmpty())
+        {
+            eventos = dao.buscarPorNome(nome);
+            if(!eventos.isEmpty())
+            {
+                return ResponseEntity.ok(eventos);
+            }
+            else
+            {
+                return ResponseEntity.badRequest().body(new Erro("Nenhum evento nessa categoria!"));
+            }
+        }
+        else
+        {
+            eventos = dao.buscarPorNome("");
+            if(!eventos.isEmpty())
+            {
+                return ResponseEntity.ok(eventos);
+            }
+            else
+            {
+                return ResponseEntity.badRequest().body(new Erro("Nenhum evento cadastrado"));
+            }
+
+        }
+    }
+
 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody Cat_Evento cat_evento) {

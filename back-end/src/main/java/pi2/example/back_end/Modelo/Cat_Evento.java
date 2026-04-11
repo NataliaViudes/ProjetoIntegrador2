@@ -34,10 +34,6 @@ public class Cat_Evento {
         return id;
     }
 
-    public void setCat_evento_id(int id) {
-        this.id = id;
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }
