@@ -31,6 +31,11 @@
   background-color: #e6e6e6;
 }
 
+.input-erro {
+  border: 2px solid #d33 !important;
+  background-color: #ffe6e6;
+}
+
 /* Barra de busca */
 .barra-busca {
   display: flex;

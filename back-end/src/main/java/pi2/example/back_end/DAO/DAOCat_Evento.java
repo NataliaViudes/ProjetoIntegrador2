@@ -9,23 +9,24 @@ import java.util.List;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class DAOEvento {
+public class DAOCat_Evento {
 
     private final Conexao bd;
 
-    public DAOEvento(Conexao bd) {
+    public DAOCat_Evento(Conexao bd) {
         this.bd = bd;
     }
 
 
     public Cat_Evento gravar(Cat_Evento entidade) {
-        String sql = "INSERT INTO CAT_EVENTO ( nome, descricao) VALUES ( ?, ?)";
+        String sql = "INSERT INTO CAT_EVENTO ( categoria, descricao) VALUES ( ?, ?)";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
-            stmt.setString(1, entidade.getNome());
+            stmt.setString(1, entidade.getCategoria());
             stmt.setString(2, entidade.getDescricao());
             stmt.executeUpdate();
+
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 int id = rs.getInt(1);
@@ -42,11 +43,11 @@ public class DAOEvento {
 
 
     public Cat_Evento alterar(Cat_Evento entidade) {
-        String sql = "UPDATE CAT_EVENTO SET nome = ?, descricao = ? WHERE id = ?";
+        String sql = "UPDATE CAT_EVENTO SET categoria = ?, descricao = ? WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            stmt.setString(1, entidade.getNome());
+            stmt.setString(1, entidade.getCategoria());
             stmt.setString(2, entidade.getDescricao());
             stmt.setInt(3, entidade.getId());
             stmt.executeUpdate();
@@ -89,7 +90,7 @@ public class DAOEvento {
             if (rs.next()) {
                 eve = new Cat_Evento(
                         rs.getInt("id"),
-                        rs.getString("nome"),
+                        rs.getString("categoria"),
                         rs.getString("descricao")
                 );
             }
@@ -109,7 +110,7 @@ public class DAOEvento {
 
         // regra: se vazio ou null → traz tudo
         if (categoria == null || categoria.isEmpty()) {
-            sql = "SELECT * FROM CAT_EVENTO ORDER BY nome ASC";
+            sql = "SELECT * FROM CAT_EVENTO ORDER BY categoria ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -118,7 +119,7 @@ public class DAOEvento {
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
                             rs.getInt("id"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }
@@ -128,7 +129,7 @@ public class DAOEvento {
             }
 
         } else {
-            sql = "SELECT * FROM CAT_EVENTO WHERE nome ILIKE '%' || ? || '%' ORDER BY nome ASC";
+            sql = "SELECT * FROM CAT_EVENTO WHERE categoria ILIKE '%' || ? || '%' ORDER BY categoria ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -138,7 +139,7 @@ public class DAOEvento {
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
                             rs.getInt("id"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }
@@ -166,7 +167,7 @@ public class DAOEvento {
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
                             rs.getInt("id"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }
@@ -186,7 +187,7 @@ public class DAOEvento {
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
                             rs.getInt("id"),
-                            rs.getString("nome"),
+                            rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
                 }

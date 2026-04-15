@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export default function CampoFiltro({
   listaDados = [],
@@ -16,39 +16,38 @@ export default function CampoFiltro({
     setOrdem((prev) => (prev === "asc" ? "desc" : "asc"));
   }
 
-  const dadosFiltrados = listaDados
-    .filter((item) => {
-      if (!filtro) return true;
+  const dadosFiltrados = useMemo(() => {
+    return listaDados
+      .filter((item) => {
+        if (!filtro) return true;
 
-      const valor = (item[filtro] || "").toString().toLowerCase();
+        const valor = (item[filtro] || "").toString().toLowerCase();
 
-      if (!busca) return true;
+        if (!busca) return true;
 
-      return valor.includes(busca.toLowerCase());
-    })
-    .sort((a, b) => {
-      if (!filtro) return 0;
+        return valor.includes(busca.toLowerCase());
+      })
+      .sort((a, b) => {
+        if (!filtro) return 0;
 
-      const valorA = (a[filtro] || "").toString().toLowerCase();
-      const valorB = (b[filtro] || "").toString().toLowerCase();
+        const valorA = (a[filtro] || "").toString().toLowerCase();
+        const valorB = (b[filtro] || "").toString().toLowerCase();
 
-      return ordem === "asc"
-        ? valorA.localeCompare(valorB)
-        : valorB.localeCompare(valorA);
-    });
+        return ordem === "asc"
+          ? valorA.localeCompare(valorB)
+          : valorB.localeCompare(valorA);
+      });
+  }, [listaDados, filtro, busca, ordem]);
 
   useEffect(() => {
     onChange && onChange(dadosFiltrados);
-  }, [filtro, busca, ordem, listaDados]);
+  }, [dadosFiltrados]); 
 
   return (
     <div className={style["filtro-box"]}>
       <span>Filtros:</span>
 
-      <select
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-      >
+      <select value={filtro} onChange={(e) => setFiltro(e.target.value)}>
         <option value="">Selecione</option>
 
         {listaFiltros.map((item) => (

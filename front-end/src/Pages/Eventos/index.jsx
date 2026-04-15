@@ -7,11 +7,12 @@ import style from "./styles.module.css";
 import CampoFiltro from "../../Components/CampoFiltro";
 
 export default function Eventos() {
-  const [nome, setNome] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [descricao, setDescricao] = useState("");
   const [eventos, setEventos] = useState([]);
   const [eventosFiltrados, setEventosFiltrados] = useState([]);
   const [eventoEditando, setEventoEditando] = useState(null);
+  const [erros, setErros] = useState({ categoria: false, descricao: false });
 
   useEffect(() => {
     carregarTudo();
@@ -19,7 +20,7 @@ export default function Eventos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/eventos/nome");
+      const resp = await api.get("/eventos/categoria");
       const dados = Array.isArray(resp.data) ? resp.data : [];
 
       setEventos(dados);
@@ -49,7 +50,11 @@ export default function Eventos() {
   };
 
   async function salvarOuAtualizar() {
-    if (!nome || !descricao) {
+    const novosErros = { categoria: !categoria, descricao: !descricao };
+
+    setErros(novosErros);
+
+    if (novosErros.categoria || novosErros.descricao) {
       Swal.fire({
         title: "Atenção!",
         text: "Preencha todos os campos!",
@@ -59,51 +64,49 @@ export default function Eventos() {
         confirmButtonColor: "#d33",
         confirmButtonText: "OK",
       });
-      return;
-    }
+    } else {
+      const dados = { categoria, descricao };
+      Swal.fire({
+        title: `Tem certeza que deseja ${eventoEditando ? "atualizar" : "cadastrar"} a categoria: [${categoria}]`,
+        showDenyButton: true,
+        confirmButtonText: eventoEditando ? "Atualizar" : "Cadastrar",
+        denyButtonText: "Cancelar",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            if (eventoEditando) {
+              await api.put("/eventos", {
+                id: eventoEditando.id,
+                ...dados,
+              });
+            } else {
+              await api.post("/eventos", dados);
+            }
 
-    const dados = { nome, descricao };
+            limparFormulario();
+            carregarTudo();
 
-    Swal.fire({
-      title: `Tem certeza que deseja ${eventoEditando ? "atualizar" : "cadastrar"} a categoria: [${nome}]`,
-      showDenyButton: true,
-      confirmButtonText: eventoEditando ? "Atualizar" : "Cadastrar",
-      denyButtonText: "Cancelar",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          if (eventoEditando) {
-            await api.put("/eventos", {
-              id: eventoEditando.id,
-              ...dados,
+            Swal.fire(
+              `Categoria do evento foi ${eventoEditando ? "atualizada" : "cadastrada"}!`,
+              "",
+              "success",
+            );
+          } catch (error) {
+            console.error("Erro ao salvar:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Erro",
+              text: "Algo deu errado!",
             });
-          } else {
-            await api.post("/eventos", dados);
           }
-
-          limparFormulario();
-          carregarTudo();
-
-          Swal.fire(
-            `Categoria do evento foi ${eventoEditando ? "atualizada" : "cadastrada"}!`,
-            "",
-            "success",
-          );
-        } catch (error) {
-          console.error("Erro ao salvar:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: "Algo deu errado!",
-          });
         }
-      }
-    });
+      });
+    }
   }
 
   function editarEvento(evento) {
     setEventoEditando(evento);
-    setNome(evento.nome || "");
+    setCategoria(evento.categoria || "");
     setDescricao(evento.descricao || "");
   }
 
@@ -124,7 +127,7 @@ export default function Eventos() {
 
   function limparFormulario() {
     setEventoEditando(null);
-    setNome("");
+    setCategoria("");
     setDescricao("");
   }
 
@@ -139,16 +142,24 @@ export default function Eventos() {
         <div className={style["form-linha"]}>
           <input
             type="text"
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            placeholder="Categoria"
+            value={categoria}
+            onChange={(e) => {
+              setCategoria(e.target.value);
+              setErros((prev) => ({ ...prev, categoria: false }));
+            }}
+            className={erros.categoria ? style["input-erro"] : ""}
           />
 
           <input
             type="text"
             placeholder="Descrição"
             value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+            onChange={(e) => {
+              setDescricao(e.target.value);
+              setErros((prev) => ({ ...prev, descricao: false }));
+            }}
+            className={erros.descricao ? style["input-erro"] : ""}
           />
         </div>
 
@@ -157,10 +168,10 @@ export default function Eventos() {
           <CampoFiltro
             listaDados={eventos}
             listaFiltros={[
-              { label: "Nome", value: "nome" },
+              { label: "Categoria", value: "categoria" },
               { label: "Descrição", value: "descricao" },
             ]}
-            filtroDefault="nome"
+            filtroDefault="categoria"
             onChange={setEventosFiltrados}
             style={style}
           />
@@ -170,7 +181,7 @@ export default function Eventos() {
         <div className={style["lista"]}>
           {eventosFiltrados.map((evento) => (
             <div key={evento.id} className={style["item"]}>
-              {evento.nome} - {evento.descricao}
+              {evento.categoria} - {evento.descricao}
               <div className={style["acoes"]}>
                 <button onClick={() => editarEvento(evento)}>Editar</button>
 
