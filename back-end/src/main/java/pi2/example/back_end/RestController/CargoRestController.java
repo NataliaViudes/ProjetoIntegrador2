@@ -20,6 +20,11 @@ public class CargoRestController {
         return control.buscaPorNome(nome);
     }
 
+    @GetMapping
+    public ResponseEntity<?> get(@RequestParam (required = false) String filtro){
+        return control.getAllOrFilter(filtro);
+    }
+
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody Cargo cargo) {
         return control.incluir(cargo);

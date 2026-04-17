@@ -1,6 +1,7 @@
 package pi2.example.back_end.DAO;
 
 import pi2.example.back_end.Modelo.Cargo;
+import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.PreparedStatement;
@@ -39,7 +40,7 @@ public class DAOCargo {
     }
 
     public Cargo alterar(Cargo entidade) {
-        String sql = "UPDATE CARGO SET nome = ? WHERE id = ?";
+        String sql = "UPDATE CARGO SET nome = ? WHERE id_cargo = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -57,7 +58,7 @@ public class DAOCargo {
     }
 
     public boolean apagar(Cargo entidade) {
-        String sql = "DELETE FROM CARGO WHERE id = ?";
+        String sql = "DELETE FROM CARGO WHERE id_cargo = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -73,7 +74,7 @@ public class DAOCargo {
 
     public Cargo get(Integer id) {
         Cargo cargo = null;
-        String sql = "SELECT * FROM CARGO WHERE id = ?";
+        String sql = "SELECT * FROM CARGO WHERE id_cargo = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -82,7 +83,7 @@ public class DAOCargo {
 
             if (rs.next()) {
                 cargo = new Cargo(
-                        rs.getInt("id"),
+                        rs.getInt("id_cargo"),
                         rs.getString("nome")
                 );
             }
@@ -94,12 +95,34 @@ public class DAOCargo {
         return cargo;
     }
 
-    public List<Cargo> buscarPorNome(String categoria) {
+    public List<Cargo> getAll(){
+        List<Cargo> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM cargo ORDER BY nome";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                lista.add(new Cargo(
+                        rs.getInt("id_cargo"),
+                        rs.getString("nome")
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    public List<Cargo> buscarPorNome(String nome) {
         List<Cargo> lista = new ArrayList<>();
         String sql;
 
-        // regra: se vazio ou null → traz tudo
-        if (categoria == null || categoria.isEmpty()) {
+        // regra: se vazio ou null = traz tudo
+        if (nome == null || nome.isEmpty()) {
             sql = "SELECT * FROM CARGO ORDER BY nome ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -108,7 +131,7 @@ public class DAOCargo {
 
                 while (rs.next()) {
                     lista.add(new Cargo(
-                            rs.getInt("id"),
+                            rs.getInt("id_cargo"),
                             rs.getString("nome")
                     ));
                 }
@@ -122,13 +145,13 @@ public class DAOCargo {
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
-                stmt.setString(1, categoria);
+                stmt.setString(1, nome);
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
                     lista.add(new Cargo(
-                            rs.getInt("id"),
-                            rs.getString("categoria")
+                            rs.getInt("id_cargo"),
+                            rs.getString("nome")
                     ));
                 }
 

@@ -208,7 +208,7 @@ public class DAOFuncionario {
                     "JOIN cargo c ON f.id_cargo = c.id_cargo " +
                     "ORDER BY f.nome ASC";
 
-            try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
+            try (PreparedStatement stmt = bd.preparar(sql)) {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {

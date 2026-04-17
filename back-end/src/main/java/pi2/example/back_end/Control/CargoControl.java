@@ -3,6 +3,7 @@ package pi2.example.back_end.Control;
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Cargo;
 import pi2.example.back_end.Modelo.Erro;
+import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
@@ -80,50 +81,23 @@ public class CargoControl {
     public ResponseEntity<?> buscaPorNome(String nome)
     {
         List<Cargo> cargos;
-        Cargo cargo= new Cargo();
+        Cargo cargo = new Cargo();
 
-        if(nome != null && !nome.isEmpty())
-        {
-            Conexao db = Banco.getConexao(); // Abre conexao
-            try {
-                if (!db.conectar()) {
-                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                }
-                cargos = cargo.buscarPorNome(nome,db);
-                if(cargos!=null && !cargos.isEmpty()) { // se encontrar algum Cat_evento
-                    return ResponseEntity.ok(cargos);
-                }
-                else {
-                    return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Cargo: "+nome));
-                }
-            } catch (SQLException e) {
-                System.out.println("Erro SQL: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+        Conexao db = Banco.getConexao();
 
-            } catch (Exception e) {
-                System.out.println("Erro geral: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-            } finally {
-                db.desconectar(); // não esquece de fechar a conexao com o banco!!
-            }
-
-        }
-
-        Conexao db = Banco.getConexao(); // Abre conexao
         try {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            cargos = cargo.buscarPorNome("",db);
-            if(cargos!=null && !cargos.isEmpty())
-            {
+
+            cargos = cargo.buscarPorNome(nome, db);
+
+            if (cargos != null && !cargos.isEmpty()) {
                 return ResponseEntity.ok(cargos);
+            } else {
+                return ResponseEntity.badRequest().body(new Erro("Nenhum cargo com esse nome:: "+nome));
             }
-            else
-            {
-                return ResponseEntity.badRequest().body(new Erro("Nenhum cargo com esse nome:: ")+nome);
-            }
+
         } catch (SQLException e) {
             System.out.println("Erro SQL: " + e.getMessage());
             return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
@@ -133,7 +107,7 @@ public class CargoControl {
             return ResponseEntity.badRequest().body(new Erro("Erro geral"));
 
         } finally {
-            db.desconectar(); // não esquece de fechar a conexao com o banco!!
+            db.desconectar();
         }
     }
 
@@ -210,6 +184,36 @@ public class CargoControl {
         }
         else
             return ResponseEntity.badRequest().body(new Erro("id invalido"));
+    }
+
+    public ResponseEntity<?> getAllOrFilter(String filtro) {
+        Conexao db = Banco.getConexao();
+        Cargo cargo = new Cargo();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+            }
+
+            List<Cargo> lista;
+
+            if (filtro == null || filtro.isEmpty()) {
+                lista = cargo.buscarTodos(db);
+            } else {
+                lista = cargo.buscarComFiltro(filtro, db);
+            }
+
+            if (lista == null || lista.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro ao buscar cargos: "+e.getMessage());
+        } finally {
+            db.desconectar();
+        }
     }
 }
 

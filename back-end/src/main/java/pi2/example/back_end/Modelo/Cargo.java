@@ -2,6 +2,7 @@ package pi2.example.back_end.Modelo;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import pi2.example.back_end.DAO.DAOCargo;
+import pi2.example.back_end.DAO.DAOFuncionario;
 import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
@@ -71,5 +72,15 @@ public class Cargo {
     {
         DAOCargo dao = new DAOCargo(con);
         return dao.buscarPorNome(nome);
+    }
+
+    public List<Cargo> buscarTodos(Conexao con) {
+        DAOCargo dao = new DAOCargo(con);
+        return dao.getAll();
+    }
+
+    public List<Cargo> buscarComFiltro(String filtro, Conexao con) {
+        DAOCargo dao = new DAOCargo(con);
+        return dao.buscarPorNome(filtro);
     }
 }

@@ -1,7 +1,6 @@
 package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
-import pi2.example.back_end.Modelo.Cargo;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Banco;
@@ -249,7 +248,7 @@ public class FuncionarioControl {
             return ResponseEntity.ok(lista);
 
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erro ao buscar funcionários");
+            return ResponseEntity.internalServerError().body("Erro ao buscar funcionários: "+e.getMessage());
         } finally {
             db.desconectar();
         }
