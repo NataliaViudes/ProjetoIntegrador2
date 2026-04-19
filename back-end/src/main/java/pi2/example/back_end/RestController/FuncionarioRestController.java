@@ -11,9 +11,9 @@ import pi2.example.back_end.db.Banco;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/funcionario")
+@RequestMapping("/funcionarios")
 public class FuncionarioRestController {
     private final FuncionarioControl control = new FuncionarioControl();
 
@@ -34,6 +34,13 @@ public class FuncionarioRestController {
 
     @PostMapping
     public ResponseEntity<?> gravar(@RequestBody Funcionario funcionario){
+        System.out.println("FUNCIONARIO: " + funcionario);
+        System.out.println("CARGO: " + funcionario.getCargo());
+        System.out.println("NASCIMENTO: " + funcionario.getNascimento());
+        if (funcionario.getCargo() != null) {
+            System.out.println("CARGO ID: " + funcionario.getCargo().getId());
+        }
+
         return control.incluir(funcionario);
     }
 
@@ -44,6 +51,7 @@ public class FuncionarioRestController {
 
     @PutMapping("{id}")
     public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody Funcionario funcionario) {
+        funcionario.setId(id);
         return control.update(funcionario);
     }
 }

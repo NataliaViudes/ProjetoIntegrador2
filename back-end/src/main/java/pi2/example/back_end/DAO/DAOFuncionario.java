@@ -38,8 +38,7 @@ public class DAOFuncionario {
             }
             return entidade;
         } catch (SQLException e){
-            System.out.println("Erro: " + e);
-            return null;
+            throw new RuntimeException("Erro ao inserir funcionário", e);
         }
     }
 
@@ -55,6 +54,8 @@ public class DAOFuncionario {
             stmt.setString(6, entidade.getSexo());
             stmt.setString(7, entidade.getEndereco());
             stmt.setInt(8, entidade.getCargo().getId());
+            stmt.setInt(9, entidade.getId());
+
             stmt.executeUpdate();
 
             return entidade;

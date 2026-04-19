@@ -18,7 +18,7 @@ public class FuncionarioControl {
                 && f.getTelefone()!=null && !f.getTelefone().isEmpty()
                 && f.getSexo()!=null && !f.getSexo().isEmpty()
                 && f.getEndereco()!=null && !f.getEndereco().isEmpty()
-                && f.getCargo()!=null && f.getNascimento()!=null)
+                && f.getCargo()!=null && f.getCargo().getId()!=null && f.getNascimento()!=null)
             return false;
         return true;
     }

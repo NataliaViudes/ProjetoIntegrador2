@@ -5,11 +5,15 @@ export default function Menu() {
   return (
     <header className={styles["topo-menu"]}>
       <div className={styles["grupo-botoes"]}>
+        
+        {/* DROPDOWN CADASTROS */}
         <div className={styles["menu-dropdown"]}>
           <button>Cadastros</button>
-
           <div className={styles["dropdown-conteudo"]}>
             <Link to="/eventos">Eventos</Link>
+            <Link to="/funcionarios">Funcionários</Link>
+            <Link to="/cargos">Cargos</Link>
+            <Link to="/familiares">Familiares</Link>
           </div>
         </div>
 

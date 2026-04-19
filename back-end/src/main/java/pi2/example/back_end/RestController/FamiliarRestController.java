@@ -7,7 +7,7 @@ import pi2.example.back_end.Modelo.Familiar;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/familiar")
+@RequestMapping("/familiares")
 public class FamiliarRestController {
     private final FamiliarControl control = new FamiliarControl();
 

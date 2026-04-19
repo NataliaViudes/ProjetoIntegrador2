@@ -21,6 +21,10 @@
   cursor: pointer;
 }
 
+.grupo-botoes button:hover {
+  background-color: #dcdcdc;
+}
+
 .area-pesquisa-topo {
   width: 220px;
 }
@@ -35,6 +39,7 @@
 
 .menu-dropdown {
   position: relative;
+  display: inline-block; /* garante comportamento consistente */
 }
 
 .dropdown-conteudo {
@@ -46,6 +51,11 @@
   background-color: #e6e6e6;
   border: 1px solid #8f8f8f;
   z-index: 10;
+
+  /* MELHORIAS 👇 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .dropdown-conteudo a {
@@ -54,6 +64,15 @@
   text-decoration: none;
   color: black;
   border-bottom: 1px solid #bcbcbc;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-conteudo a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-conteudo a:hover {
+  background-color: #d5d5d5;
 }
 
 .dropdown-conteudo a:hover {
@@ -63,3 +82,4 @@
 .menu-dropdown:hover .dropdown-conteudo {
   display: block;
 }
+
