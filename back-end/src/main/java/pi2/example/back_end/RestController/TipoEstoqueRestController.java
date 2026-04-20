@@ -1,45 +1,41 @@
 package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Control.Cat_EventoControll;
+import pi2.example.back_end.Controller.TipoEstoqueControll;
 import pi2.example.back_end.Modelo.Cat_Evento;
+import pi2.example.back_end.Modelo.TipoEstoque;
+
 
 @CrossOrigin
 @RestController
-@RequestMapping("/eventos")
-public class EventosRestController {
+@RequestMapping("/estoque")
+public class TipoEstoqueRestController {
 
-    private final Cat_EventoControll controll = new Cat_EventoControll();
+    private final TipoEstoqueControll control = new TipoEstoqueControll();
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {
-       return  controll.getById(id);
+       return  control.getById(id);
     }
 
-    @GetMapping("categoria")
-    public ResponseEntity<?> getCategoria(@RequestParam (required = false) String categoria) {
-       return controll.buscaPorCategoria(categoria);
+    @GetMapping("tipo")
+    public ResponseEntity<?> getTipo(@RequestParam (required = false) String tipo) {
+       return control.buscaPorTipo(tipo);
     }
-
-    @GetMapping("descricao")
-    public ResponseEntity<?> getDescricao(@RequestParam (required = false) String descricao) {
-        return controll.buscaPorDescricao(descricao);
-    }
-
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody Cat_Evento cat_evento) {
-        return controll.incluir(cat_evento);
+    public ResponseEntity<?> salvar(@RequestBody TipoEstoque tipoEstoque) {
+        return control.incluir(tipoEstoque);
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody Cat_Evento cat_evento) {
-        return controll.update(cat_evento);
+    public ResponseEntity<?> update(@RequestBody TipoEstoque tipoEstoque) {
+        return control.update(tipoEstoque);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        return controll.delete(id);
+        return control.delete(id);
     }
 
 }

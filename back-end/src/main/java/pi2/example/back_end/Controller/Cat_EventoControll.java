@@ -1,4 +1,4 @@
-package pi2.example.back_end.Control;
+package pi2.example.back_end.Controller;
 
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Cat_Evento;

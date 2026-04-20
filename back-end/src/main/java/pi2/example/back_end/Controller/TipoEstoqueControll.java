@@ -1,4 +1,4 @@
-package pi2.example.back_end.Control;
+package pi2.example.back_end.Controller;
 
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Erro;
@@ -53,7 +53,7 @@ public class TipoEstoqueControll {
         }
         else
         {
-            TipoEstoque eve= new TipoEstoque();
+            TipoEstoque eve= new TipoEstoque(id);
             Conexao db = Banco.getConexao(); // Abre conexao
             try {
                 if (!db.conectar()) {
@@ -197,13 +197,13 @@ public class TipoEstoqueControll {
                 if (!db.conectar()) {
                     throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                 }
-                TipoEstoque eve = new TipoEstoque();
-                TipoEstoque existente = eve.buscarPorId(db,eve.getId()); // verificar se existe no banco
+                TipoEstoque eve = new TipoEstoque(id);
+                TipoEstoque existente = eve.buscarPorId(db,id); // verificar se existe no banco
                 if (existente != null) {
                     if(eve.apagar(db))
                         return ResponseEntity.ok(true);
                     else
-                        return ResponseEntity.badRequest().body(new Erro("Erro ao excluir TipoEstoque"));
+                        return ResponseEntity.badRequest().body(new Erro("Erro ao excluir TipoEstoqueAA"));
                 }
                 else
                     return ResponseEntity.badRequest().body(new Erro("TipoEstoque não encontrado"));

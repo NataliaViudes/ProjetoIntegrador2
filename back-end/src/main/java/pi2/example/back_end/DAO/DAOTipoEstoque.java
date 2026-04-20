@@ -1,30 +1,29 @@
 package pi2.example.back_end.DAO;
 
-import pi2.example.back_end.Modelo.Cat_Evento;
+import pi2.example.back_end.Modelo.TipoEstoque;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class DAOCat_Evento {
+public class DAOTipoEstoque {
 
     private final Conexao bd;
 
-    public DAOCat_Evento(Conexao bd) {
+    public DAOTipoEstoque(Conexao bd) {
         this.bd = bd;
     }
 
 
-    public Cat_Evento gravar(Cat_Evento entidade) {
-        String sql = "INSERT INTO CAT_EVENTO ( categoria, descricao) VALUES ( ?, ?)";
+    public TipoEstoque gravar(TipoEstoque entidade) {
+        String sql = "INSERT INTO TIPO_ESTOQUE ( tipo) VALUES (?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
-            stmt.setString(1, entidade.getCategoria());
-            stmt.setString(2, entidade.getDescricao());
+            stmt.setString(1, entidade.getTipo());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -42,16 +41,14 @@ public class DAOCat_Evento {
 
 
 
-    public Cat_Evento alterar(Cat_Evento entidade) {
-        String sql = "UPDATE CAT_EVENTO SET categoria = ?, descricao = ? WHERE id = ?";
+    public TipoEstoque alterar(TipoEstoque entidade) {
+        String sql = "UPDATE TIPO_ESTOQUE SET tipo = ?  WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            stmt.setString(1, entidade.getCategoria());
-            stmt.setString(2, entidade.getDescricao());
-            stmt.setInt(3, entidade.getId());
+            stmt.setString(1, entidade.getTipo());
+            stmt.setInt(2, entidade.getId());
             stmt.executeUpdate();
-
 
             return entidade;
 
@@ -62,8 +59,8 @@ public class DAOCat_Evento {
     }
 
 
-    public boolean apagar(Cat_Evento entidade) {
-        String sql = "DELETE FROM CAT_EVENTO WHERE id = ?";
+    public boolean apagar(TipoEstoque entidade) {
+        String sql = "DELETE FROM TIPO_ESTOQUE WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -78,9 +75,9 @@ public class DAOCat_Evento {
     }
 
 
-    public Cat_Evento get(Integer id) {
-        Cat_Evento eve = null;
-        String sql = "SELECT * FROM CAT_EVENTO WHERE id = ?";
+    public TipoEstoque getPorId(Integer id) {
+        TipoEstoque eve = null;
+        String sql = "SELECT * FROM Tipo_Estoque WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -88,10 +85,9 @@ public class DAOCat_Evento {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                eve = new Cat_Evento(
+                eve = new TipoEstoque(
                         rs.getInt("id"),
-                        rs.getString("categoria"),
-                        rs.getString("descricao")
+                        rs.getString("tipo")
                 );
             }
 
@@ -104,23 +100,22 @@ public class DAOCat_Evento {
 
 
 
-    public List<Cat_Evento> buscarPorNome(String categoria) {
-        List<Cat_Evento> lista = new ArrayList<>();
+    public List<TipoEstoque> buscarPorTipo(String tipo) {
+        List<TipoEstoque> lista = new ArrayList<>();
         String sql;
 
         // regra: se vazio ou null → traz tudo
-        if (categoria == null || categoria.isEmpty()) {
-            sql = "SELECT * FROM CAT_EVENTO ORDER BY categoria ASC";
+        if (tipo == null || tipo.isEmpty()) {
+            sql = "SELECT * FROM TIPO_ESTOQUE ORDER BY tipo ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    lista.add(new Cat_Evento(
+                    lista.add(new TipoEstoque(
                             rs.getInt("id"),
-                            rs.getString("categoria"),
-                            rs.getString("descricao")
+                            rs.getString("tipo")
                     ));
                 }
 
@@ -129,66 +124,17 @@ public class DAOCat_Evento {
             }
 
         } else {
-            sql = "SELECT * FROM CAT_EVENTO WHERE categoria ILIKE '%' || ? || '%' ORDER BY categoria ASC";
+            sql = "SELECT * FROM TIPO_ESTOQUE WHERE tipo ILIKE '%' || ? || '%' ORDER BY tipo ASC";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
 
-                stmt.setString(1, categoria);
+                stmt.setString(1, tipo);
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {
-                    lista.add(new Cat_Evento(
+                    lista.add(new TipoEstoque(
                             rs.getInt("id"),
-                            rs.getString("categoria"),
-                            rs.getString("descricao")
-                    ));
-                }
-
-            } catch (SQLException e) {
-                System.out.println("Erro: " + e);
-            }
-        }
-        return lista;
-    }
-
-
-    public List<Cat_Evento> buscarPorDescricao(String descricao) {
-        List<Cat_Evento> lista = new ArrayList<>();
-        String sql;
-
-        // regra: se vazio ou null → traz tudo
-        if (descricao == null || descricao.isEmpty()) {
-            sql = "SELECT * FROM CAT_EVENTO ORDER BY descricao ASC";
-
-            try (PreparedStatement stmt = bd.preparar(sql)) {
-
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    lista.add(new Cat_Evento(
-                            rs.getInt("id"),
-                            rs.getString("categoria"),
-                            rs.getString("descricao")
-                    ));
-                }
-
-            } catch (SQLException e) {
-                System.out.println("Erro: " + e);
-            }
-
-        } else {
-            sql = "SELECT * FROM CAT_EVENTO WHERE descricao ILIKE '%' || ? || '%' ORDER BY descricao ASC";
-
-            try (PreparedStatement stmt = bd.preparar(sql)) {
-
-                stmt.setString(1, descricao);
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    lista.add(new Cat_Evento(
-                            rs.getInt("id"),
-                            rs.getString("categoria"),
-                            rs.getString("descricao")
+                            rs.getString("tipo")
                     ));
                 }
 

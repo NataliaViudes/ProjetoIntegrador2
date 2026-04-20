@@ -1,8 +1,9 @@
 package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Control.Cat_EventoControll;
+import pi2.example.back_end.Controller.Cat_EventoControll;
 import pi2.example.back_end.Modelo.Cat_Evento;
+
 
 @CrossOrigin
 @RestController
@@ -10,6 +11,7 @@ import pi2.example.back_end.Modelo.Cat_Evento;
 public class EventosRestController {
 
     private final Cat_EventoControll controll = new Cat_EventoControll();
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {
