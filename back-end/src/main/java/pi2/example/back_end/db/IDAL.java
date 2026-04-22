@@ -1,6 +1,4 @@
-
 package pi2.example.back_end.db;
-
 import java.util.List;
 
 public interface IDAL<T> {
