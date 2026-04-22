@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
+import api from "../services/api";
+import Menu from "../components/Menu";
 import "./Funcionario.css";
 
 function Funcionario() {
@@ -197,19 +198,8 @@ function Funcionario() {
     // tela === "tabela" -> tabela de funcionários
     if (tela === "tabela") {
         return (
-            <div className="pagina-funcionario">
-                <header className="topo-menu">
-                    <div className="grupo-botoes">
-                        <button>Cadastros</button>
-                        <button>Vincular</button>
-                        <button>Agendador</button>
-                        <button>Relatórios</button>
-                    </div>
-
-                    <div className="area-pesquisa-topo">
-                        <input type="text" placeholder="Pesquisar..." />
-                    </div>
-                </header>
+            <div className="pagina-funcionario" translate="no">
+      <Menu />
 
                 <div className="topo">
                     <input
@@ -253,11 +243,8 @@ function Funcionario() {
 
     // tela === "detalhes" | "cadastro" -> formulário de detalhes ou cadastro
     return (
-        <div className="form-funcionario">
-
-            <h2 className="titulo-form">
-                {tela === "cadastro" ? "Cadastro de Funcionário" : "Detalhes do Funcionário"}
-            </h2>
+         <div className="pagina-funcionario" translate="no">
+      <Menu />
 
             <div className="form-grid">
 

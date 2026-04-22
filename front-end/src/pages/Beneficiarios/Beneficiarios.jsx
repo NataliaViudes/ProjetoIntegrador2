@@ -30,7 +30,8 @@ function Beneficiario() {
         renda: "",
         participacao: "",
         alergias: "",
-        tratamentos: ""
+        tratamentos: "",
+        medicamentos: null
     });
 
     useEffect(() => {
