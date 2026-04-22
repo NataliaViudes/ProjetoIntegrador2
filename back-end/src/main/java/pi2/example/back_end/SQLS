@@ -86,6 +86,34 @@ CREATE TABLE beneficiario (
     CONSTRAINT chk_beneficiario_celular_recado CHECK (celular_recado IS NULL OR celular_recado ~ '^[0-9]+$')
 );
 
+CREATE TABLE remedio(
+    id SERIAL,
+    nome VARCHAR(45),
+    descricao VARCHAR(100),
+
+    CONSTRAINT pk_remedio PRIMARY KEY (id)
+);
+
+CREATE TABLE prescricao(
+    id SERIAL,
+    dosagem VARCHAR(45),
+    quantidade INT,
+    horario DATE,
+    idBeneficiario INT,
+    idRemedio INT,
+    intervalo INT,
+
+    CONSTRAINT pk_prescricao PRIMARY KEY (id),
+
+    CONSTRAINT fk_prescricao
+            FOREIGN KEY (idBeneficiario)
+            REFERENCES beneficiario(id)
+
+    CONSTRAINT fk_prescricao
+                FOREIGN KEY (idRemedio)
+                REFERENCES remedio(id)
+);
+
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
 

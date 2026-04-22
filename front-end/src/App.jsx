@@ -4,6 +4,7 @@ import Atividades from "./pages/Alimentos/Alimentos";
 import Auxilios from "./pages/Auxilios/Auxilios";
 import Alimentos from "./pages/Alimentos/Alimentos";
 import Beneficiarios from "./pages/Beneficiarios/Beneficiarios";
+import PageAtiv from "./pages/PaginaAtividade/PageAtiv";
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
         <Route path="/auxilios" element={<Auxilios />} />
         <Route path="/alimentos" element={<Alimentos />} />
         <Route path="/beneficiarios" element={<Beneficiarios />} />
+        <Route path="/AgendarAtividade" element={<PageAtiv />} />
+
       </Routes>
     </BrowserRouter>
   );
