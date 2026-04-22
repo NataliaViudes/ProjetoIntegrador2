@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS ESTOQUE(
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id)  REFERENCES TIPO_ESTOQUE(id)
+);
+
+

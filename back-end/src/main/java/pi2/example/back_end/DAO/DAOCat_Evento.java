@@ -61,7 +61,6 @@ public class DAOCat_Evento {
         }
     }
 
-
     public boolean apagar(Cat_Evento entidade) {
         String sql = "DELETE FROM CAT_EVENTO WHERE id = ?";
 
@@ -76,7 +75,6 @@ public class DAOCat_Evento {
             return false;
         }
     }
-
 
     public Cat_Evento get(Integer id) {
         Cat_Evento eve = null;
@@ -101,7 +99,6 @@ public class DAOCat_Evento {
 
         return eve;
     }
-
 
 
     public List<Cat_Evento> buscarPorNome(String categoria) {

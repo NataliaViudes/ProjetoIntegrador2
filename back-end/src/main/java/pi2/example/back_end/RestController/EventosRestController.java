@@ -1,7 +1,7 @@
 package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Controller.Cat_EventoControll;
+import pi2.example.back_end.Controller.Cat_EventoControl;
 import pi2.example.back_end.Modelo.Cat_Evento;
 
 
@@ -10,7 +10,7 @@ import pi2.example.back_end.Modelo.Cat_Evento;
 @RequestMapping("/eventos")
 public class EventosRestController {
 
-    private final Cat_EventoControll controll = new Cat_EventoControll();
+    private final Cat_EventoControl controll = new Cat_EventoControl();
 
 
     @GetMapping("/{id}")

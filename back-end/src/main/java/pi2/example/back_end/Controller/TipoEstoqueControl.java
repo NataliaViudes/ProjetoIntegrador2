@@ -9,9 +9,9 @@ import pi2.example.back_end.db.Conexao;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TipoEstoqueControll {
+public class TipoEstoqueControl {
 
-    public TipoEstoqueControll() {
+    public TipoEstoqueControl() {
     }
 
     public ResponseEntity<?> incluir(TipoEstoque tipoEstoque)

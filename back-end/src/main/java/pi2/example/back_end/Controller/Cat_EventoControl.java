@@ -9,8 +9,8 @@ import pi2.example.back_end.db.Conexao;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Cat_EventoControll {
-    public Cat_EventoControll() {
+public class Cat_EventoControl {
+    public Cat_EventoControl() {
     }
 
     public ResponseEntity<?> incluir(Cat_Evento cat_evento)
