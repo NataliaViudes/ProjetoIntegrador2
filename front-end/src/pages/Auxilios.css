@@ -1,0 +1,123 @@
+.pagina-auxilios {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.conteudo-auxilios {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-esquerdo,
+.painel-direito {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+}
+
+.painel-esquerdo h2,
+.painel-direito h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.painel-esquerdo label {
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.painel-esquerdo input,
+.painel-esquerdo select,
+.painel-esquerdo textarea,
+.cabecalho-lista input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.linha-busca-cpf {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.linha-busca-cpf button,
+.acoes-formulario button,
+.botoes-item button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.box-beneficiario {
+  margin-top: 10px;
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+  min-height: 70px;
+}
+
+.acoes-formulario {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cabecalho-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lista-auxilios {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-auxilio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+}
+
+.info-auxilio {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.botoes-item {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .conteudo-auxilios {
+    grid-template-columns: 1fr;
+  }
+
+  .item-auxilio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .linha-busca-cpf {
+    grid-template-columns: 1fr;
+  }
+}
