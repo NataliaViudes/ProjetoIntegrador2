@@ -7,7 +7,7 @@ import pi2.example.back_end.db.Conexao;
 import java.util.List;
 
 @JsonPropertyOrder({ "id", "categoria", "descricao" })
-public class Cat_Evento {
+public class Estoque {
     private Integer id;
     private String categoria;
     private String descricao;
