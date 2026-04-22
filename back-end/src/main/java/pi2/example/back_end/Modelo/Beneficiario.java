@@ -1,5 +1,10 @@
 package pi2.example.back_end.Modelo;
 
+import pi2.example.back_end.DAO.DAOBeneficiario;
+import pi2.example.back_end.db.Conexao;
+
+import java.util.List;
+
 public class Beneficiario {
 
     private Integer id;
@@ -21,7 +26,7 @@ public class Beneficiario {
     //infos gerais - fazer
     private String alergias;
     private String tratamentos;
-    //private String medicamentos;
+    private List<Prescricao> medicamentos;
     private String participacao;
     private String situacao;
 
@@ -31,8 +36,11 @@ public class Beneficiario {
 
     }
 
+    public Beneficiario(Integer id) {
+        this.id = id;
+    }
 
-    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
+    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, List<Prescricao> medicamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -49,6 +57,7 @@ public class Beneficiario {
         this.celularRecado = celularRecado;
         this.alergias = alergias;
         this.tratamentos = tratamentos;
+        this.medicamentos = medicamentos;
         this.participacao = participacao;
         this.situacao = situacao;
     }
@@ -57,7 +66,7 @@ public class Beneficiario {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -81,7 +90,7 @@ public class Beneficiario {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(Integer idade) {
         this.idade = idade;
     }
 
@@ -113,7 +122,7 @@ public class Beneficiario {
         return renda;
     }
 
-    public void setRenda(double renda) {
+    public void setRenda(Double renda) {
         this.renda = renda;
     }
 
@@ -181,6 +190,14 @@ public class Beneficiario {
         this.tratamentos = tratamentos;
     }
 
+    public List<Prescricao> getMedicamentos() {
+        return medicamentos;
+    }
+
+    public void setMedicamentos(List<Prescricao> medicamentos) {
+        this.medicamentos = medicamentos;
+    }
+
     public String getParticipacao() {
         return participacao;
     }
@@ -195,5 +212,47 @@ public class Beneficiario {
 
     public void setSituacao(String situacao) {
         this.situacao = situacao;
+    }
+
+    public Beneficiario incluir(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.gravar(this);
+    }
+
+    public Beneficiario alterar(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.alterar(this);
+    }
+
+    public boolean apagar(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.apagar(this);
+    }
+
+    public Beneficiario buscarPorId(Integer id, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.get(id);
+    }
+
+    public List<Beneficiario> buscarPorNome(String nome, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorNome(nome);
+    }
+
+    public List<Beneficiario> buscarPorCpf(String cpf, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorCpf(cpf);
+    }
+
+    public List<Beneficiario> buscarPorNis(String nis, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorNis(nis);
     }
 }

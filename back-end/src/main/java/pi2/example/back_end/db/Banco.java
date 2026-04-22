@@ -2,21 +2,24 @@ package pi2.example.back_end.db;
 
 public class Banco  // classe Singleton
 {
-    static private Conexao con=new Conexao();
-    static public boolean conectar() {
-        boolean ok = con.conectar("jdbc:postgresql://localhost:5432/SCFV",  "postgres", "postgres123"); //mudar rota conforme seu banco
-        if(!ok) {
-            System.out.println("ERRO ao conectar com o banco: " + con.getMensagemErro());
-            return false;
-        }
-        return true;
-    }
-    static public Conexao getCon()
-    {
-        return con;
+    private static Banco singleton;
+
+
+    private static final String URL = "jdbc:postgresql://localhost:5432/SCFV";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "14042005";
+
+    public static Conexao getConexao() {
+        return new Conexao(URL, USER, PASSWORD);
     }
 
-    private Banco() {
+    public static Banco getSingleton() {
+        if (singleton == null) {
+            singleton = new Banco();
+        }
+        return singleton;
     }
-    
+
+    private Banco() {}
+
 }

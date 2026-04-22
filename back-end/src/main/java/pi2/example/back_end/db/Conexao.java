@@ -1,83 +1,117 @@
 package pi2.example.back_end.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+public class Conexao {
 
-public class Conexao 
-{
     private Connection connect;
     private String erro;
-    public Conexao()
-    {   erro="";
-        connect=null;
+
+    private String url;
+    private String user;
+    private String password;
+
+    public Conexao(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+        this.erro = "";
     }
-    public boolean conectar(String local,String usuario,String senha)
-    {   boolean conectado=false;
+
+    public PreparedStatement preparar(String sql) throws SQLException {
+        return connect.prepareStatement(sql);
+    }
+
+    // preparar COM retorno de ID
+    public PreparedStatement prepararComRetorno(String sql) throws SQLException {
+        return connect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    }
+
+
+    //  ABRIR CONEXÃO
+    public boolean conectar() {
         try {
-            //Class.forName(driver); "org.postgresql.Driver");
-             //"jdbc:postgresql://localhost/"+banco;
-            connect = DriverManager.getConnection( local, usuario,senha);
-            conectado=true;
+            connect = DriverManager.getConnection(url, user, password);
+            return true;
+        } catch (SQLException e) {
+            erro = "Erro ao conectar: " + e.getMessage();
+            return false;
         }
-        catch ( SQLException sqlex )
-        { erro="Impossivel conectar com a base de dados: " + sqlex.toString(); }
-        catch ( Exception ex )
-        { erro="Outro erro: " + ex.toString(); }
-        return conectado;
     }
+
+    //  FECHAR CONEXÃO
+    public void desconectar() {
+        try {
+            if (connect != null && !connect.isClosed()) {
+                connect.close();
+            }
+        } catch (SQLException e) {
+            erro = "Erro ao fechar conexão: " + e.getMessage();
+        }
+    }
+
     public String getMensagemErro() {
         return erro;
     }
-    public boolean getEstadoConexao() {
-        return (connect!=null);
+
+    public Connection getConnection() {
+        return connect;
     }
-    public boolean manipular(String sql) // inserir, alterar,excluir
-    {   boolean executou=false;
-        try {
-            Statement statement = connect.createStatement();
-            int result = statement.executeUpdate( sql );
-            statement.close();
-            if(result>=1)
-                executou=true;
+
+    //  INSERT / UPDATE / DELETE (COM PreparedStatement)
+    public boolean manipular(String sql, Object... params) {
+        boolean executou = false;
+
+        try (PreparedStatement ps = connect.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+
+            int result = ps.executeUpdate();
+            executou = result > 0;
+
+        } catch (SQLException e) {
+            erro = "Erro: " + e.getMessage();
         }
-        catch ( SQLException sqlex )
-        {  erro="Erro: "+sqlex.toString();
-        }
+
         return executou;
     }
-    public ResultSet consultar(String sql)
-    {   ResultSet rs=null;
+
+    //  SELECT
+    public ResultSet consultar(String sql, Object... params) {
         try {
-           Statement statement = connect.createStatement();
-             //ResultSet.TYPE_SCROLL_INSENSITIVE,
-             //ResultSet.CONCUR_READ_ONLY);
-           rs = statement.executeQuery( sql );
-           //statement.close();
+            PreparedStatement ps = connect.prepareStatement(sql);
+
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+
+            return ps.executeQuery();
+
+        } catch (SQLException e) {
+            erro = "Erro: " + e.getMessage();
+            return null;
         }
-        catch ( SQLException sqlex )
-        { erro="Erro: "+sqlex.toString();
-          rs = null;
-        }
-        return rs;
     }
-    public int getMaxPK(String tabela,String chave) 
-    {
-        String sql="select max("+chave+") from "+tabela;
-        int max=0;
-        ResultSet rs= consultar(sql);
-        try 
-        {
-            if(rs.next())
-                max=rs.getInt(1);
+
+
+
+    // MAX PK
+    public int getMaxPK(String tabela, String chave) {
+        String sql = "SELECT MAX(" + chave + ") FROM " + tabela;
+
+        try (PreparedStatement ps = connect.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            erro = "Erro: " + e.getMessage();
         }
-        catch (SQLException sqlex)
-        { 
-             erro="Erro: " + sqlex.toString();
-             max = -1;
-        }
-        return max;
+
+        return -1;
     }
 }
+
