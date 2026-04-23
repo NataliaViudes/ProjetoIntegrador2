@@ -43,6 +43,7 @@ function Beneficiario() {
         return String(valor || "").replace(/\D/g, "");
     }
 
+    
     // ================= MÁSCARAS =================
     function mascaraTelefone(valor) {
         valor = limparNumero(valor).slice(0, 11);
@@ -101,7 +102,7 @@ function Beneficiario() {
     // ================= API =================
     async function carregar() {
         try {
-            const resp = await api.get("/beneficiario");
+            const resp = await api.get("/beneficiarios");
             setLista(Array.isArray(resp.data) ? resp.data : []);
         } catch (e) {
             console.error(e);
@@ -188,9 +189,9 @@ function Beneficiario() {
 
         try {
             if (tela === "cadastro") {
-                await api.post("/beneficiario", payload);
+                await api.post("/beneficiarios", payload);
             } else {
-                await api.put(`/beneficiario/${form.id}`, payload);
+                await api.put(`/beneficiarios/${form.id}`, payload);
             }
 
             setTela("tabela");
@@ -205,7 +206,7 @@ function Beneficiario() {
     async function deletar(id) {
         if (!window.confirm("Deseja excluir o beneficiário?")) return;
 
-        await api.delete(`/beneficiario/${id}`);
+        await api.delete(`/beneficiarios/${id}`);
         carregar();
     }
 

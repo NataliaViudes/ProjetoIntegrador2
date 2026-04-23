@@ -5,6 +5,7 @@ import Auxilios from "./pages/Auxilios/Auxilios";
 import Alimentos from "./pages/Alimentos/Alimentos";
 import Beneficiarios from "./pages/Beneficiarios/Beneficiarios";
 import Agendamentos from "./pages/Agendamentos/Agendamentos";
+import Vincular from "./pages/VincularBeneficiario/VincularBeneficiario"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/alimentos" element={<Alimentos />} />
         <Route path="/beneficiarios" element={<Beneficiarios />} />
         <Route path="/agendamentos" element={<Agendamentos />} />
+        <Route path="/vincular" element={<Vincular />} />
 
       </Routes>
     </BrowserRouter>

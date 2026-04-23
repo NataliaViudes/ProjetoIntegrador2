@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -173,6 +174,19 @@ function Agendamentos() {
             onChange={(e) => setObservacao(e.target.value)}
           />
 
+          <h3 style={{ marginTop: "20px" }}>Vinculação de Beneficiários</h3>
+
+          <Link
+            to="/vincular"
+            state={{
+              atividadeId,
+              dataInicio,
+              dataFim,
+              observacao
+            }}
+          >
+            <button>Ir para Vinculação</button>
+          </Link>
 
           <div className="acoes-formulario">
             <button onClick={salvar}>
