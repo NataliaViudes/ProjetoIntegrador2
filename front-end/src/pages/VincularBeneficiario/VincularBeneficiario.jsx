@@ -2,22 +2,32 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu";
 import "../Agendamentos/Agendamentos.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function VincularBeneficiario() {
   const location = useLocation();
-  const dados = location.state;
+  const navigate = useNavigate();
+
+  const dados = location.state || {}; 
+  const [modoEdicao, setModoEdicao] = useState(false);
   const [atividades, setAtividades] = useState([]);
   const [beneficiarios, setBeneficiarios] = useState([]);
 
-  const [atividadeId, setAtividadeId] = useState(dados?.atividadeId || "");
-  const [dataInicio, setDataInicio] = useState(dados?.dataInicio || "");
-  const [dataFim, setDataFim] = useState(dados?.dataFim || "");
-  const [observacao, setObservacao] = useState(dados?.observacao || "");
+  const [atividadeId, setAtividadeId] = useState(dados.atividadeId || "");
+  const [dataInicio, setDataInicio] = useState(dados.dataInicio || "");
+  const [dataFim, setDataFim] = useState(dados.dataFim || "");
+  const [observacao, setObservacao] = useState(dados.observacao || "");
 
   const [selecionados, setSelecionados] = useState([]);
 
   useEffect(() => {
+    const dados = location.state || {};
+
+    if (dados.idAgendamento) {
+        setModoEdicao(true);
+        carregarBeneficiariosVinculados(dados.idAgendamento);
+    }
+
     carregarTudo();
   }, []);
 
@@ -35,45 +45,90 @@ function VincularBeneficiario() {
     }
   }
 
-  function toggleSelecionado(id) {
-    if (selecionados.includes(id)) {
-      setSelecionados(selecionados.filter(b => b !== id));
-    } else {
-      setSelecionados([...selecionados, id]);
-    }
-  }
+  async function carregarBeneficiariosVinculados(idAgendamento) {
+  try {
+    const resp = await api.get(`/agendamentos/${idAgendamento}/beneficiarios`);
 
-  function limparFormulario() {
-    setAtividadeId("");
-    setDataInicio("");
-    setDataFim("");
-    setObservacao("");
-    setSelecionados([]);
+    const ids = resp.data.map(b => b.id);
+    setSelecionados(ids);
+  } catch (e) {
+    console.error("Erro ao carregar vinculados:", e);
+  }
+}
+
+  function toggleSelecionado(id) {
+    setSelecionados(prev =>
+      prev.includes(id)
+        ? prev.filter(b => b !== id)
+        : [...prev, id]
+    );
   }
 
   async function salvar() {
-    if (!atividadeId || !dataInicio || !dataFim || selecionados.length === 0) {
-      alert("Preencha tudo e selecione pelo menos um beneficiário.");
-      return;
+    if (!atividadeId || !dataInicio || !dataFim) {
+        alert("Preencha os dados.");
+        return;
     }
 
-    const payload = {
-      atividade: { id: Number(atividadeId) },
-      dataInicio,
-      dataFim,
-      observacao,
-      beneficiarios: selecionados.map(id => ({ id }))
-    };
+    if (selecionados.length === 0) {
+        alert("Selecione beneficiários.");
+        return;
+    }
 
     try {
-      await api.post("/agendamentos/vincular", payload);
-      alert("Beneficiários vinculados com sucesso!");
-      limparFormulario();
+        
+        const respAg = await api.post("/agendamentos", {
+        atividade: { id: Number(atividadeId) },
+        dataInicio,
+        dataFim,
+        observacao
+        });
+        
+        const idAgendamento = respAg.data.id;
+
+        
+        const payloadVinculo = {
+            lista: selecionados.map(id => ({
+                idBeneficiario: id,
+                idAgendamento: idAgendamento
+            }))
+        };
+
+        await api.post("/vincularBeneficiario", payloadVinculo);
+
+        alert("Agendamento e vínculos salvos!");
+        navigate("/agendamentos");
+
     } catch (e) {
-      console.error(e);
-      alert("Erro ao vincular beneficiários.");
+        console.error("ERRO REAL:", e.response?.data || e);
+        alert("Erro ao salvar.");
     }
   }
+
+  async function alterar() {
+  try {
+    const idAgendamento = dados.idAgendamento;
+
+    // 🔥 apagar antigos (precisa endpoint GET antes, se não tiver me fala)
+    
+    // 🔥 recriar todos
+    const payload = {
+      lista: selecionados.map(id => ({
+        idBeneficiario: id,
+        idAgendamento
+      }))
+    };
+
+    await api.post("/vincularBeneficiario", payload);
+
+    alert("Atualizado!");
+    navigate("/agendamentos");
+
+  } catch (e) {
+    console.error(e.response?.data || e);
+    alert("Erro ao atualizar.");
+  }
+}
 
   return (
     <div className="pagina-agendamentos">
@@ -81,7 +136,6 @@ function VincularBeneficiario() {
 
       <div className="conteudo-agendamentos">
 
-        {/* FORMULÁRIO */}
         <section className="painel-formulario">
           <h2>Vincular Beneficiários</h2>
 
@@ -96,32 +150,23 @@ function VincularBeneficiario() {
           </select>
 
           <label>Data início</label>
-          <input
-            type="datetime-local"
-            value={dataInicio}
-            disabled
-          />
+          <input type="datetime-local" value={dataInicio} disabled />
 
           <label>Data fim</label>
-          <input
-            type="datetime-local"
-            value={dataFim}
-            disabled
-          />
+          <input type="datetime-local" value={dataFim} disabled />
 
           <label>Observação</label>
-          <textarea
-            rows="4"
-            value={observacao}
-            disabled
-          />
+          <textarea rows="4" value={observacao} disabled />
 
           <div className="acoes-formulario">
-            <button onClick={salvar}>Vincular</button>
+            {modoEdicao ? (
+                <button onClick={alterar}>Atualizar Vínculos</button>
+                ) : (
+                <button onClick={salvar}>Vincular</button>
+            )}
           </div>
         </section>
 
-        {/* LISTA DE BENEFICIÁRIOS */}
         <section className="painel-calendario">
           <h3>Beneficiários</h3>
 
@@ -136,13 +181,11 @@ function VincularBeneficiario() {
                   <div>Situação: {b.situacao}</div>
                 </div>
 
-                <div>
-                  <input
-                    type="checkbox"
-                    checked={selecionados.includes(b.id)}
-                    onChange={() => toggleSelecionado(b.id)}
-                  />
-                </div>
+                <input
+                  type="checkbox"
+                  checked={selecionados.includes(b.id)}
+                  onChange={() => toggleSelecionado(b.id)}
+                />
               </div>
             ))
           )}

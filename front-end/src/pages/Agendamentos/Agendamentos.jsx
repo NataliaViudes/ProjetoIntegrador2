@@ -182,7 +182,8 @@ function Agendamentos() {
               atividadeId,
               dataInicio,
               dataFim,
-              observacao
+              observacao,
+              idAgendamento: agendamentoEditando?.id || null
             }}
           >
             <button>Ir para Vinculação</button>
