@@ -1,10 +1,14 @@
 package pi2.example.back_end.Modelo;
 
+import pi2.example.back_end.DAO.AuxilioDAOImpl;
+import pi2.example.back_end.db.Conexao;
+
+import java.util.List;
+
 public class Auxilio {
 
     private Integer id;
     private String descricao;
-
     private Beneficiario beneficiario;
     private CategoriaAuxilio categoria;
 
@@ -18,11 +22,18 @@ public class Auxilio {
         this.categoria = categoria;
     }
 
+    public Auxilio(Integer id) {
+        this.id = id;
+        this.descricao = "";
+        this.beneficiario = null;
+        this.categoria = null;
+    }
+
     public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,5 +59,35 @@ public class Auxilio {
 
     public void setCategoria(CategoriaAuxilio categoria) {
         this.categoria = categoria;
+    }
+
+    public Auxilio incluir(Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.gravar(this);
+    }
+
+    public Auxilio alterar(Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.alterar(this);
+    }
+
+    public boolean apagar(Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.apagar(this);
+    }
+
+    public Auxilio buscarPorId(Integer id, Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.get(id);
+    }
+
+    public List<Auxilio> buscarTodos(Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.getAll();
+    }
+
+    public List<Auxilio> buscarComFiltro(String filtro, Conexao con) {
+        AuxilioDAOImpl dao = new AuxilioDAOImpl(con);
+        return dao.get(filtro);
     }
 }

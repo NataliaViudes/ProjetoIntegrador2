@@ -28,7 +28,7 @@ public class DAOBeneficiario {
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, b.getNome());
-            stmt.setString(2, b.getNascimento());
+            stmt.setDate(2, b.getNascimento());
             stmt.setInt(3, b.getIdade());
             stmt.setString(4, b.getRg());
             stmt.setString(5, b.getCpf());
@@ -71,7 +71,7 @@ public class DAOBeneficiario {
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, b.getNome());
-            stmt.setString(2, b.getNascimento());
+            stmt.setDate(2, b.getNascimento());
             stmt.setInt(3, b.getIdade());
             stmt.setString(4, b.getRg());
             stmt.setString(5, b.getCpf());
@@ -115,6 +115,49 @@ public class DAOBeneficiario {
         }
     }
 
+    // -------------------- GET ALL --------------------
+    public List<Beneficiario> getAll() {
+
+        List<Beneficiario> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM BENEFICIARIO ORDER BY nome ASC";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                lista.add(new Beneficiario(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getDate("nascimento"),
+                        rs.getInt("idade"),
+                        rs.getString("rg"),
+                        rs.getString("cpf"),
+                        rs.getString("nis"),
+                        rs.getDouble("renda"),
+                        rs.getString("endereco"),
+                        rs.getString("bairro"),
+                        rs.getString("tipo_residencia"),
+                        rs.getString("telefone"),
+                        rs.getString("celular"),
+                        rs.getString("celular_recado"),
+                        rs.getString("alergias"),
+                        rs.getString("tratamentos"),
+                        null,
+                        rs.getString("participacao"),
+                        rs.getString("situacao")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+        }
+
+        return lista;
+    }
+
     // -------------------- GET BY ID --------------------
     public Beneficiario get(Integer id) {
 
@@ -130,7 +173,7 @@ public class DAOBeneficiario {
                 b = new Beneficiario(
                         rs.getInt("id"),
                         rs.getString("nome"),
-                        rs.getString("nascimento"),
+                        rs.getDate("nascimento"),
                         rs.getInt("idade"),
                         rs.getString("rg"),
                         rs.getString("cpf"),
@@ -242,7 +285,7 @@ public class DAOBeneficiario {
                 lista.add(new Beneficiario(
                         rs.getInt("id"),
                         rs.getString("nome"),
-                        rs.getString("nascimento"),
+                        rs.getDate("nascimento"),
                         rs.getInt("idade"),
                         rs.getString("rg"),
                         rs.getString("cpf"),

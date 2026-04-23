@@ -12,6 +12,12 @@ public class BeneficiarioRestController {
 
     private final BeneficiarioControl controll = new BeneficiarioControl();
 
+    // -------------------- GET ALL --------------------
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return controll.getAll();
+    }
+
     // -------------------- GET POR ID --------------------
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable Integer id) {

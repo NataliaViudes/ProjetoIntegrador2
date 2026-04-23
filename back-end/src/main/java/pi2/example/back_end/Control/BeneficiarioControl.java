@@ -18,7 +18,7 @@ public class BeneficiarioControl {
     {
         if (b.getNome() != null && !b.getNome().isEmpty()) {
 
-            if (b.getNascimento() != null && !b.getNascimento().isEmpty()) {
+            if (b.getNascimento() != null) {
 
                 if (b.getIdade() != null && b.getIdade() > 0) {
 
@@ -46,34 +46,32 @@ public class BeneficiarioControl {
 
                                                                 if (b.getTratamentos() != null && !b.getTratamentos().isEmpty()) {
 
-                                                                    if (b.getMedicamentos() != null && !b.getMedicamentos().isEmpty()) {
 
-                                                                        if (b.getParticipacao() != null && !b.getParticipacao().isEmpty()) {
+                                                                    if (b.getParticipacao() != null && !b.getParticipacao().isEmpty()) {
 
-                                                                            if (b.getSituacao() != null && !b.getSituacao().isEmpty()) {
+                                                                        if (b.getSituacao() != null && !b.getSituacao().isEmpty()) {
 
-                                                                                Conexao db = Banco.getConexao();
-                                                                                try {
-                                                                                    if (!db.conectar()) {
-                                                                                        throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                                                                                    }
-
-                                                                                    Beneficiario resultado = b.incluir(db);
-                                                                                    return ResponseEntity.ok(resultado);
-
-                                                                                } catch (SQLException e) {
-                                                                                    return ResponseEntity.badRequest().body(new Erro("Erro com banco"));
-
-                                                                                } catch (Exception e) {
-                                                                                    return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-                                                                                } finally {
-                                                                                    db.desconectar();
+                                                                            Conexao db = Banco.getConexao();
+                                                                            try {
+                                                                                if (!db.conectar()) {
+                                                                                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                                                                                 }
 
-                                                                            } else return ResponseEntity.badRequest().body(new Erro("Situação é obrigatória"));
-                                                                        } else return ResponseEntity.badRequest().body(new Erro("Participação é obrigatória"));
-                                                                    } else return ResponseEntity.badRequest().body(new Erro("Medicamentos são obrigatórios"));
+                                                                                Beneficiario resultado = b.incluir(db);
+                                                                                return ResponseEntity.ok(resultado);
+
+                                                                            } catch (SQLException e) {
+                                                                                return ResponseEntity.badRequest().body(new Erro("Erro com banco"));
+
+                                                                            } catch (Exception e) {
+                                                                                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+                                                                            } finally {
+                                                                                db.desconectar();
+                                                                            }
+
+                                                                        } else return ResponseEntity.badRequest().body(new Erro("Situação é obrigatória"));
+                                                                    } else return ResponseEntity.badRequest().body(new Erro("Participação é obrigatória"));
                                                                 } else return ResponseEntity.badRequest().body(new Erro("Tratamentos são obrigatórios"));
                                                             } else return ResponseEntity.badRequest().body(new Erro("Alergias são obrigatórias"));
                                                         } else return ResponseEntity.badRequest().body(new Erro("Celular de recado é obrigatório"));
@@ -90,6 +88,30 @@ public class BeneficiarioControl {
             } else return ResponseEntity.badRequest().body(new Erro("Nascimento é obrigatório"));
         } else return ResponseEntity.badRequest().body(new Erro("Nome é obrigatório"));
     }
+
+    // -------------------- BUSCAR TODOS --------------------
+    public ResponseEntity<?> getAll() {
+
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+            }
+
+            Beneficiario b = new Beneficiario();
+            List<Beneficiario> lista = b.getAll(db);
+
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new Erro("Erro ao buscar beneficiários"));
+        } finally {
+            db.desconectar();
+        }
+    }
+
 
     // -------------------- BUSCAR POR ID --------------------
     public ResponseEntity<?> getById(Integer id)

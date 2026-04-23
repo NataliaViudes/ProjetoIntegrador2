@@ -3,13 +3,14 @@ package pi2.example.back_end.Modelo;
 import pi2.example.back_end.DAO.DAOBeneficiario;
 import pi2.example.back_end.db.Conexao;
 
+import java.sql.Date;
 import java.util.List;
 
 public class Beneficiario {
 
     private Integer id;
     private String nome;
-    private String nascimento;
+    private Date nascimento;
     private Integer idade;
     private String rg;
     private String cpf;
@@ -40,7 +41,8 @@ public class Beneficiario {
         this.id = id;
     }
 
-    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, List<Prescricao> medicamentos, String participacao, String situacao) {
+
+    public Beneficiario(Integer id, String nome, Date nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, List<Prescricao> medicamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -78,11 +80,11 @@ public class Beneficiario {
         this.nome = nome;
     }
 
-    public String getNascimento() {
+    public Date getNascimento() {
         return nascimento;
     }
 
-    public void setNascimento(String nascimento) {
+    public void setNascimento(Date nascimento) {
         this.nascimento = nascimento;
     }
 
@@ -254,5 +256,10 @@ public class Beneficiario {
     {
         DAOBeneficiario dao = new DAOBeneficiario(con);
         return dao.buscarPorNis(nis);
+    }
+
+    public List<Beneficiario> getAll(Conexao db) {
+        DAOBeneficiario dao = new DAOBeneficiario(db);
+        return dao.getAll();
     }
 }
