@@ -52,9 +52,18 @@ function TipoEstoque() {
   }
 
   async function excluir(id) {
-    await api.delete(`/tipo-estoque/${id}`);
-    carregar();
-  }
+        const confirmar = window.confirm("Tem certeza que deseja excluir esta categoria?");
+
+        if (!confirmar) return;
+
+        try {
+            await api.delete(`/tipo-estoque/${id}`);
+            carregar();
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao excluir");
+        }
+    }
 
   function limpar() {
     setTipo("");

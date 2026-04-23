@@ -19,26 +19,40 @@ function Estoque() {
     carregarTipos();
   }, []);
 
+
   async function carregarTudo() {
-    const resp = await api.get("/estoque/descricao");
-    setItens(Array.isArray(resp.data) ? resp.data : []);
+    try {
+      const resp = await api.get("/estoque/descricao");
+      setItens(Array.isArray(resp.data) ? resp.data : []);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function carregarTipos() {
-    const resp = await api.get("/tipo-estoque/tipo");
-    setTipos(resp.data);
+    try {
+      const resp = await api.get("/tipo-estoque/tipo");
+      setTipos(Array.isArray(resp.data) ? resp.data : []);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function salvar() {
     if (!descricao || !qtd || !tipoId) {
-      alert("Preencha tudo");
+      alert("Preencha todos os campos");
+      return;
+    }
+
+    if (qtd < 0) {
+      alert("Quantidade não pode ser negativa");
       return;
     }
 
     const payload = {
       descricao,
       qtd: parseInt(qtd),
-      tipo: { id: tipoId },
+      tipo: { id: parseInt(tipoId) },
     };
 
     try {
@@ -67,8 +81,19 @@ function Estoque() {
   }
 
   async function excluir(id) {
-    await api.delete(`/estoque/${id}`);
-    carregarTudo();
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir este item?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+      await api.delete(`/estoque/${id}`);
+      carregarTudo();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao excluir");
+    }
   }
 
   function limpar() {
@@ -79,7 +104,7 @@ function Estoque() {
   }
 
   const filtrados = itens.filter((i) =>
-    i.descricao.toLowerCase().includes(busca.toLowerCase())
+    (i.descricao || "").toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
@@ -99,8 +124,16 @@ function Estoque() {
           <label>Quantidade</label>
           <input
             type="number"
+            min="0"
             value={qtd}
-            onChange={(e) => setQtd(e.target.value)}
+            onChange={(e) => {
+              const valor = e.target.value;
+
+              // bloqueia negativo
+              if (valor < 0) return;
+
+              setQtd(valor);
+            }}
           />
 
           <label>Categoria</label>
@@ -120,6 +153,7 @@ function Estoque() {
             <button onClick={salvar}>
               {editando ? "Atualizar" : "Confirmar"}
             </button>
+
             <button onClick={limpar}>Limpar</button>
           </div>
         </section>
@@ -135,20 +169,24 @@ function Estoque() {
           </div>
 
           <div className="lista-alimentos">
-            {filtrados.map((i) => (
-              <div className="item-alimento" key={i.id}>
-                <div>
-                  <strong>{i.descricao}</strong>
-                  <div>Qtd: {i.qtd}</div>
-                  <div>Tipo: {i.tipo.tipo}</div>
-                </div>
+            {filtrados.length === 0 ? (
+              <p>Nenhum item encontrado.</p>
+            ) : (
+              filtrados.map((i) => (
+                <div className="item-alimento" key={i.id}>
+                  <div>
+                    <strong>{i.descricao}</strong>
+                    <div>Qtd: {i.qtd}</div>
+                    <div>Tipo: {i.tipo.tipo}</div>
+                  </div>
 
-                <div className="botoes-item">
-                  <button onClick={() => editar(i)}>Editar</button>
-                  <button onClick={() => excluir(i.id)}>Excluir</button>
+                  <div className="botoes-item">
+                    <button onClick={() => editar(i)}>Editar</button>
+                    <button onClick={() => excluir(i.id)}>Excluir</button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </main>
