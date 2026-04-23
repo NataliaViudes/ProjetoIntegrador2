@@ -7,8 +7,8 @@ import pi2.example.back_end.Modelo.Cat_Evento;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/eventos")
-public class EventosRestController {
+@RequestMapping("/cat-evento")
+public class CatEventoRestController {
 
     private final Cat_EventoControl controll = new Cat_EventoControl();
 

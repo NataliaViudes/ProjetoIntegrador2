@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS CAT_EVENTO(
 	id SERIAL,
 	categoria varchar(50),
 	descricao varchar(200),
-	CONSTRAINT PK_EVENTO PRIMARY KEY (id)
+	CONSTRAINT PK_CAT_EVENTO PRIMARY KEY (id)
 	-- CONSTRAINT UNCAT_EVENTO UNIQUE (categoria)
 );
 
@@ -40,4 +40,87 @@ INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('borracha grande',10,1
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Grampeador',2,1);
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar reto',2,2);
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar um pouco torto',2,2);
+
+
+
+CREATE TABLE funcionario (
+    id_funcionario SERIAL,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    cargo VARCHAR(50),
+
+    CONSTRAINT pk_funcionario PRIMARY KEY (id_funcionario),
+    CONSTRAINT un_cpf UNIQUE (cpf),
+    CONSTRAINT un_nis UNIQUE (nis),
+
+    CONSTRAINT chk_sexo CHECK (sexo IN ('M', 'F', 'O')),
+    CONSTRAINT chk_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_nis_format CHECK (nis ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
+);
+
+
+
+INSERT INTO funcionario
+(nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES
+('João Silva', '12345678901', '18998123456', '98765432100', '1990-05-12', 'M', 'Rua A, 123', 'Instrutor'),
+
+('Maria Oliveira', '23456789012', '18999223344', '87654321001', '1985-08-22', 'F', 'Rua B, 456', 'Coordenadora'),
+
+('Carlos Souza', '34567890123', NULL, '76543210012', '1992-11-03', 'M', 'Rua C, 789', 'Auxiliar'),
+
+('Ana Pereira', '45678901234', '18997776655', '65432100123', '2000-01-15', 'F', 'Rua D, 321', 'Professora'),
+
+('Lucas Mendes', '56789012345', '18996665544', '54321001234', '1998-07-30', 'M', 'Rua E, 654', 'Monitor'),
+
+('Fernanda Costa', '67890123456', NULL, '43210012345', '1987-03-19', 'F', 'Rua F, 987', 'Assistente'),
+
+('Rafael Lima', '78901234567', '18995554433', '32100123456', '1995-09-10', 'M', 'Rua G, 159', 'Instrutor'),
+
+('Juliana Rocha', '89012345678', '18994443322', '21001234567', '1993-12-25', 'F', 'Rua H, 753', 'Coordenadora');
+
+CREATE TABLE IF NOT EXISTS EVENTO(
+    id SERIAL,
+    nome varchar(50) not null,
+    qtd int not null,
+    local varchar(200),
+    id_cat_evento int not null,
+    dia DATE,
+    hora_inicio TIME,
+    hora_fim TIME,
+    id_funcionario INT,
+
+    CONSTRAINT PK_Evento PRIMARY KEY (id),
+    CONSTRAINT FK_Evento_Cat_evento FOREIGN KEY (id_cat_evento) REFERENCES CAT_EVENTO(id),
+    CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
+);
+
+
+INSERT INTO EVENTO
+(nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES
+('Bola de Futebol', 20, 'Depósito A', 1, '2026-05-10', '08:00', '12:00', 1),
+
+('Cone de Treino', 50, 'Depósito B', 2, '2026-05-11', '09:00', '11:30', 2),
+
+('Corda de Pular', 30, 'Sala 1', 1, '2026-05-12', '14:00', '16:00', 3),
+
+('Colchonete', 15, 'Sala 2', 3, '2026-05-13', '07:30', '10:00', 4),
+
+('Apito', 10, 'Depósito A', 2, '2026-05-14', '13:00', '15:00', 5),
+
+('Rede de Vôlei', 5, 'Quadra', 1, '2026-05-15', '08:00', '11:00', 6),
+
+('Bola de Basquete', 12, 'Depósito C', 1, '2026-05-16', '10:00', '12:00', 7),
+
+('Cronômetro', 8, 'Sala 3', 3, '2026-05-17', '15:00', '17:30', 8);
+
+
+
 

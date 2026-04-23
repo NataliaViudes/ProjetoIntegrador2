@@ -1,0 +1,39 @@
+CREATE TABLE IF NOT EXISTS EVENTO(
+    id SERIAL,
+    nome varchar(50) not null,
+    qtd int not null,
+    local varchar(200),
+    id_cat_evento int not null,
+    dia DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    id_funcionario INT,
+
+    CONSTRAINT PK_Evento PRIMARY KEY (id),
+    CONSTRAINT FK_Evento_Cat_evento FOREIGN KEY (id_cat_evento) REFERENCES CAT_EVENTO(id),
+    CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario),
+
+    CONSTRAINT chk_horario CHECK (hora_fim > hora_inicio),
+    CONSTRAINT chk_qtd CHECK (qtd >= 0)
+);
+
+
+INSERT INTO evento
+(nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES
+('Bola de Futebol', 20, 'Depósito A', 1, '2026-05-10', '08:00', '12:00', 1),
+
+('Cone de Treino', 50, 'Depósito B', 2, '2026-05-11', '09:00', '11:30', 2),
+
+('Corda de Pular', 30, 'Sala 1', 1, '2026-05-12', '14:00', '16:00', 3),
+
+('Colchonete', 15, 'Sala 2', 3, '2026-05-13', '07:30', '10:00', 4),
+
+('Apito', 10, 'Depósito A', 2, '2026-05-14', '13:00', '15:00', 5),
+
+('Rede de Vôlei', 5, 'Quadra', 1, '2026-05-15', '08:00', '11:00', 6),
+
+('Bola de Basquete', 12, 'Depósito C', 1, '2026-05-16', '10:00', '12:00', 7),
+
+('Cronômetro', 8, 'Sala 3', 3, '2026-05-17', '15:00', '17:30', 8);
+
