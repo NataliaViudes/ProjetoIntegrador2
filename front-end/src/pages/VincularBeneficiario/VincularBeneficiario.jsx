@@ -18,6 +18,8 @@ function VincularBeneficiario() {
   const [dataFim, setDataFim] = useState(dados.dataFim || "");
   const [observacao, setObservacao] = useState(dados.observacao || "");
 
+  const[idAgendamento, setIdAgendamento] = useState(dados.idAgendamento || null);
+
   const [selecionados, setSelecionados] = useState([]);
 
   useEffect(() => {
@@ -47,10 +49,10 @@ function VincularBeneficiario() {
 
   async function carregarBeneficiariosVinculados(idAgendamento) {
   try {
-    const resp = await api.get(`/agendamentos/${idAgendamento}/beneficiarios`);
+    const resp = await api.get(`/vincularBeneficiario/${idAgendamento}`);
 
-    const ids = resp.data.map(b => b.id);
-    setSelecionados(ids);
+    const ids = resp.data.map(item => item.idBeneficiario);
+    setSelecionados(ids); // o erro está ak dentro arrumar depois !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LEIA ISSO !!!
   } catch (e) {
     console.error("Erro ao carregar vinculados:", e);
   }
@@ -84,9 +86,9 @@ function VincularBeneficiario() {
         observacao
         });
         
-        const idAgendamento = respAg.data.id;
+        const idAgendamento = respAg.id;
 
-        
+        console.log("ID do agendamento a alterar:", idAgendamento);
         const payloadVinculo = {
             lista: selecionados.map(id => ({
                 idBeneficiario: id,
@@ -108,19 +110,17 @@ function VincularBeneficiario() {
   async function alterar() {
   try {
     const idAgendamento = dados.idAgendamento;
-
+    console.log("ID do agendamento a alterar:", idAgendamento);
     // 🔥 apagar antigos (precisa endpoint GET antes, se não tiver me fala)
     
     // 🔥 recriar todos
-    const payload = {
-      lista: selecionados.map(id => ({
-        idBeneficiario: id,
-        idAgendamento
-      }))
-    };
+    const payload = selecionados.map(id => ({
+  idBeneficiario: id,
+  idAgendamento
+}));
 
+    console.log("Payload enviado para vincularBeneficiario:", payload);
     await api.post("/vincularBeneficiario", payload);
-
     alert("Atualizado!");
     navigate("/agendamentos");
 

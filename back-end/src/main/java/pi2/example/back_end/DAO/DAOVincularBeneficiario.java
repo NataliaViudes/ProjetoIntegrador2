@@ -20,19 +20,13 @@ public class DAOVincularBeneficiario {
     // -------------------- INSERT --------------------
     public VincularBeneficiario gravar(VincularBeneficiario vb) {
 
-        String sql = "INSERT INTO vincularbeneficiario (" +
-                "idBeneficiario, idAgendamento" +
-                ") VALUES (?, ?)";
+        String sql = "INSERT INTO vincularbeneficiario (idBeneficiario, idAgendamento) VALUES (?, ?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
-
-            stmt.setInt(1, vb.getIdAgendamento());
-            stmt.setInt(2, vb.getIdBeneficiario());
+            stmt.setInt(1, vb.getIdBeneficiario());
+            stmt.setInt(2, vb.getIdAgendamento());
 
             stmt.executeUpdate();
-
-
-
 
             return vb;
 
@@ -85,8 +79,8 @@ public class DAOVincularBeneficiario {
     }
 
     // -------------------- GET BY ID AGENDAMENTO --------------------
-    public VincularBeneficiario get(Integer id) {
-
+    public List<VincularBeneficiario> getByIdAgendamento(Integer id) {
+        List<VincularBeneficiario> lvb = new ArrayList<>();
         VincularBeneficiario vb = null;
         String sql = "SELECT * FROM vincularbeneficiario WHERE idAgendamento=?";
 
@@ -95,17 +89,17 @@ public class DAOVincularBeneficiario {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                vb = new VincularBeneficiario(
+            while (rs.next()) {
+                lvb.add(vb = new VincularBeneficiario(
                         rs.getInt("idAgendamento"),
-                        rs.getInt("idBeneficiario"));
+                        rs.getInt("idBeneficiario")));
             }
 
         } catch (SQLException e) {
             System.out.println("Erro: " + e);
         }
 
-        return vb;
+        return lvb;
     }
 
     // -------------------- GET ELEMENTO --------------------
