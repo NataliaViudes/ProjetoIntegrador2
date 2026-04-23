@@ -6,17 +6,27 @@ function Menu() {
     <header className="topo-menu">
       <div className="grupo-botoes">
         <div className="menu-dropdown">
-          <button>Cadastros</button>
+          <button type="button">Cadastros</button>
 
           <div className="dropdown-conteudo">
             <Link to="/atividades">Atividades</Link>
             <Link to="/auxilios">Auxílios</Link>
             <Link to="/alimentos">Alimentos</Link>
+            <Link to="/beneficiarios">Beneficiários</Link>
+            <Link to="/funcionario">Funcionários</Link>
           </div>
         </div>
 
         <button type="button">Vincular</button>
-        <button type="button">Agendador</button>
+
+        <div className="menu-dropdown">
+          <button type="button">Agendador</button>
+
+          <div className="dropdown-conteudo">
+            <Link to="/agendamentos">Calendário</Link>
+          </div>
+        </div>
+
         <button type="button">Relatórios</button>
       </div>
 
@@ -26,5 +36,6 @@ function Menu() {
     </header>
   );
 }
+
 
 export default Menu;

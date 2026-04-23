@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
-import Menu from "../../components/Menu";
+import api from "../services/api";
+import Menu from "../components/Menu";
 import "./Atividades.css";
 
 
@@ -25,7 +25,7 @@ function Atividades() {
     const respAtividades = await api.get("/atividades");
   
 
-    const respFuncionarios = await api.get("/funcionario");
+    const respFuncionarios = await api.get("/funcionarios");
    
 
     const respCategorias = await api.get("/categoriaAtividade");
@@ -53,10 +53,7 @@ function Atividades() {
 
     try {
       if (atividadeEditando) {
-        await api.put("/atividades", {
-          id: atividadeEditando.id,
-          ...payload
-        });
+        await api.put(`/atividades/${atividadeEditando.id}`, payload);
       } else {
         await api.post("/atividades", payload);
       }

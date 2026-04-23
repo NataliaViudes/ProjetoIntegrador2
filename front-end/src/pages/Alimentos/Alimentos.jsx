@@ -17,7 +17,7 @@ function Alimentos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/alimentos");
+      const resp = await api.get("/alimento/descricao");
       setAlimentos(Array.isArray(resp.data) ? resp.data : []);
     } catch (error) {
       console.error("Erro ao carregar alimentos:", error);
@@ -34,12 +34,12 @@ function Alimentos() {
 
     try {
       if (alimentoEditando) {
-        await api.put("/alimentos", {
+        await api.put("/alimento", {
           id: alimentoEditando.id,
           ...payload,
         });
       } else {
-        await api.post("/alimentos", payload);
+        await api.post("/alimento", payload);
       }
 
       limparFormulario();
@@ -59,7 +59,7 @@ function Alimentos() {
 
   async function excluirAlimento(id) {
     try {
-      await api.delete(`/alimentos/${id}`);
+      await api.delete(`/alimento/${id}`);
       if (alimentoEditando && alimentoEditando.id === id) {
         limparFormulario();
       }
