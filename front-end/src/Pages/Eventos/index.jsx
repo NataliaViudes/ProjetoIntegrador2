@@ -20,7 +20,7 @@ export default function Eventos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/eventos/categoria");
+      const resp = await api.get("/cat-evento/categoria");
       const dados = Array.isArray(resp.data) ? resp.data : [];
 
       setEventos(dados);
@@ -75,12 +75,12 @@ export default function Eventos() {
         if (result.isConfirmed) {
           try {
             if (eventoEditando) {
-              await api.put("/eventos", {
+              await api.put("/cat-evento", {
                 id: eventoEditando.id,
                 ...dados,
               });
             } else {
-              await api.post("/eventos", dados);
+              await api.post("/cat-evento", dados);
             }
 
             limparFormulario();
@@ -112,7 +112,7 @@ export default function Eventos() {
 
   async function excluirEvento(id) {
     try {
-      await api.delete(`/eventos/${id}`);
+      await api.delete(`/cat-evento/${id}`);
 
       if (eventoEditando && eventoEditando.id === id) {
         limparFormulario();
@@ -121,7 +121,7 @@ export default function Eventos() {
       carregarTudo();
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      Swal.fire("Erro", "Erro ao excluir evento.", "error");
+      Swal.fire("Erro", "Erro ao excluir categoria.", "error");
     }
   }
 
