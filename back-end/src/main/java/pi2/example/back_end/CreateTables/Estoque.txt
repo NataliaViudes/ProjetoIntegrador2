@@ -7,4 +7,17 @@ CREATE TABLE IF NOT EXISTS ESTOQUE(
     CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id)  REFERENCES TIPO_ESTOQUE(id)
 );
 
+    INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+    VALUES ('Caderno 100 folhas', 50, 1);
+
+    INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+    VALUES ('Caneta azul', 200, 1);
+
+    INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+    VALUES ('Faixa elástica', 30, 2);
+
+    INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+    VALUES ('Tinta acrílica', 80, 3);
+
+
 

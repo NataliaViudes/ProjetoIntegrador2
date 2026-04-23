@@ -14,6 +14,8 @@ function Menu() {
             <Link to="/alimentos">Alimentos</Link>
             <Link to="/beneficiarios">Beneficiários</Link>
             <Link to="/funcionario">Funcionários</Link>
+            <Link to="/tipo-estoque">Tipo de estoque</Link>
+            <Link to="/estoque">Estoque</Link>
           </div>
         </div>
 
