@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../Services/api.js";
-import Menu from "../../Components/Menu";
+import Menu from "../../Components/Menu/Menu.jsx";
 import "animate.css";
 import Swal from "sweetalert2";
 import style from "./styles.module.css";
