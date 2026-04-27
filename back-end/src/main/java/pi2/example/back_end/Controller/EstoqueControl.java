@@ -97,7 +97,7 @@ public class EstoqueControl {
 
     public ResponseEntity<?> buscaPorTipo(String tipo)
     {
-        List<Estoque> eventos = new ArrayList<>();
+        List<Estoque> estoques = new ArrayList<>();
         Estoque est= new Estoque();
         if(tipo==null) tipo="";
         Conexao db = Banco.getConexao(); // Abre conexao
@@ -105,9 +105,9 @@ public class EstoqueControl {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            eventos = est.buscarPorTipo(db,tipo);
-            if(eventos!=null && !eventos.isEmpty()) { // se encontrar algum
-                return ResponseEntity.ok(eventos);
+            estoques = est.buscarPorTipo(db,tipo);
+            if(estoques!=null && !estoques.isEmpty()) { // se encontrar algum
+                return ResponseEntity.ok(estoques);
             }
             else {
                 return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Estoque do tipo: "+ tipo));
@@ -127,7 +127,7 @@ public class EstoqueControl {
 
     public ResponseEntity<?> buscaPorDescricao(String descricao)
     {
-        List<Estoque> eventos;
+        List<Estoque> estoques;
         Estoque este= new Estoque();
         if(descricao==null) descricao="";
 
@@ -136,12 +136,12 @@ public class EstoqueControl {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            eventos = este.buscarPorDescricao(db,descricao);
-            if(eventos!=null && !eventos.isEmpty()) { // se encontrar algum Cat_evento
-                return ResponseEntity.ok(eventos);
+            estoques = este.buscarPorDescricao(db,descricao);
+            if(estoques!=null && !estoques.isEmpty()) { // se encontrar
+                return ResponseEntity.ok(estoques);
             }
             else {
-                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Evento: "+descricao));
+                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar estoque: "+descricao));
             }
         } catch (SQLException e) {
             System.out.println("Erro SQL: " + e.getMessage());

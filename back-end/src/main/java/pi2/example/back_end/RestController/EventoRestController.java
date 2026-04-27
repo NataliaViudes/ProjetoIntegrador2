@@ -7,7 +7,7 @@ import pi2.example.back_end.Modelo.Evento;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/evento")
+@RequestMapping("/eventos")
 public class EventoRestController {
 
     private final EventoControl control = new EventoControl();

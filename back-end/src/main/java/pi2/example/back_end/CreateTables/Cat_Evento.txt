@@ -15,13 +15,4 @@ INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Palestra','Palestra sobre o 
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa de Carnaval','Venha curtir o Carnaval ak no Cras');
 
 
-CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE(
-	id SERIAL,
-	tipo varchar(50) not null,
-	CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
-	CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
-);
 
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material escolar');
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material fisio');
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material artesanato');

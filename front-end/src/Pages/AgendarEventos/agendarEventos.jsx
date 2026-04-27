@@ -34,15 +34,25 @@ function Eventos() {
 
   async function carregarTudo() {
   try {
-    const [respEventos, respCategorias, respFuncionarios] = await Promise.all([
-      api.get("/eventos"),
-      api.get("/categorias-evento"),
-      api.get("/funcionarios")
+    // const [respEventos, respCategorias, respFuncionarios] = await Promise.all([
+    //   api.get("/eventos/nome"),
+    //   api.get("/cat-eventos/categoria"),
+    //   api.get("/funcionarios")
+    // ]);
+
+    const [respEventos, respCategorias, ] = await Promise.all([
+      api.get("/eventos/nome"),
+      api.get("/cat-eventos/categoria"),
     ]);
 
     setEventosApi(Array.isArray(respEventos.data) ? respEventos.data : []);
     setCategorias(Array.isArray(respCategorias.data) ? respCategorias.data : []);
-    setFuncionarios(Array.isArray(respFuncionarios.data) ? respFuncionarios.data : []);
+
+    console.log(respEventos);
+    console.log(respCategorias);
+    
+    
+   // setFuncionarios(Array.isArray(respFuncionarios.data) ? respFuncionarios.data : []);
   } catch (e) {
     console.error("Erro ao carregar dados:", e);
   }
@@ -104,7 +114,7 @@ function Eventos() {
       }
 
       limparFormulario();
-      carregarEventos();
+      //carregarEventos();
     } catch (e) {
       console.error("Erro ao salvar evento:", e);
       alert("Erro ao salvar evento.");
@@ -123,6 +133,8 @@ function Eventos() {
   }
 
   async function excluir(id) {
+    console.log(id);
+    
     const confirmou = window.confirm("Deseja excluir este evento?");
     if (!confirmou) return;
 
@@ -133,7 +145,7 @@ function Eventos() {
         limparFormulario();
       }
 
-      carregarEventos();
+      //carregarEventos();
     } catch (e) {
       console.error("Erro ao excluir evento:", e);
       alert("Erro ao excluir evento.");

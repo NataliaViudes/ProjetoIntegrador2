@@ -16,24 +16,25 @@ public class Evento {
     private String nome;
     private String local;
     private Integer qtd;
-    private Integer idCatEvento;
-    private Integer idFuncionario;
+    private Cat_Evento categoria;
+    private Integer idFuncionario; /// mudar para funcionario
+
 
     public Evento() {
     }
 
-    public Evento(LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Integer idCatEvento, Integer idFuncionario) {
+    public Evento(LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Cat_Evento cat, Integer idFuncionario) {
         this.data = data;
         this.horaInicio = horaInicio;
         this.horaFim = horaFim;
         this.nome = nome;
         this.local = local;
         this.qtd = qtd;
-        this.idCatEvento = idCatEvento;
+        this.categoria = cat;
         this.idFuncionario = idFuncionario;
     }
 
-    public Evento(Integer id, LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Integer idCatEvento, Integer idFuncionario) {
+    public Evento(Integer id, LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Cat_Evento cat, Integer idFuncionario) {
         this.id = id;
         this.data = data;
         this.horaInicio = horaInicio;
@@ -41,16 +42,16 @@ public class Evento {
         this.nome = nome;
         this.local = local;
         this.qtd = qtd;
-        this.idCatEvento = idCatEvento;
+        this.categoria = cat;
         this.idFuncionario = idFuncionario;
     }
 
-    public Integer getIdCatEvento() {
-        return idCatEvento;
+    public Cat_Evento getCategoria() {
+        return categoria;
     }
 
-    public void setIdCatEvento(Integer idCatEvento) {
-        this.idCatEvento = idCatEvento;
+    public void setCategoria(Cat_Evento categoria) {
+        this.categoria = categoria;
     }
 
     public Integer getIdFuncionario() {
@@ -155,6 +156,7 @@ public class Evento {
 
 
 
-
-
+    public Integer getIdCatEvento() {
+        return categoria.getId();
+    }
 }

@@ -1,14 +1,14 @@
 package pi2.example.back_end.Modelo;
 
-public class ItensDoEvento {
+public class ItensEvento {
     private Estoque estoque;
     private Evento evento;
     private int qtd;
 
-    public ItensDoEvento() {
+    public ItensEvento() {
     }
 
-    public ItensDoEvento(Estoque id_estoque, Evento evento, int qtd) {
+    public ItensEvento(Estoque id_estoque, Evento evento, int qtd) {
         this.estoque = id_estoque;
         this.evento = evento;
         this.qtd = qtd;

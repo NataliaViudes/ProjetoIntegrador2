@@ -65,7 +65,6 @@ CREATE TABLE funcionario (
 );
 
 
-
 INSERT INTO funcionario
 (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES
@@ -121,6 +120,15 @@ VALUES
 
 ('Cronômetro', 8, 'Sala 3', 3, '2026-05-17', '15:00', '17:30', 8);
 
+
+CREATE TABLE IF NOT EXISTS Itens_Evento(
+	id_evento int,
+	id_estoque int,
+	qtd int not  null,
+	CONSTRAINT PK_ITENS_EVENTO PRIMARY KEY (id_evento,id_estoque),
+	CONSTRAINT FK_ITENS_EVENTO_Estoque FOREIGN KEY (id_estoque) REFERENCES ESTOQUE(id),
+	CONSTRAINT FK_ITENS_EVENTO_Evento FOREIGN KEY (id_evento) REFERENCES Evento(id)
+);
 
 
 
