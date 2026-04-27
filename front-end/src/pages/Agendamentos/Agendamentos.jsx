@@ -176,7 +176,10 @@ function Agendamentos() {
 
           <h3 style={{ marginTop: "20px" }}>Vinculação de Beneficiários</h3>
 
-          <Link
+          
+
+          <div className="acoes-formulario">
+            <Link
             to="/vincular"
             state={{
               atividadeId,
@@ -188,8 +191,6 @@ function Agendamentos() {
           >
             <button>Ir para Vinculação</button>
           </Link>
-
-          <div className="acoes-formulario">
             <button onClick={salvar}>
               {agendamentoEditando ? "Atualizar" : "Salvar"}
             </button>

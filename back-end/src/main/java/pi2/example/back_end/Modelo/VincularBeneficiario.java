@@ -6,16 +6,16 @@ import pi2.example.back_end.db.Conexao;
 import java.util.List;
 
 public class VincularBeneficiario {
-    private Integer idBeneficiario;
     private Integer idAgendamento;
+    private Integer idBeneficiario;
 
     public VincularBeneficiario() {
 
     }
 
-    public VincularBeneficiario(Integer idBeneficiario, Integer idAgendamento) {
-        this.idBeneficiario = idBeneficiario;
+    public VincularBeneficiario(Integer idAgendamento, Integer idBeneficiario) {
         this.idAgendamento = idAgendamento;
+        this.idBeneficiario = idBeneficiario;
     }
 
     public Integer getIdBeneficiario() {
@@ -54,4 +54,8 @@ public class VincularBeneficiario {
         return dao.getByIdAgendamento(id);
     }
 
+    public boolean apagarPorAgendamento(Conexao con, Integer id){
+        DAOVincularBeneficiario dao = new DAOVincularBeneficiario(con);
+        return dao.apagarPorAgendamento(id);
+    }
 }

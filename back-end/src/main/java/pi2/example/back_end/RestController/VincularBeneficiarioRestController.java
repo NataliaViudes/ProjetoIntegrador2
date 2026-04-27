@@ -26,10 +26,10 @@ public class VincularBeneficiarioRestController {
         return control.buscaPorIdAgendamento(idAgendamento);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable VincularBeneficiario vb) {
-        return control.apagar(vb);
-    }
 
+    @DeleteMapping("/{idAgendamento}")
+    public ResponseEntity<?> delete(@PathVariable Integer idAgendamento) {
+        return control.apagarPorAgendamento(idAgendamento);
+    }
 
 }

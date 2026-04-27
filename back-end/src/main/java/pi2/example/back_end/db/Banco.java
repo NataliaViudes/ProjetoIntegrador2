@@ -7,7 +7,7 @@ public class Banco  // classe Singleton
 
     private static final String URL = "jdbc:postgresql://localhost:5432/SCFV";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres123";
+    private static final String PASSWORD = "14042005";
 
     public static Conexao getConexao() {
         return new Conexao(URL, USER, PASSWORD);

@@ -8,7 +8,8 @@ function VincularBeneficiario() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const dados = location.state || {}; 
+  const dados = location.state || {};
+
   const [modoEdicao, setModoEdicao] = useState(false);
   const [atividades, setAtividades] = useState([]);
   const [beneficiarios, setBeneficiarios] = useState([]);
@@ -17,118 +18,123 @@ function VincularBeneficiario() {
   const [dataInicio, setDataInicio] = useState(dados.dataInicio || "");
   const [dataFim, setDataFim] = useState(dados.dataFim || "");
   const [observacao, setObservacao] = useState(dados.observacao || "");
-
-  const[idAgendamento, setIdAgendamento] = useState(dados.idAgendamento || null);
+  const [idAgendamento, setIdAgendamento] = useState(dados.idAgendamento || null);
 
   const [selecionados, setSelecionados] = useState([]);
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
-    const dados = location.state || {};
+    async function init() {
+      try {
+        const [respAtividades, respBeneficiarios] = await Promise.all([
+          api.get("/atividades"),
+          api.get("/beneficiarios")
+        ]);
 
-    if (dados.idAgendamento) {
-        setModoEdicao(true);
-        carregarBeneficiariosVinculados(dados.idAgendamento);
+        const listaBeneficiarios = Array.isArray(respBeneficiarios.data)
+          ? respBeneficiarios.data.map(b => ({ ...b, id: Number(b.id) }))
+          : [];
+
+        setAtividades(Array.isArray(respAtividades.data) ? respAtividades.data : []);
+        setBeneficiarios(listaBeneficiarios);
+
+        if (dados.idAgendamento) {
+          setModoEdicao(true);
+          setIdAgendamento(dados.idAgendamento);
+
+          const resp = await api.get(`/vincularBeneficiario/${dados.idAgendamento}`);
+
+          const ids = resp.data.map(item => Number(item.idBeneficiario));
+          setSelecionados(ids);
+        }
+
+      } catch (e) {
+        console.error("Erro ao carregar:", e);
+      }
     }
 
-    carregarTudo();
+    init();
   }, []);
 
-  async function carregarTudo() {
-    try {
-      const [respAtividades, respBeneficiarios] = await Promise.all([
-        api.get("/atividades"),
-        api.get("/beneficiarios")
-      ]);
-
-      setAtividades(Array.isArray(respAtividades.data) ? respAtividades.data : []);
-      setBeneficiarios(Array.isArray(respBeneficiarios.data) ? respBeneficiarios.data : []);
-    } catch (e) {
-      console.error("Erro ao carregar dados:", e);
-    }
-  }
-
-  async function carregarBeneficiariosVinculados(idAgendamento) {
-  try {
-    const resp = await api.get(`/vincularBeneficiario/${idAgendamento}`);
-
-    const ids = resp.data.map(item => item.idBeneficiario);
-    setSelecionados(ids); // o erro está ak dentro arrumar depois !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LEIA ISSO !!!
-  } catch (e) {
-    console.error("Erro ao carregar vinculados:", e);
-  }
-}
-
   function toggleSelecionado(id) {
+    const idNum = Number(id);
+
     setSelecionados(prev =>
-      prev.includes(id)
-        ? prev.filter(b => b !== id)
-        : [...prev, id]
+      prev.includes(idNum)
+        ? prev.filter(b => b !== idNum)
+        : [...prev, idNum]
     );
+  }
+
+  function desselecionarTodos() {
+    setSelecionados([]);
   }
 
   async function salvar() {
     if (!atividadeId || !dataInicio || !dataFim) {
-        alert("Preencha os dados.");
-        return;
+      alert("Preencha os dados.");
+      return;
     }
 
     if (selecionados.length === 0) {
-        alert("Selecione beneficiários.");
-        return;
+      alert("Selecione beneficiários.");
+      return;
     }
 
     try {
-        
-        const respAg = await api.post("/agendamentos", {
+      const respAg = await api.post("/agendamentos", {
         atividade: { id: Number(atividadeId) },
         dataInicio,
         dataFim,
         observacao
-        });
-        
-        const idAgendamento = respAg.id;
+      });
 
-        console.log("ID do agendamento a alterar:", idAgendamento);
-        const payloadVinculo = {
-            lista: selecionados.map(id => ({
-                idBeneficiario: id,
-                idAgendamento: idAgendamento
-            }))
-        };
+      const novoId = respAg.data.id;
 
-        await api.post("/vincularBeneficiario", payloadVinculo);
+      await api.post("/vincularBeneficiario",
+        selecionados.map(id => ({
+          idBeneficiario: Number(id),
+          idAgendamento: novoId
+        }))
+      );
 
-        alert("Agendamento e vínculos salvos!");
-        navigate("/agendamentos");
+      alert("Salvo com sucesso!");
+      navigate("/agendamentos");
 
     } catch (e) {
-        console.error("ERRO REAL:", e.response?.data || e);
-        alert("Erro ao salvar.");
+      console.error(e.response?.data || e);
+      alert("Erro ao salvar.");
     }
   }
 
   async function alterar() {
-  try {
-    const idAgendamento = dados.idAgendamento;
-    console.log("ID do agendamento a alterar:", idAgendamento);
-    // 🔥 apagar antigos (precisa endpoint GET antes, se não tiver me fala)
-    
-    // 🔥 recriar todos
-    const payload = selecionados.map(id => ({
-  idBeneficiario: id,
-  idAgendamento
-}));
+    if (selecionados.length === 0) {
+      alert("Selecione beneficiários.");
+      return;
+    }
 
-    console.log("Payload enviado para vincularBeneficiario:", payload);
-    await api.post("/vincularBeneficiario", payload);
-    alert("Atualizado!");
-    navigate("/agendamentos");
+    try {
+      await api.delete(`/vincularBeneficiario/${idAgendamento}`);
 
-  } catch (e) {
-    console.error(e.response?.data || e);
-    alert("Erro ao atualizar.");
+      await api.post("/vincularBeneficiario",
+        selecionados.map(id => ({
+          idBeneficiario: Number(id),
+          idAgendamento: idAgendamento
+        }))
+      );
+
+      alert("Atualizado com sucesso!");
+      navigate("/agendamentos");
+
+    } catch (e) {
+      console.error(e.response?.data || e);
+      alert("Erro ao atualizar.");
+    }
   }
-}
+
+  const beneficiariosFiltrados = beneficiarios.filter(b =>
+    b.nome.toLowerCase().includes(busca.toLowerCase())
+  );
 
   return (
     <div className="pagina-agendamentos">
@@ -160,35 +166,67 @@ function VincularBeneficiario() {
 
           <div className="acoes-formulario">
             {modoEdicao ? (
+              <>
                 <button onClick={alterar}>Atualizar Vínculos</button>
-                ) : (
+
+                <button 
+                  onClick={desselecionarTodos}
+                  style={{ marginLeft: "10px", backgroundColor: "#ccc" }}
+                >
+                  Limpar Seleção
+                </button>
+              </>
+            ) : (
+              <>
                 <button onClick={salvar}>Vincular</button>
+
+                <button 
+                  onClick={desselecionarTodos}
+                  style={{ marginLeft: "10px", backgroundColor: "#ccc" }}
+                >
+                  Limpar Seleção
+                </button>
+              </>
             )}
           </div>
         </section>
 
         <section className="painel-calendario">
-          <h3>Beneficiários</h3>
+          <h3 style={{
+            marginTop: "1%",
+          }}>BENEFICIÁRIOS</h3>
 
-          {beneficiarios.length === 0 ? (
-            <p>Nenhum beneficiário encontrado.</p>
-          ) : (
-            beneficiarios.map((b) => (
-              <div key={b.id} className="item-agendamento">
-                <div>
-                  <strong>{b.nome}</strong>
-                  <div>CPF: {b.cpf}</div>
-                  <div>Situação: {b.situacao}</div>
-                </div>
+          <input
+            type="text"
+            placeholder="Pesquisar beneficiário..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            style={{
+              width: "50%",
+              padding: "8px",
+              marginBottom: "10px"
+            }}
+          />
 
-                <input
-                  type="checkbox"
-                  checked={selecionados.includes(b.id)}
-                  onChange={() => toggleSelecionado(b.id)}
-                />
+          {beneficiariosFiltrados.map((b) => (
+            <div key={b.id} className="item-agendamento">
+              <div>
+                <strong>{b.nome}</strong>
+                <div>CPF: {b.cpf}</div>
+                <div>Situação: {b.situacao}</div>
               </div>
-            ))
-          )}
+
+              <input
+                type="checkbox"
+                checked={selecionados.includes(Number(b.id))}
+                onChange={() => toggleSelecionado(b.id)}
+                style={{
+                  transform: "scale(1.5)", 
+                  cursor: "pointer"
+                }}
+              />
+            </div>
+          ))}
         </section>
 
       </div>

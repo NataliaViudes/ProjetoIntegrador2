@@ -129,5 +129,21 @@ public class DAOVincularBeneficiario {
         }
     }
 
+    public boolean apagarPorAgendamento(Integer idAgendamento) {
+
+        String sql = "DELETE FROM vincularbeneficiario WHERE idAgendamento=?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setInt(1, idAgendamento);
+            stmt.executeUpdate();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
+    }
 
 }

@@ -124,4 +124,32 @@ public class VincularBeneficiarioControl {
             return ResponseEntity.badRequest().body(new Erro("Dado inválido"));
     }
 
+    public ResponseEntity<?> apagarPorAgendamento(Integer idAgendamento){
+
+        if(idAgendamento != null && idAgendamento > 0){
+
+            Conexao db = Banco.getConexao();
+
+            try {
+                if (!db.conectar()) {
+                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+                }
+
+                VincularBeneficiario vb = new VincularBeneficiario();
+
+                if(vb.apagarPorAgendamento(db, idAgendamento))
+                    return ResponseEntity.ok(true);
+                else
+                    return ResponseEntity.badRequest().body(new Erro("Erro ao excluir"));
+
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            } finally {
+                db.desconectar();
+            }
+        }
+
+        return ResponseEntity.badRequest().body(new Erro("Id inválido"));
+    }
 }

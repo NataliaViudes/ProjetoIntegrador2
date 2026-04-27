@@ -202,4 +202,24 @@ INSERT INTO beneficiario (
 );
 
 
+CREATE TABLE agendamento_atividade (
+    id_agendamento SERIAL PRIMARY KEY,
 
+    id_atividade INTEGER NOT NULL,
+
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP NOT NULL,
+
+    observacao TEXT,
+
+    CONSTRAINT fk_agendamento_atividade
+        FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
+);
+
+
+ALTER TABLE vincularbeneficiario
+DROP CONSTRAINT fk_vb_agendamento,
+ADD CONSTRAINT fk_vb_agendamento
+FOREIGN KEY (id_agendamento)
+REFERENCES agendamento_atividade(id)
+ON DELETE CASCADE;
