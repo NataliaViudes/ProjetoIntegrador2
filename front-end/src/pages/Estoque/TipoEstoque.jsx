@@ -8,6 +8,7 @@ function TipoEstoque() {
   const [busca, setBusca] = useState("");
   const [tipos, setTipos] = useState([]);
   const [editando, setEditando] = useState(null);
+  const [erro, setErro] = useState(false);
 
   useEffect(() => {
     carregar();
@@ -23,28 +24,31 @@ function TipoEstoque() {
   }
 
   async function salvar() {
-    if (!tipo) {
-      alert("Digite o tipo");
-      return;
-    }
-
-    try {
-      if (editando) {
-        await api.put("/tipo-estoque", {
-          id: editando.id,
-          tipo,
-        });
-      } else {
-        await api.post("/tipo-estoque", { tipo });
-      }
-
-      limpar();
-      carregar();
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao salvar");
-    }
+  if (!tipo) {
+    setErro(true);
+    console.log("aaaaa");
+    return;
   }
+  console.log(tipo);
+  setErro(false);
+
+  try {
+    if (editando) {
+      await api.put("/tipo-estoque", {
+        id: editando.id,
+        tipo,
+      });
+    } else {
+      await api.post("/tipo-estoque", { tipo });
+    }
+
+    limpar();
+    carregar();
+  } catch (e) {
+    console.error(e);
+    alert("Erro ao salvar");
+  }
+}
 
   function editar(item) {
     setEditando(item);
@@ -83,9 +87,14 @@ function TipoEstoque() {
           <h2>Tipo de Estoque</h2>
 
           <label>Categoria</label>
+          
           <input
             value={tipo}
-            onChange={(e) => setTipo(e.target.value)}
+            onChange={(e) => {
+              setTipo(e.target.value);
+              if (erro) setErro(false);
+            }}
+            className={erro ? "input-erro" : ""}
           />
 
           <div className="acoes-formulario">

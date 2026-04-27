@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS ALIMENTO(
-	id_alimento SERIAL,
+	id SERIAL,
 	nome varchar(50),
 	tipo varchar(50),
 	descricao varchar(200),

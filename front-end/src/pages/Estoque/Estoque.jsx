@@ -14,6 +14,12 @@ function Estoque() {
 
   const [editando, setEditando] = useState(null);
 
+  const [erros, setErros] = useState({
+  descricao: false,
+  qtd: false,
+  tipoId: false,
+  });
+
   useEffect(() => {
     carregarTudo();
     carregarTipos();
@@ -39,39 +45,40 @@ function Estoque() {
   }
 
   async function salvar() {
-    if (!descricao || !qtd || !tipoId) {
-      alert("Preencha todos os campos");
-      return;
+  const novosErros = {
+    descricao: !descricao.trim(),
+    qtd: !qtd || qtd < 0,
+    tipoId: !tipoId,
+  };
+
+  setErros(novosErros);
+
+  // se tiver algum erro, para aqui
+  if (Object.values(novosErros).some((e) => e)) return;
+
+  const payload = {
+    descricao,
+    qtd: parseInt(qtd),
+    tipo: { id: parseInt(tipoId) },
+  };
+
+  try {
+    if (editando) {
+      await api.put("/estoque", {
+        id: editando.id,
+        ...payload,
+      });
+    } else {
+      await api.post("/estoque", payload);
     }
 
-    if (qtd < 0) {
-      alert("Quantidade não pode ser negativa");
-      return;
-    }
-
-    const payload = {
-      descricao,
-      qtd: parseInt(qtd),
-      tipo: { id: parseInt(tipoId) },
-    };
-
-    try {
-      if (editando) {
-        await api.put("/estoque", {
-          id: editando.id,
-          ...payload,
-        });
-      } else {
-        await api.post("/estoque", payload);
-      }
-
-      limpar();
-      carregarTudo();
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao salvar");
-    }
+    limpar();
+    carregarTudo();
+  } catch (e) {
+    console.error(e);
+    alert("Erro ao salvar");
   }
+}
 
   function editar(item) {
     setEditando(item);
@@ -118,11 +125,16 @@ function Estoque() {
           <label>Descrição</label>
           <input
             value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+            onChange={(e) => {
+              setDescricao(e.target.value);
+              if (erros.descricao) setErros({ ...erros, descricao: false });
+            }}
+            className={erros.descricao ? "input-erro" : ""}
           />
 
           <label>Quantidade</label>
           <input
+          className={erros.qtd ? "input-erro" : ""}
             type="number"
             min="0"
             value={qtd}
@@ -133,13 +145,19 @@ function Estoque() {
               if (valor < 0) return;
 
               setQtd(valor);
-            }}
+              
+            }
+          }
           />
 
           <label>Categoria</label>
           <select
             value={tipoId}
-            onChange={(e) => setTipoId(e.target.value)}
+            onChange={(e) => {
+              setTipoId(e.target.value);
+              if (erros.tipoId) setErros({ ...erros, tipoId: false });
+            }}
+            className={erros.tipoId ? "input-erro" : ""}
           >
             <option value="">Selecione</option>
             {tipos.map((t) => (

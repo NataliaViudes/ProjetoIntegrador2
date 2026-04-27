@@ -87,6 +87,8 @@ public class AlimentoControl {
 
     public ResponseEntity<?> buscaPorDescricao(String descricao) {
 
+        if(descricao == null)
+            descricao = "";
         Conexao db = Banco.getConexao();
 
         try {

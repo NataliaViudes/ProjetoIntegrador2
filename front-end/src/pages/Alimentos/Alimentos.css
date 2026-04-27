@@ -21,6 +21,11 @@
   gap: 10px;
 }
 
+.input-erro {
+  border: 2px solid red !important;
+  background-color: #ffe6e6;
+}
+
 .grupo-botoes button,
 .acoes-formulario button,
 .botoes-item button {
