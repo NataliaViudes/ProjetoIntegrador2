@@ -16,41 +16,21 @@ public class DAOEvento {
         this.bd = bd;
     }
 
-    // 🔹 INSERT
+    //  INSERT
     public Evento gravar(Evento entidade) {
         String sql = "INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, entidade.getNome());
-
-            if (entidade.getQtd() != null)
-                stmt.setInt(2, entidade.getQtd());
-            else
-                stmt.setNull(2, Types.INTEGER);
-
+            stmt.setInt(2, entidade.getQtd());
             stmt.setString(3, entidade.getLocal());
+            stmt.setInt(4, entidade.getIdCatEvento());
 
-            // 🔥 evita NullPointer
-            if (entidade.getCategoria() != null && entidade.getCategoria().getId() != null)
-                stmt.setInt(4, entidade.getCategoria().getId());
-            else
-                stmt.setNull(4, Types.INTEGER);
-
-            if (entidade.getData() != null)
-                stmt.setDate(5, Date.valueOf(entidade.getData()));
-            else
-                stmt.setNull(5, Types.DATE);
-
-            if (entidade.getHoraInicio() != null)
-                stmt.setTime(6, Time.valueOf(entidade.getHoraInicio()));
-            else
-                stmt.setNull(6, Types.TIME);
-
-            if (entidade.getHoraFim() != null)
-                stmt.setTime(7, Time.valueOf(entidade.getHoraFim()));
-            else
-                stmt.setNull(7, Types.TIME);
+            //  conversão segura
+            stmt.setDate(5, entidade.getData() != null ? Date.valueOf(entidade.getData()) : null);
+            stmt.setTime(6, entidade.getHoraInicio() != null ? Time.valueOf(entidade.getHoraInicio()) : null);
+            stmt.setTime(7, entidade.getHoraFim() != null ? Time.valueOf(entidade.getHoraFim()) : null);
 
             if (entidade.getIdFuncionario() != null)
                 stmt.setInt(8, entidade.getIdFuncionario());
@@ -71,39 +51,21 @@ public class DAOEvento {
             return null;
         }
     }
+
+
     public Evento alterar(Evento entidade) {
         String sql = "UPDATE EVENTO SET nome=?, qtd=?, local=?, id_cat_evento=?, dia=?, hora_inicio=?, hora_fim=?, id_funcionario=? WHERE id=?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, entidade.getNome());
-
-            if (entidade.getQtd() != null)
-                stmt.setInt(2, entidade.getQtd());
-            else
-                stmt.setNull(2, Types.INTEGER);
-
+            stmt.setInt(2, entidade.getQtd());
             stmt.setString(3, entidade.getLocal());
+            stmt.setInt(4, entidade.getIdCatEvento());
 
-            if (entidade.getCategoria() != null && entidade.getCategoria().getId() != null)
-                stmt.setInt(4, entidade.getCategoria().getId());
-            else
-                stmt.setNull(4, Types.INTEGER);
-
-            if (entidade.getData() != null)
-                stmt.setDate(5, Date.valueOf(entidade.getData()));
-            else
-                stmt.setNull(5, Types.DATE);
-
-            if (entidade.getHoraInicio() != null)
-                stmt.setTime(6, Time.valueOf(entidade.getHoraInicio()));
-            else
-                stmt.setNull(6, Types.TIME);
-
-            if (entidade.getHoraFim() != null)
-                stmt.setTime(7, Time.valueOf(entidade.getHoraFim()));
-            else
-                stmt.setNull(7, Types.TIME);
+            stmt.setDate(5, entidade.getData() != null ? Date.valueOf(entidade.getData()) : null);
+            stmt.setTime(6, entidade.getHoraInicio() != null ? Time.valueOf(entidade.getHoraInicio()) : null);
+            stmt.setTime(7, entidade.getHoraFim() != null ? Time.valueOf(entidade.getHoraFim()) : null);
 
             if (entidade.getIdFuncionario() != null)
                 stmt.setInt(8, entidade.getIdFuncionario());
@@ -149,26 +111,7 @@ public class DAOEvento {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-
-                Cat_Evento cat = new Cat_Evento(
-                        rs.getInt("cat_id"),
-                        rs.getString("categoria"),
-                        rs.getString("cat_descricao")
-                );
-
-                Evento e = new Evento(
-                        rs.getInt("id"),
-                        rs.getDate("dia") != null ? rs.getDate("dia").toLocalDate() : null,
-                        rs.getTime("hora_inicio") != null ? rs.getTime("hora_inicio").toLocalTime() : null,
-                        rs.getTime("hora_fim") != null ? rs.getTime("hora_fim").toLocalTime() : null,
-                        rs.getString("nome"),
-                        rs.getString("local"),
-                        rs.getInt("qtd"),
-                        cat,
-                        rs.getObject("id_funcionario") != null ? rs.getInt("id_funcionario") : null
-                );
-
-                lista.add(e);
+                lista.add(mapear(rs));
             }
 
         } catch (SQLException e) {
@@ -192,26 +135,7 @@ public class DAOEvento {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-
-                Cat_Evento cat = new Cat_Evento(
-                        rs.getInt("cat_id"),
-                        rs.getString("categoria"),
-                        rs.getString("cat_descricao")
-                );
-
-                Evento e = new Evento(
-                        rs.getInt("id"),
-                        rs.getDate("dia") != null ? rs.getDate("dia").toLocalDate() : null,
-                        rs.getTime("hora_inicio") != null ? rs.getTime("hora_inicio").toLocalTime() : null,
-                        rs.getTime("hora_fim") != null ? rs.getTime("hora_fim").toLocalTime() : null,
-                        rs.getString("nome"),
-                        rs.getString("local"),
-                        rs.getInt("qtd"),
-                        cat,
-                        rs.getObject("id_funcionario") != null ? rs.getInt("id_funcionario") : null
-                );
-
-                return e;
+                return mapear(rs);
             }
 
         } catch (SQLException e) {
@@ -224,7 +148,12 @@ public class DAOEvento {
     // 🔹 BUSCAR POR NOME
     public List<Evento> buscarPorNome(String nome) {
         List<Evento> lista = new ArrayList<>();
-        String sql = "SELECT * FROM EVENTO WHERE nome ILIKE ? ORDER BY nome ASC";
+        String sql =  "SELECT " +
+                "e.id, e.nome, e.qtd, e.local, e.dia, e.hora_inicio, e.hora_fim, e.id_funcionario, " +
+                "cat.id AS cat_id, cat.categoria, cat.descricao AS cat_descricao " +
+                "FROM evento e " +
+                "JOIN cat_evento cat ON cat.id = e.id_cat_evento " +
+                "WHERE e.nome ILIKE ?  order by e.nome asc";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -245,7 +174,12 @@ public class DAOEvento {
     // 🔹 BUSCAR POR LOCAL
     public List<Evento> buscarPorLocal(String local) {
         List<Evento> lista = new ArrayList<>();
-        String sql = "SELECT * FROM EVENTO WHERE local ILIKE ?  ORDER BY local ASC";
+        String sql = "SELECT " +
+                "e.id, e.nome, e.qtd, e.local, e.dia, e.hora_inicio, e.hora_fim, e.id_funcionario, " +
+                "cat.id AS cat_id, cat.categoria, cat.descricao AS cat_descricao " +
+                "FROM evento e " +
+                "JOIN cat_evento cat ON cat.id = e.id_cat_evento " +
+                "WHERE e.local ILIKE ?  order by e.local asc";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -263,38 +197,25 @@ public class DAOEvento {
         return lista;
     }
 
-    // 🔹 MAPEAMENTO (ResultSet → Objeto)
+    // MAPEAMENTO (ResultSet → Objeto)
     private Evento mapear(ResultSet rs) throws SQLException {
-        Evento e = new Evento();
+        Cat_Evento cat = new Cat_Evento(
+                rs.getInt("cat_id"),
+                rs.getString("categoria"),
+                rs.getString("cat_descricao")
+        );
 
-        e.setId(rs.getInt("id"));
-        e.setNome(rs.getString("nome"));
-
-        int qtd = rs.getInt("qtd");
-        if (!rs.wasNull()) e.setQtd(qtd);
-
-        e.setLocal(rs.getString("local"));
-
-        int catId = rs.getInt("id_cat_evento");
-        if (!rs.wasNull())
-            e.setCategoria(new Cat_Evento(catId));
-
-        Date data = rs.getDate("dia");
-        if (data != null)
-            e.setData(data.toLocalDate());
-
-        Time hi = rs.getTime("hora_inicio");
-        if (hi != null)
-            e.setHoraInicio(hi.toLocalTime());
-
-        Time hf = rs.getTime("hora_fim");
-        if (hf != null)
-            e.setHoraFim(hf.toLocalTime());
-
-        int funcId = rs.getInt("id_funcionario");
-        if (!rs.wasNull())
-            e.setIdFuncionario(funcId);
-
+        Evento e = new Evento(
+                rs.getInt("id"),
+                rs.getDate("dia") != null ? rs.getDate("dia").toLocalDate() : null,
+                rs.getTime("hora_inicio") != null ? rs.getTime("hora_inicio").toLocalTime() : null,
+                rs.getTime("hora_fim") != null ? rs.getTime("hora_fim").toLocalTime() : null,
+                rs.getString("nome"),
+                rs.getString("local"),
+                rs.getInt("qtd"),
+                cat,
+                rs.getObject("id_funcionario") != null ? rs.getInt("id_funcionario") : null
+        );
         return e;
     }
 }

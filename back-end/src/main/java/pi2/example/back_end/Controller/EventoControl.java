@@ -17,58 +17,55 @@ public class EventoControl {
 
     // 🔹 INSERT
     public ResponseEntity<?> incluir(Evento evento) {
-        if (evento.getIdCatEvento() != null && evento.getIdCatEvento() > 0) {
 
-            if (evento.getQtd() != null && evento.getQtd() > 0) {
+        if (evento == null)
+            return ResponseEntity.badRequest().body(new Erro("Evento nulo"));
 
-                if (evento.getNome() != null && !evento.getNome().isEmpty()) {
-
-                    if (evento.getData() != null &&
-                            evento.getHoraInicio() != null &&
-                            evento.getHoraFim() != null &&
-                            evento.getHoraFim().isAfter(evento.getHoraInicio())) {
-
-                        Evento resultado = null;
-                        Conexao db = Banco.getConexao();
-
-                        try {
-                            if (!db.conectar()) {
-                                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                            }
-
-                            resultado = evento.incluir(db);
-                            return ResponseEntity.ok(resultado);
-
-                        } catch (SQLException e) {
-                            System.out.println("Erro SQL: " + e.getMessage());
-                            return ResponseEntity.badRequest().body(new Erro("Erro ao conectar com o banco de dados"));
-
-                        } catch (Exception e) {
-                            System.out.println("Erro geral: " + e.getMessage());
-                            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-                        } finally {
-                            db.desconectar();
-                        }
-
-                    } else {
-                        return ResponseEntity.badRequest().body(new Erro("Data ou horário inválido"));
-                    }
-
-                } else {
-                    return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
-                }
-
-            } else {
-                return ResponseEntity.badRequest().body(new Erro("Quantidade inválida!"));
-            }
-
-        } else {
+        if (evento.getIdCatEvento() == null || evento.getIdCatEvento() <= 0)
             return ResponseEntity.badRequest().body(new Erro("Categoria inválida"));
+
+        if (evento.getQtd() == null || evento.getQtd() <= 0)
+            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
+
+        if (evento.getNome() == null || evento.getNome().isEmpty())
+            return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
+
+        if (evento.getData() == null)
+            return ResponseEntity.badRequest().body(new Erro("Data obrigatória"));
+
+        if (evento.getHoraInicio() == null || evento.getHoraFim() == null)
+            return ResponseEntity.badRequest().body(new Erro("Horário inválido"));
+
+        if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
+            return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
+
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar())
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+
+            Evento resultado = evento.incluir(db);
+
+            if (resultado != null)
+                return ResponseEntity.ok(resultado);
+            else
+                return ResponseEntity.badRequest().body(new Erro("Erro ao inserir evento"));
+
+        } catch (SQLException e) {
+            System.out.println("Erro SQL: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+        } catch (Exception e) {
+            System.out.println("Erro geral: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+        } finally {
+            db.desconectar();
         }
     }
 
-    // 🔹 GET BY ID
+    // GET BY ID
     public ResponseEntity<?> getById(int id) {
         if (id < 0) {
             return ResponseEntity.badRequest().body(new Erro("Id invalido"));
@@ -172,66 +169,60 @@ public class EventoControl {
         }
     }
 
-    // 🔹 UPDATE
+    //  UPDATE
     public ResponseEntity<?> alterar(Evento evento) {
-        if (evento.getId() != null && evento.getId() > 0) {
 
-            if (evento.getIdCatEvento() != null && evento.getIdCatEvento() > 0) {
+        if (evento == null)
+            return ResponseEntity.badRequest().body(new Erro("Evento nulo"));
 
-                if (evento.getQtd() != null && evento.getQtd() > 0) {
+        if (evento.getId() == null || evento.getId() <= 0)
+            return ResponseEntity.badRequest().body(new Erro("Id inválido"));
 
-                    if (evento.getNome() != null && !evento.getNome().isEmpty()) {
+        if (evento.getIdCatEvento() == null || evento.getIdCatEvento() <= 0)
+            return ResponseEntity.badRequest().body(new Erro("Categoria inválida"));
 
-                        if (evento.getData() != null &&
-                                evento.getHoraInicio() != null &&
-                                evento.getHoraFim() != null &&
-                                evento.getHoraFim().isAfter(evento.getHoraInicio())) {
+        if (evento.getQtd() == null || evento.getQtd() <= 0)
+            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
 
-                            Evento resultado = null;
-                            Conexao db = Banco.getConexao();
+        if (evento.getNome() == null || evento.getNome().isEmpty())
+            return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
 
-                            try {
-                                if (!db.conectar()) {
-                                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                                }
+        if (evento.getData() == null)
+            return ResponseEntity.badRequest().body(new Erro("Data obrigatória"));
 
-                                resultado = evento.alterar(db);
-                                return ResponseEntity.ok(resultado);
+        if (evento.getHoraInicio() == null || evento.getHoraFim() == null)
+            return ResponseEntity.badRequest().body(new Erro("Horário inválido"));
 
-                            } catch (SQLException e) {
-                                System.out.println("Erro SQL: " + e.getMessage());
-                                return ResponseEntity.badRequest().body(new Erro("Erro ao conectar com o banco de dados"));
+        if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
+            return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
 
-                            } catch (Exception e) {
-                                System.out.println("Erro geral: " + e.getMessage());
-                                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+        Conexao db = Banco.getConexao();
 
-                            } finally {
-                                db.desconectar();
-                            }
+        try {
+            if (!db.conectar())
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
 
-                        } else {
-                            return ResponseEntity.badRequest().body(new Erro("Data ou horário inválido"));
-                        }
+            Evento resultado = evento.alterar(db);
 
-                    } else {
-                        return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
-                    }
+            if (resultado != null)
+                return ResponseEntity.ok(resultado);
+            else
+                return ResponseEntity.badRequest().body(new Erro("Erro ao alterar evento"));
 
-                } else {
-                    return ResponseEntity.badRequest().body(new Erro("Quantidade inválida!"));
-                }
+        } catch (SQLException e) {
+            System.out.println("Erro SQL: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
 
-            } else {
-                return ResponseEntity.badRequest().body(new Erro("Categoria inválida"));
-            }
+        } catch (Exception e) {
+            System.out.println("Erro geral: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
 
-        } else {
-            return ResponseEntity.badRequest().body(new Erro("Id inválido!"));
+        } finally {
+            db.desconectar();
         }
     }
 
-    // 🔹 DELETE
+    //  DELETE
     public ResponseEntity<?> delete(Integer id) {
         if (id != null && id > 0) {
 
