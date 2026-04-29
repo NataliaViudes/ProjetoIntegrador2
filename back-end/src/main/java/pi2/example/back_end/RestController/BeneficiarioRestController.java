@@ -12,19 +12,16 @@ public class BeneficiarioRestController {
 
     private final BeneficiarioControl controll = new BeneficiarioControl();
 
-    // -------------------- GET ALL --------------------
     @GetMapping
     public ResponseEntity<?> getAll() {
         return controll.getAll();
     }
 
-    // -------------------- GET POR ID --------------------
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable Integer id) {
         return controll.getById(id);
     }
 
-    // -------------------- BUSCAS --------------------
 
     @GetMapping("/nome")
     public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
@@ -42,7 +39,6 @@ public class BeneficiarioRestController {
     }
 
 
-    // -------------------- CRUD --------------------
 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody Beneficiario b) {
