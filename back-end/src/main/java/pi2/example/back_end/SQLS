@@ -1,47 +1,5 @@
 //SQLS ATUALIZADOS
 
-CREATE TABLE IF NOT EXISTS ALIMENTO (
-    id SERIAL,
-    nome varchar(50),
-    tipo varchar(50),
-    descricao varchar(200),
-    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
-);
-
-            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
-            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
-
-CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
-    id SERIAL,
-    tipo varchar(50) NOT NULL,
-    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
-    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
-);
-
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material escolar');
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material fisio');
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material artesanato');
-
-CREATE TABLE IF NOT EXISTS ESTOQUE (
-    id SERIAL,
-    descricao varchar(200),
-    qtd int,
-    id_tipo_estoque int,
-    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
-    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
-);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Caderno 100 folhas', 50, 1);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Caneta azul', 200, 1);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Faixa elástica', 30, 2);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Tinta acrílica', 80, 3);
 
 CREATE TABLE categoria (
     id_categoria SERIAL,
@@ -266,3 +224,49 @@ ADD CONSTRAINT fk_vb_agendamento
 FOREIGN KEY (id_agendamento)
 REFERENCES agendamento_atividade(id)
 ON DELETE CASCADE;
+
+
+
+
+CREATE TABLE IF NOT EXISTS ALIMENTO (
+    id SERIAL,
+    nome varchar(50),
+    tipo varchar(50),
+    descricao varchar(200),
+    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
+);
+
+            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
+            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
+
+CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
+    id SERIAL,
+    tipo varchar(50) NOT NULL,
+    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
+    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
+);
+
+            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material escolar');
+            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material fisio');
+            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material artesanato');
+
+CREATE TABLE IF NOT EXISTS ESTOQUE (
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque int,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
+);
+
+            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+            VALUES ('Caderno 100 folhas', 50, 1);
+
+            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+            VALUES ('Caneta azul', 200, 1);
+
+            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+            VALUES ('Faixa elástica', 30, 2);
+
+            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
+            VALUES ('Tinta acrílica', 80, 3);
