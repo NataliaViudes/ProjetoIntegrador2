@@ -55,8 +55,6 @@ CREATE TABLE funcionario (
     CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
 );
 
-
-
 CREATE TABLE beneficiario (
     id SERIAL,
 
@@ -124,6 +122,154 @@ CREATE TABLE prescricao(
         FOREIGN KEY (idRemedio)
         REFERENCES remedio(id)
 );
+
+
+CREATE TABLE vincularbeneficiario (
+    idAgendamento INT NOT NULL,
+    idBeneficiario INT NOT NULL,
+
+    CONSTRAINT pk_vb_agendamento PRIMARY KEY (idAgendamento, idBeneficiario),
+
+    CONSTRAINT fk_vb_agendamento
+        FOREIGN KEY (idAgendamento)
+        REFERENCES AgendamentoAtividade(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_vb_beneficiario
+        FOREIGN KEY (idBeneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS ALIMENTO (
+    id SERIAL,
+    nome varchar(50),
+    tipo varchar(50),
+    descricao varchar(200),
+    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
+    id SERIAL,
+    tipo varchar(50) NOT NULL,
+    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
+    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
+);
+
+
+CREATE TABLE IF NOT EXISTS ESTOQUE (
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque int,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
+);
+
+
+CREATE TABLE cardapio (
+    id SERIAL,
+    descricao VARCHAR(255),
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    quantidade INTEGER,
+
+    id_alimento INTEGER NOT NULL,
+    id_agendamento INTEGER NOT NULL,
+
+    CONSTRAINT pk_cardapio PRIMARY KEY (id),
+
+    CONSTRAINT fk_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id),
+
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento)
+);
+
+CREATE TABLE IF NOT EXISTS EVENTO(
+    id SERIAL,
+    nome varchar(50) not null,
+    qtd int not null,
+    local varchar(200),
+    id_cat_evento int not null,
+    dia DATE,
+    hora_inicio TIME,
+    hora_fim TIME,
+    id_funcionario INT,
+
+    CONSTRAINT PK_Evento PRIMARY KEY (id),
+    CONSTRAINT FK_Evento_Cat_evento FOREIGN KEY (id_cat_evento) REFERENCES CAT_EVENTO(id),
+    CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
+);
+
+CREATE TABLE IF NOT EXISTS Itens_Evento(
+	id_evento int,
+	id_estoque int,
+	qtd int not  null,
+	CONSTRAINT PK_ITENS_EVENTO PRIMARY KEY (id_evento,id_estoque),
+	CONSTRAINT FK_ITENS_EVENTO_Estoque FOREIGN KEY (id_estoque) REFERENCES ESTOQUE(id),
+	CONSTRAINT FK_ITENS_EVENTO_Evento FOREIGN KEY (id_evento) REFERENCES Evento(id)
+);
+
+
+
+
+
+
+
+
+
+-----------------------------------------
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('TESTE BANCO AGORA', 10, 'Sala Teste', 1, '2026-04-29', '09:00:00', '10:00:00', 1);
+
+-- Evento 1
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Reunião Pedagógica', 20, 'Sala 1', 1, '2026-05-10', '08:00:00', '10:00:00', 1);
+
+-- Evento 2
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Aula de Música', 15, 'Sala de Música', 2, '2026-05-10', '10:30:00', '12:00:00', 2);
+
+-- Evento 3
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Treino Esportivo', 25, 'Quadra', 3, '2026-05-11', '14:00:00', '16:00:00', 3);
+
+-- Evento 4
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Oficina de Artes', 10, 'Sala de Artes', 2, '2026-05-12', '09:00:00', '11:30:00', 1);
+
+-- Evento 5
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Palestra Educativa', 50, 'Auditório', 1, '2026-05-13', '19:00:00', '21:00:00', 2);
+
+
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião','Todos os funcionarios presentes');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião PAIF','Todos os funcionarios presentes menos o Savoldi');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião Socioeducativa','Venham todos');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa de Carnaval');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa Junina');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Palestra','Palestra sobre o meio ambiente');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa de Carnaval','Venha curtir o Carnaval ak no Cras');
+INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Caderno 100 folhas', 50, 1);
+
+INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Caneta azul', 200, 1);
+
+INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Faixa elástica', 30, 2);
+
+INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Tinta acrílica', 80, 3);
+
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material escolar');
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material fisio');
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material artesanato');
+
+
+INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
+INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
 
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
@@ -210,96 +356,4 @@ INSERT INTO beneficiario (
     '33344455566', '44444444444', 1700.90, 'Rua F, 600',
     'Jardim das Flores', 'Casa', '18993334444', '18994445555',
     '18995556666', 'Lactose', 'Suplementação', 'Natação', 'Acompanhamento'
-);
-
-CREATE TABLE vincularbeneficiario (
-    idAgendamento INTEGER,
-    idBeneficiario INTEGER,
-
-
-    CONSTRAINT pk_vb_agendamento
-        primary KEY (idAgendamento,idBeneficiario),
-
-    CONSTRAINT fk_vb_agendamento
-        FOREIGN KEY (idAgendamento)
-        REFERENCES agendamento_atividade(id_agendamento),
-
-    CONSTRAINT fk_vb_beneficiario
-        FOREIGN KEY (idBeneficiario)
-        REFERENCES beneficiario(id)
-);
-
-ALTER TABLE vincularbeneficiario
-DROP CONSTRAINT fk_vb_agendamento,
-ADD CONSTRAINT fk_vb_agendamento
-FOREIGN KEY (id_agendamento)
-REFERENCES agendamento_atividade(id)
-ON DELETE CASCADE;
-
-
-----------------------------
-
-CREATE TABLE IF NOT EXISTS ALIMENTO (
-    id SERIAL,
-    nome varchar(50),
-    tipo varchar(50),
-    descricao varchar(200),
-    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
-);
-
-            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
-            INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
-
-CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
-    id SERIAL,
-    tipo varchar(50) NOT NULL,
-    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
-    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
-);
-
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material escolar');
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material fisio');
-            INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material artesanato');
-
-CREATE TABLE IF NOT EXISTS ESTOQUE (
-    id SERIAL,
-    descricao varchar(200),
-    qtd int,
-    id_tipo_estoque int,
-    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
-    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
-);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Caderno 100 folhas', 50, 1);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Caneta azul', 200, 1);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Faixa elástica', 30, 2);
-
-            INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
-            VALUES ('Tinta acrílica', 80, 3);
-
-
-CREATE TABLE cardapio (
-    id SERIAL,
-    descricao VARCHAR(255),
-    data DATE NOT NULL,
-    hora TIME NOT NULL,
-    quantidade INTEGER,
-
-    id_alimento INTEGER NOT NULL,
-    id_agendamento INTEGER NOT NULL,
-
-    CONSTRAINT pk_cardapio PRIMARY KEY (id),
-
-    CONSTRAINT fk_cardapio_alimento
-        FOREIGN KEY (id_alimento)
-        REFERENCES alimento(id),
-
-    CONSTRAINT fk_cardapio_agendamento
-        FOREIGN KEY (id_agendamento)
-        REFERENCES agendamento_atividade(id_agendamento)
 );
