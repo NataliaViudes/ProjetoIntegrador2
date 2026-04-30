@@ -8,7 +8,8 @@ import Agendamentos from "./pages/Agendamentos/Agendamentos";
 import Vincular from "./pages/VincularBeneficiario/VincularBeneficiario"
 import TipoEstoque from "./pages/Estoque/TipoEstoque";
 import Estoque from "./pages/Estoque/Estoque";
-import PaginaInicial from "./pages/PaginaInicial";
+import Cardapio from "./pages/CardapioMensal/Cardapio";
+import PaginaInicial from "./pages/PaginaInicial/PaginaInicial";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/vincular" element={<Vincular />} />
         <Route path="/tipo-estoque" element={<TipoEstoque />} />
         <Route path="/estoque" element={<Estoque />} />
+        <Route path="/cardapio" element={<Cardapio />} />
         <Route path="/pagina-inicial" element={<PaginaInicial />} />
       </Routes>
     </BrowserRouter>

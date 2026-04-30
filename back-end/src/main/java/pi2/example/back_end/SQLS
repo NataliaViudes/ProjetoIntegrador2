@@ -214,6 +214,22 @@ CREATE TABLE agendamento_atividade (
         FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
 );
 
+CREATE TABLE vincularbeneficiario (
+    idAgendamento INTEGER,
+    idBeneficiario INTEGER,
+
+
+    CONSTRAINT pk_vb_agendamento
+        primary KEY (idAgendamento,idBeneficiario),
+
+    CONSTRAINT fk_vb_agendamento
+        FOREIGN KEY (idAgendamento)
+        REFERENCES agendamento_atividade(id_agendamento),
+
+    CONSTRAINT fk_vb_beneficiario
+        FOREIGN KEY (idBeneficiario)
+        REFERENCES beneficiario(id)
+);
 
 ALTER TABLE vincularbeneficiario
 DROP CONSTRAINT fk_vb_agendamento,
@@ -267,3 +283,25 @@ CREATE TABLE IF NOT EXISTS ESTOQUE (
 
             INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque)
             VALUES ('Tinta acrílica', 80, 3);
+
+
+CREATE TABLE cardapio (
+    id SERIAL,
+    descricao VARCHAR(255),
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    quantidade INTEGER,
+
+    id_alimento INTEGER NOT NULL,
+    id_agendamento INTEGER NOT NULL,
+
+    CONSTRAINT pk_cardapio PRIMARY KEY (id),
+
+    CONSTRAINT fk_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id),
+
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento)
+);

@@ -104,11 +104,11 @@ public class CardapioDAO {
 
                 return c;
             }
-
         } catch (SQLException e) {}
 
         return null;
     }
+
 
     public List<Cardapio> getAll() {
         List<Cardapio> lista = new ArrayList<>();

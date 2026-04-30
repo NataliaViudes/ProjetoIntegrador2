@@ -41,7 +41,9 @@ function Menu() {
           <button type="button">Agendador</button>
 
           <div className="dropdown-conteudo">
-            <Link to="/agendamentos">Calendário</Link>
+            <Link to="/agendamentos">Agendamentos</Link>
+            <Link to="/cardapio">Cardapio</Link>
+
           </div>
         </div>
 

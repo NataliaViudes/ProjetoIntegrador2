@@ -30,7 +30,6 @@ public class CardapioControl {
             if (!db.conectar())
                 throw new Exception();
 
-            // 🔥 VALIDAÇÃO PRINCIPAL
             AgendamentoAtividade ag = new AgendamentoAtividade()
                     .buscarPorId(cardapio.getAgendamento().getId(), db);
 
