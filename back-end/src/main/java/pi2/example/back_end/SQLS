@@ -1,6 +1,3 @@
-//SQLS ATUALIZADOS
-
-
 CREATE TABLE categoria (
     id_categoria SERIAL,
     nome VARCHAR(100) NOT NULL,
@@ -106,13 +103,13 @@ CREATE TABLE prescricao(
 
     CONSTRAINT pk_prescricao PRIMARY KEY (id),
 
-    CONSTRAINT fk_prescricao
-            FOREIGN KEY (idBeneficiario)
-            REFERENCES beneficiario(id)
+    CONSTRAINT fk_prescricao_beneficiario
+        FOREIGN KEY (idBeneficiario)
+        REFERENCES beneficiario(id),
 
-    CONSTRAINT fk_prescricao
-                FOREIGN KEY (idRemedio)
-                REFERENCES remedio(id)
+    CONSTRAINT fk_prescricao_remedio
+        FOREIGN KEY (idRemedio)
+        REFERENCES remedio(id)
 );
 
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
@@ -226,7 +223,7 @@ REFERENCES agendamento_atividade(id)
 ON DELETE CASCADE;
 
 
-
+----------------------------
 
 CREATE TABLE IF NOT EXISTS ALIMENTO (
     id SERIAL,
