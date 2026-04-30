@@ -6,6 +6,34 @@ CREATE TABLE categoria (
     CONSTRAINT un_categoria_nome UNIQUE (nome)
 );
 
+CREATE TABLE atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+CREATE TABLE AgendamentoAtividade (
+    id SERIAL PRIMARY KEY,
+    atividade_id INT NOT NULL,
+    dataInicio TIMESTAMP NOT NULL,
+    dataFim TIMESTAMP,
+    observacao TEXT,
+    CONSTRAINT fk_atividade
+        FOREIGN KEY (atividade_id)
+        REFERENCES Atividade(id_atividade)
+        ON DELETE CASCADE
+);
 CREATE TABLE funcionario (
     id_funcionario SERIAL,
     nome VARCHAR(100) NOT NULL,
@@ -27,22 +55,7 @@ CREATE TABLE funcionario (
     CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
 );
 
-CREATE TABLE atividade (
-    id_atividade SERIAL,
-    descricao VARCHAR(255) NOT NULL,
-    id_categoria INTEGER NOT NULL,
-    id_funcionario INTEGER NOT NULL,
 
-    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
-
-    CONSTRAINT fk_atividade_categoria
-        FOREIGN KEY (id_categoria)
-        REFERENCES categoria(id_categoria),
-
-    CONSTRAINT fk_atividade_funcionario
-        FOREIGN KEY (id_funcionario)
-        REFERENCES funcionario(id_funcionario)
-);
 
 CREATE TABLE beneficiario (
     id SERIAL,
@@ -197,21 +210,6 @@ INSERT INTO beneficiario (
     '33344455566', '44444444444', 1700.90, 'Rua F, 600',
     'Jardim das Flores', 'Casa', '18993334444', '18994445555',
     '18995556666', 'Lactose', 'Suplementação', 'Natação', 'Acompanhamento'
-);
-
-
-CREATE TABLE agendamento_atividade (
-    id_agendamento SERIAL PRIMARY KEY,
-
-    id_atividade INTEGER NOT NULL,
-
-    data_inicio TIMESTAMP NOT NULL,
-    data_fim TIMESTAMP NOT NULL,
-
-    observacao TEXT,
-
-    CONSTRAINT fk_agendamento_atividade
-        FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
 );
 
 CREATE TABLE vincularbeneficiario (
