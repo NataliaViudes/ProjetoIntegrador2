@@ -81,7 +81,9 @@ public class DAOItensEvento {
         String sql = "SELECT " +
                 "e.id AS evento_id, " +
                 "e.nome, " +
+                "e.local, " +
                 "e.dia, " +
+                "e.qtd AS qtd_evento, " +
                 "e.hora_inicio, " +
                 "e.hora_fim, " +
                 "e.id_funcionario, " +
@@ -93,8 +95,9 @@ public class DAOItensEvento {
                 "item.qtd AS item_qtd, " +
 
                 "est.id AS estoque_id, " +
+                "est.qtd as estoque_qtd, " +
                 "est.descricao AS estoque_descricao, " +
-
+                "te.id as tipo_estoque_id," +
                 "te.tipo " +
 
                 "FROM evento e " +
@@ -115,7 +118,7 @@ public class DAOItensEvento {
                 Cat_Evento cat = new Cat_Evento(
                         rs.getInt("cat_id"),
                         rs.getString("categoria"),
-                        rs.getString("descricao")
+                        rs.getString("cat_descricao")
                 );
 
 
@@ -125,19 +128,22 @@ public class DAOItensEvento {
                         rs.getTime("hora_inicio").toLocalTime(),
                         rs.getTime("hora_fim").toLocalTime(),
                         rs.getString("nome"),
-                        null, // local não veio no select
-                        null, // qtd não veio no select
+                        rs.getString("local"),
+                        rs.getInt("qtd_evento"),
                         cat,
-                        null  // idFuncionario não veio
+                        rs.getInt("id_funcionario")
                 );
 
                 TipoEstoque tipo = new TipoEstoque();
                 tipo.setTipo(rs.getString("tipo"));
+                tipo.setId(rs.getInt("tipo_estoque_id"));
 
 
                 Estoque est = new Estoque();
                 est.setId(rs.getInt("estoque_id"));
+                est.setQtd(rs.getInt("estoque_qtd"));
                 est.setDescricao(rs.getString("estoque_descricao"));
+
                 est.setTipo(tipo);
 
 

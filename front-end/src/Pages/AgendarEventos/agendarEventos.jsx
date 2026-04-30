@@ -20,6 +20,7 @@ function Eventos() {
   const [qtd, setQtd] = useState("");
   const [idCatEvento, setIdCatEvento] = useState("");
   const [idFuncionario, setIdFuncionario] = useState("");
+
   const [categorias, setCategorias] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
 
@@ -33,50 +34,58 @@ function Eventos() {
   }, []);
 
   async function carregarTudo() {
-  try {
-    // const [respEventos, respCategorias, respFuncionarios] = await Promise.all([
-    //   api.get("/eventos/nome"),
-    //   api.get("/cat-eventos/categoria"),
-    //   api.get("/funcionarios")
-    // ]);
+    try {
+      const [respEventos, respCategorias] = await Promise.all([
+        api.get("/evento/nome"),
+        api.get("/cat-eventos/categoria"),
+      ]);
 
-    const [respEventos, respCategorias, ] = await Promise.all([
-      api.get("/eventos/nome"),
-      api.get("/cat-eventos/categoria"),
-    ]);
-
-    setEventosApi(Array.isArray(respEventos.data) ? respEventos.data : []);
-    setCategorias(Array.isArray(respCategorias.data) ? respCategorias.data : []);
-
-    console.log(respEventos);
-    console.log(respCategorias);
-    
-    
-   // setFuncionarios(Array.isArray(respFuncionarios.data) ? respFuncionarios.data : []);
-  } catch (e) {
-    console.error("Erro ao carregar dados:", e);
+      setEventosApi(Array.isArray(respEventos.data) ? respEventos.data : []);
+      setCategorias(
+        Array.isArray(respCategorias.data) ? respCategorias.data : [],
+      );
+    } catch (e) {
+      console.error("Erro ao carregar dados:", e);
+    }
   }
-}
 
+  // 🔄 BACK → FRONT (calendar)
   const eventos = useMemo(() => {
-    return eventosApi.map((ev) => ({
-      id: ev.id,
-      title: `${ev.nome} (Func: ${ev.idFuncionario})`,
-      start: new Date(ev.dataInicio),
-      end: new Date(ev.dataFim),
-      resource: ev
-    }));
+    return eventosApi
+      .map((ev) => {
+        if (!ev.data || !ev.horaInicio || !ev.horaFim) return null;
+
+        const [ano, mes, dia] = ev.data.split("-").map(Number);
+        const [hIni, mIni] = ev.horaInicio.split(":").map(Number);
+        const [hFim, mFim] = ev.horaFim.split(":").map(Number);
+
+        const inicio = new Date(ano, mes - 1, dia, hIni, mIni);
+        const fim = new Date(ano, mes - 1, dia, hFim, mFim);
+
+        return {
+          id: ev.id,
+          title: ev.nome,
+          start: inicio,
+          end: fim,
+          resource: ev,
+        };
+      })
+      .filter(Boolean); // remove null
   }, [eventosApi]);
 
-  function formatarDatetimeLocal(valor) {
-    const d = new Date(valor);
-    const ano = d.getFullYear();
-    const mes = String(d.getMonth() + 1).padStart(2, "0");
-    const dia = String(d.getDate()).padStart(2, "0");
-    const hora = String(d.getHours()).padStart(2, "0");
-    const minuto = String(d.getMinutes()).padStart(2, "0");
+  // 🔄 FRONT → BACK
+  function separarDataHora(datetime) {
+    const d = new Date(datetime);
 
-    return `${ano}-${mes}-${dia}T${hora}:${minuto}`;
+    const data = d.toISOString().split("T")[0];
+    const hora = d.toTimeString().split(" ")[0];
+
+    return { data, hora };
+  }
+
+  function juntarDataHora(data, hora) {
+    if (!data || !hora) return "";
+    return `${data}T${hora.substring(0, 5)}`;
   }
 
   function limparFormulario() {
@@ -91,30 +100,35 @@ function Eventos() {
   }
 
   async function salvar() {
-    if (!nome || !dataInicio || !dataFim || !local || !qtd || !idCatEvento || !idFuncionario) {
-      alert("Preencha nome, data inicial e final, local, quantidade, categoria e funcionario.");
+    if (!nome || !dataInicio || !dataFim || !local || !qtd || !idCatEvento) {
+      alert("Preencha todos os campos.");
       return;
     }
 
+    const inicio = separarDataHora(dataInicio);
+    const fim = separarDataHora(dataFim);
+
     const payload = {
+      id: eventoEditando?.id || null,
       nome,
-      dataInicio,
-      dataFim,
       local,
       qtd: Number(qtd),
-      idCatEvento: Number(idCatEvento),
-      idFuncionario: Number(idFuncionario)
+      data: inicio.data,
+      horaInicio: inicio.hora,
+      horaFim: fim.hora,
+      categoria: { id: Number(idCatEvento) },
+      idFuncionario: idFuncionario ? Number(idFuncionario) : null,
     };
 
     try {
       if (eventoEditando) {
-        await api.put(`/eventos/${eventoEditando.id}`, payload);
+        await api.put("/evento", payload);
       } else {
-        await api.post("/eventos", payload);
+        await api.post("/evento", payload);
       }
 
       limparFormulario();
-      //carregarEventos();
+      carregarTudo();
     } catch (e) {
       console.error("Erro ao salvar evento:", e);
       alert("Erro ao salvar evento.");
@@ -124,28 +138,26 @@ function Eventos() {
   function editar(ev) {
     setEventoEditando(ev);
     setNome(ev.nome || "");
-    setDataInicio(formatarDatetimeLocal(ev.dataInicio));
-    setDataFim(formatarDatetimeLocal(ev.dataFim));
+    setDataInicio(juntarDataHora(ev.data, ev.horaInicio));
+    setDataFim(juntarDataHora(ev.data, ev.horaFim));
     setLocal(ev.local || "");
     setQtd(ev.qtd || "");
-    setIdCatEvento(ev.idCatEvento || "");
+    setIdCatEvento(ev.categoria?.id || "");
     setIdFuncionario(ev.idFuncionario || "");
   }
 
   async function excluir(id) {
-    console.log(id);
-    
     const confirmou = window.confirm("Deseja excluir este evento?");
     if (!confirmou) return;
 
     try {
-      await api.delete(`/eventos/${id}`);
+      await api.delete(`/evento/${id}`);
 
       if (eventoEditando && eventoEditando.id === id) {
         limparFormulario();
       }
 
-      //carregarEventos();
+      carregarTudo();
     } catch (e) {
       console.error("Erro ao excluir evento:", e);
       alert("Erro ao excluir evento.");
@@ -157,8 +169,18 @@ function Eventos() {
   }
 
   function selecionarSlot(slotInfo) {
-    setDataInicio(formatarDatetimeLocal(slotInfo.start));
-    setDataFim(formatarDatetimeLocal(slotInfo.end));
+    setDataInicio(
+      juntarDataHora(
+        slotInfo.start.toISOString().split("T")[0],
+        slotInfo.start.toTimeString().split(" ")[0],
+      ),
+    );
+    setDataFim(
+      juntarDataHora(
+        slotInfo.end.toISOString().split("T")[0],
+        slotInfo.end.toTimeString().split(" ")[0],
+      ),
+    );
   }
 
   return (
@@ -173,24 +195,25 @@ function Eventos() {
           <input value={nome} onChange={(e) => setNome(e.target.value)} />
 
           <label>Categoria do evento</label>
-            <select value={idCatEvento} onChange={(e) => setIdCatEvento(e.target.value)}>
+          <select
+            value={idCatEvento}
+            onChange={(e) => setIdCatEvento(e.target.value)}
+          >
             <option value="">Selecione a categoria</option>
             {categorias.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+              <option key={cat.id} value={cat.id}>
                 {cat.descricao}
-                </option>
+              </option>
             ))}
-            </select>
+          </select>
 
           <label>Funcionário</label>
-            <select value={idFuncionario} onChange={(e) => setIdFuncionario(e.target.value)}>
-            <option value="">Selecione o funcionário</option>
-            {funcionarios.map((func) => (
-                <option key={func.id} value={func.id}>
-                {func.nome}
-                </option>
-            ))}
-            </select>
+          <input
+            type="number"
+            value={idFuncionario}
+            onChange={(e) => setIdFuncionario(e.target.value)}
+            placeholder="ID do funcionário"
+          />
 
           <label>Data e hora inicial</label>
           <input
@@ -237,30 +260,26 @@ function Eventos() {
               <p>Nenhum evento cadastrado.</p>
             ) : (
               eventosApi.map((ev) => {
-
-                const nomeCategoria = categorias.find(c => c.id === ev.idCatEvento)?.descricao;
-                const nomeFuncionario = funcionarios.find(f => f.id === ev.idFuncionario)?.nome;
-
                 return (
-                <div key={ev.id} className="item-agendamento">
-                  <div>
-                    <strong>{ev.nome}</strong>
-                    <div>Categoria: {nomeCategoria || ev.idCatEvento}</div>
-                    <div>Funcionário: {nomeFuncionario || ev.idFuncionario}</div>
-                    <div>Local: {ev.local}</div>
-                    <div>Qtd: {ev.qtd}</div>
+                  <div key={ev.id} className="item-agendamento">
                     <div>
-                      {new Date(ev.dataInicio).toLocaleString()} -{" "}
-                      {new Date(ev.dataFim).toLocaleString()}
+                      <strong>{ev.nome}</strong>
+                      <div>Categoria: {ev.categoria?.descricao}</div>
+                      <div>Funcionário: {ev.idFuncionario}</div>
+                      <div>Local: {ev.local}</div>
+                      <div>Qtd: {ev.qtd}</div>
+                      <div>
+                        {ev.data} {ev.horaInicio} - {ev.horaFim}
+                      </div>
+                    </div>
+
+                    <div className="acoes-item">
+                      <button onClick={() => editar(ev)}>Editar</button>
+                      <button onClick={() => excluir(ev.id)}>Excluir</button>
                     </div>
                   </div>
-
-                  <div className="acoes-item">
-                    <button onClick={() => editar(ev)}>Editar</button>
-                    <button onClick={() => excluir(ev.id)}>Excluir</button>
-                  </div>
-                </div>
-              )})
+                );
+              })
             )}
           </div>
         </section>
@@ -293,7 +312,7 @@ function Eventos() {
               time: "Hora",
               event: "Evento",
               noEventsInRange: "Nenhum evento neste período",
-              allDay: "Dia inteiro"
+              allDay: "Dia inteiro",
             }}
             style={{ height: "80vh" }}
           />
@@ -304,4 +323,3 @@ function Eventos() {
 }
 
 export default Eventos;
-

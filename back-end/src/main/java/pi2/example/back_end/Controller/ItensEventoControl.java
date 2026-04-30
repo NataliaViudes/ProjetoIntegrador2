@@ -10,6 +10,7 @@ import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItensEventoControl {
@@ -153,9 +154,9 @@ public class ItensEventoControl {
             if (!db.conectar())
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
 
-            DAOItensEvento dao = new DAOItensEvento(db);
-            List<ItensEvento> lista = dao.getPorIdEvento(idEvento);
-
+            ItensEvento it = new ItensEvento();
+            List<ItensEvento> lista = new ArrayList<ItensEvento>();
+            lista = it.buscarItensDoEvento(db,idEvento);
             if (lista != null && !lista.isEmpty())
                 return ResponseEntity.ok(lista);
             else

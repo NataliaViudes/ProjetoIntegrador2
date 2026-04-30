@@ -100,25 +100,28 @@ CREATE TABLE IF NOT EXISTS EVENTO(
     CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
 );
 
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('TESTE BANCO AGORA', 10, 'Sala Teste', 1, '2026-04-29', '09:00:00', '10:00:00', 1);
 
-INSERT INTO EVENTO
-(nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES
-('Bola de Futebol', 20, 'Depósito A', 1, '2026-05-10', '08:00', '12:00', 1),
+-- Evento 1
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Reunião Pedagógica', 20, 'Sala 1', 1, '2026-05-10', '08:00:00', '10:00:00', 1);
 
-('Cone de Treino', 50, 'Depósito B', 2, '2026-05-11', '09:00', '11:30', 2),
+-- Evento 2
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Aula de Música', 15, 'Sala de Música', 2, '2026-05-10', '10:30:00', '12:00:00', 2);
 
-('Corda de Pular', 30, 'Sala 1', 1, '2026-05-12', '14:00', '16:00', 3),
+-- Evento 3
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Treino Esportivo', 25, 'Quadra', 3, '2026-05-11', '14:00:00', '16:00:00', 3);
 
-('Colchonete', 15, 'Sala 2', 3, '2026-05-13', '07:30', '10:00', 4),
+-- Evento 4
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Oficina de Artes', 10, 'Sala de Artes', 2, '2026-05-12', '09:00:00', '11:30:00', 1);
 
-('Apito', 10, 'Depósito A', 2, '2026-05-14', '13:00', '15:00', 5),
-
-('Rede de Vôlei', 5, 'Quadra', 1, '2026-05-15', '08:00', '11:00', 6),
-
-('Bola de Basquete', 12, 'Depósito C', 1, '2026-05-16', '10:00', '12:00', 7),
-
-('Cronômetro', 8, 'Sala 3', 3, '2026-05-17', '15:00', '17:30', 8);
+-- Evento 5
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Palestra Educativa', 50, 'Auditório', 1, '2026-05-13', '19:00:00', '21:00:00', 2);
 
 
 CREATE TABLE IF NOT EXISTS Itens_Evento(
@@ -129,6 +132,10 @@ CREATE TABLE IF NOT EXISTS Itens_Evento(
 	CONSTRAINT FK_ITENS_EVENTO_Estoque FOREIGN KEY (id_estoque) REFERENCES ESTOQUE(id),
 	CONSTRAINT FK_ITENS_EVENTO_Evento FOREIGN KEY (id_evento) REFERENCES Evento(id)
 );
+
+
+
+
 
 
 
