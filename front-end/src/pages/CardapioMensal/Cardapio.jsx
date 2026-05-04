@@ -1,22 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu";
-import "../Alimentos/Alimentos.css";    
+import "../Agendamentos/Agendamentos.css";
+
+import ItensCardapio from "./ItensCardapio";
+
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "moment/locale/pt-br";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+moment.locale("pt-br");
+const localizer = momentLocalizer(moment);
 
 function Cardapio() {
-  const [cardapios, setCardapios] = useState([]);
-  const [alimentos, setAlimentos] = useState([]);
+  const [modo, setModo] = useState("lista");
+  const [cardapioSelecionado, setCardapioSelecionado] = useState(null);
+
+  const [cardapio, setCardapio] = useState([]);
   const [agendamentos, setAgendamentos] = useState([]);
 
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
-  const [quantidade, setQuantidade] = useState("");
+  const [idAgendamento, setIdAgendamento] = useState("");
 
-  const [alimentoId, setAlimentoId] = useState("");
-  const [agendamentoId, setAgendamentoId] = useState("");
+  const [cardapioEditando, setCardapioEditando] = useState(null);
 
-  const [editando, setEditando] = useState(null);
+  const [dataAtual, setDataAtual] = useState(new Date());
+  const [viewAtual, setViewAtual] = useState("month");
 
   useEffect(() => {
     carregarTudo();
@@ -24,80 +36,139 @@ function Cardapio() {
 
   async function carregarTudo() {
     try {
-      const [respCardapio, respAlimentos, respAgendamentos] =
-        await Promise.all([
-          api.get("/cardapio"),
-          api.get("/alimentos"),
-          api.get("/agendamentos"),
-        ]);
+      const [respCardapio, respAgendamentos] = await Promise.all([
+        api.get("/cardapio"),
+        api.get("/agendamentos"),
+      ]);
 
-      setCardapios(respCardapio.data || []);
-      setAlimentos(respAlimentos.data || []);
-      setAgendamentos(respAgendamentos.data || []);
+      setCardapio(Array.isArray(respCardapio.data) ? respCardapio.data : []);
+      setAgendamentos(Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []);
     } catch (e) {
-      console.error("Erro ao carregar dados:", e);
+      console.error("Erro ao carregar:", e);
     }
   }
 
-  function limpar() {
+  function onlyDate(date) {
+    return moment(date).format("YYYY-MM-DD");
+  }
+
+  const atividadesDia = useMemo(() => {
+    if (!data) return [];
+
+    return agendamentos.filter((ag) => {
+      return onlyDate(ag.dataInicio) === data;
+    });
+  }, [data, agendamentos]);
+
+  const eventosCardapio = useMemo(() => {
+    return cardapio.map((c) => {
+      const dataHora = new Date(`${c.data}T${c.hora}`);
+
+      return {
+        id: c.id,
+        title: `${c.descricao} (${c.agendamento?.atividade?.descricao || "Sem atividade"})`,
+        start: dataHora,
+        end: new Date(dataHora.getTime() + 60 * 60 * 1000),
+        resource: c,
+        tipo: "cardapio",
+      };
+    });
+  }, [cardapio]);
+
+  const eventosAtividades = useMemo(() => {
+    return agendamentos.map((ag) => ({
+      id: `ag-${ag.id}`,
+      title: ` ${ag.atividade?.descricao || "Atividade"}`,
+      start: new Date(ag.dataInicio),
+      end: new Date(ag.dataFim),
+      resource: ag,
+      tipo: "atividade",
+    }));
+  }, [agendamentos]);
+
+  const eventosCalendario = useMemo(() => {
+    return [...eventosAtividades, ...eventosCardapio].sort(
+      (a, b) => new Date(a.start) - new Date(b.start)
+    );
+  }, [eventosAtividades, eventosCardapio]);
+
+  function formatDate(date) {
+    return moment(date).format("YYYY-MM-DD");
+  }
+
+  function limparFormulario() {
+    setCardapioEditando(null);
     setDescricao("");
     setData("");
     setHora("");
-    setQuantidade("");
-    setAlimentoId("");
-    setAgendamentoId("");
-    setEditando(null);
+    setIdAgendamento("");
   }
 
   async function salvar() {
-    if (!descricao || !data || !hora) {
-      alert("Preencha descrição, data e hora.");
+    if (!descricao || !data || !hora || !idAgendamento) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    if (atividadesDia.length === 0) {
+      alert("Não existe atividade neste dia.");
       return;
     }
 
     const payload = {
+      id: cardapioEditando?.id || null,
       descricao,
       data,
       hora,
-      quantidade: Number(quantidade),
-      alimento: { id: Number(alimentoId) },
-      agendamento: { id: Number(agendamentoId) },
+      agendamento: { id: Number(idAgendamento) },
     };
 
     try {
-      if (editando) {
-        await api.put(`/cardapio/${editando.id}`, payload);
+      if (cardapioEditando) {
+        await api.put(`/cardapio/${cardapioEditando.id}`, payload);
       } else {
         await api.post("/cardapio", payload);
       }
 
-      limpar();
+      limparFormulario();
       carregarTudo();
     } catch (e) {
-      console.error("Erro ao salvar:", e);
-      alert("Erro ao salvar cardápio.");
+      console.error("Erro salvar:", e);
     }
   }
 
-  function editar(item) {
-    setEditando(item);
-    setDescricao(item.descricao || "");
-    setData(item.data || "");
-    setHora(item.hora || "");
-    setQuantidade(item.quantidade || "");
-    setAlimentoId(item.alimento?.id || "");
-    setAgendamentoId(item.agendamento?.id || "");
+  function editar(c) {
+    setCardapioEditando(c);
+    setDescricao(c.descricao || "");
+    setData(c.data || "");
+    setHora(c.hora || "");
+    setIdAgendamento(c.agendamento?.id || "");
   }
 
   async function excluir(id) {
     if (!window.confirm("Deseja excluir?")) return;
 
-    try {
-      await api.delete(`/cardapio/${id}`);
-      carregarTudo();
-    } catch (e) {
-      console.error("Erro ao excluir:", e);
-    }
+    await api.delete(`/cardapio/${id}`);
+    carregarTudo();
+  }
+
+  function abrirItens(c) {
+    setCardapioSelecionado(c);
+    setModo("itens");
+  }
+
+  function selecionarSlot(slotInfo) {
+    setData(formatDate(slotInfo.start));
+  }
+
+  function selecionarEvento(evento) {
+    const ag = evento.resource;
+
+    if (!ag?.dataInicio) return;
+
+    setData(formatDate(ag.dataInicio));
+    setHora(moment(ag.dataInicio).format("HH:mm"));
+    setIdAgendamento(ag.id);
   }
 
   return (
@@ -105,14 +176,10 @@ function Cardapio() {
       <Menu />
 
       <div className="conteudo-cardapio">
-        <section className="formulario">
-          <h2>Cadastro de Cardápio</h2>
 
-          <label>Descrição</label>
-          <input
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-          />
+        {/* FORM */}
+        <section className="painel-formulario">
+          <h2>Cardápios</h2>
 
           <label>Data</label>
           <input
@@ -128,74 +195,106 @@ function Cardapio() {
             onChange={(e) => setHora(e.target.value)}
           />
 
-          <label>Quantidade</label>
-          <input
-            type="number"
-            value={quantidade}
-            onChange={(e) => setQuantidade(e.target.value)}
+          {/* ATIVIDADES DO DIA */}
+          <label>Atividades do dia</label>
+
+          <select
+            value={idAgendamento}
+            onChange={(e) => setIdAgendamento(e.target.value)}
+          >
+            <option value="">Selecione uma atividade</option>
+
+            {atividadesDia.length === 0 ? (
+              <option disabled>Nenhuma atividade neste dia</option>
+            ) : (
+              atividadesDia.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.atividade?.descricao}
+                </option>
+              ))
+            )}
+          </select>
+
+          <label>Descrição</label>
+          <textarea
+            rows="4"
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
           />
 
-          <label>Alimento</label>
-          <select
-            value={alimentoId}
-            onChange={(e) => setAlimentoId(e.target.value)}
-          >
-            <option value="">Selecione</option>
-            {alimentos.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.descricao}
-              </option>
-            ))}
-          </select>
-
-          <label>Agendamento</label>
-          <select
-            value={agendamentoId}
-            onChange={(e) => setAgendamentoId(e.target.value)}
-          >
-            <option value="">Selecione</option>
-            {agendamentos.map((ag) => (
-              <option key={ag.id} value={ag.id}>
-                {ag.atividade?.descricao}
-              </option>
-            ))}
-          </select>
-
-          <div className="acoes">
+          <div className="acoes-formulario">
             <button onClick={salvar}>
-              {editando ? "Atualizar" : "Salvar"}
+              {cardapioEditando ? "Atualizar" : "Salvar"}
             </button>
 
-            <button onClick={limpar}>Limpar</button>
+            <button onClick={limparFormulario}>Limpar</button>
+
+            <button
+              onClick={() => {
+                if (!cardapioSelecionado) {
+                  alert("Selecione um cardápio");
+                  return;
+                }
+                setModo("itens");
+              }}
+            >
+              Itens
+            </button>
+          </div>
+
+          {/* LISTA */}
+          <div className="lista">
+            <h3>Cardápios</h3>
+
+            {cardapio.map((c) => (
+              <div key={c.id} className="item">
+                <div>
+                  <strong>{c.descricao}</strong>
+                  <div>{c.data} {c.hora}</div>
+                  <div>Atividade: {c.agendamento?.id}</div>
+                </div>
+
+                <div>
+                  <button onClick={() => editar(c)}>Editar</button>
+                  <button onClick={() => excluir(c.id)}>Excluir</button>
+                  <button onClick={() => abrirItens(c)}>Itens</button>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="lista">
-          <h3>Cardápios cadastrados</h3>
+        {/* ITENS */}
+        {modo === "itens" && cardapioSelecionado && (
+          <ItensCardapio
+            cardapio={cardapioSelecionado}
+            voltar={() => setModo("lista")}
+          />
+        )}
 
-          {cardapios.length === 0 ? (
-            <p>Nenhum cardápio encontrado.</p>
-          ) : (
-            cardapios.map((c) => (
-              <div key={c.id} className="item">
-                <strong>{c.descricao}</strong>
+        {/* CALENDÁRIO */}
+        <section className="painel-calendario">
+          <Calendar
+            localizer={localizer}
+            events={eventosCalendario}
+            startAccessor="start"
+            endAccessor="end"
+            selectable
+            popup
+            date={dataAtual}
+            view={viewAtual}
+            onNavigate={setDataAtual}
+            onView={setViewAtual}
+            views={["month", "week", "day", "agenda"]}
+            defaultView="month"
 
-                <div>Data: {c.data}</div>
-                <div>Hora: {c.hora}</div>
-                <div>Quantidade: {c.quantidade}</div>
-                <div>Alimento: {c.alimento?.descricao}</div>
-                <div>
-                  Atividade: {c.agendamento?.atividade?.descricao}
-                </div>
+            onSelectSlot={selecionarSlot}
+            onSelectEvent={selecionarEvento}
 
-                <div className="acoes-item">
-                  <button onClick={() => editar(c)}>Editar</button>
-                  <button onClick={() => excluir(c.id)}>Excluir</button>
-                </div>
-              </div>
-            ))
-          )}
+            style={{ height: "80vh" }}
+          />
         </section>
+
       </div>
     </div>
   );
