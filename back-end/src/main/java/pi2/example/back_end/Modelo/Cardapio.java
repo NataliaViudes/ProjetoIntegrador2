@@ -5,6 +5,7 @@ import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
 
+
 public class Cardapio {
 
     private Integer id;
@@ -59,27 +60,22 @@ public class Cardapio {
     }
 
     public Cardapio incluir(Conexao con) {
-        CardapioDAO dao = new CardapioDAO(con);
-        return dao.gravar(this);
+        return new CardapioDAO(con).gravar(this);
     }
 
     public Cardapio alterar(Conexao con) {
-        CardapioDAO dao = new CardapioDAO(con);
-        return dao.alterar(this);
+        return new CardapioDAO(con).alterar(this);
     }
 
     public boolean apagar(Conexao con) {
-        CardapioDAO dao = new CardapioDAO(con);
-        return dao.apagar(this);
+        return new CardapioDAO(con).apagar(this);
     }
 
     public Cardapio buscarPorId(Integer id, Conexao con) {
-        CardapioDAO dao = new CardapioDAO(con);
-        return dao.getPorId(id);
+        return new CardapioDAO(con).getPorId(id);
     }
 
     public List<Cardapio> buscarTodos(Conexao con) {
-        CardapioDAO dao = new CardapioDAO(con);
-        return dao.getAll();
+        return new CardapioDAO(con).getAll();
     }
 }

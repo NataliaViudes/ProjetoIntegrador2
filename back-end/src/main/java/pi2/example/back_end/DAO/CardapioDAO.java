@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.*;
+
 public class CardapioDAO {
 
     private final Conexao bd;
@@ -19,6 +21,10 @@ public class CardapioDAO {
     }
 
     public Cardapio gravar(Cardapio c) {
+
+        if (c.getAgendamento() == null || c.getAgendamento().getId() == null) {
+            throw new RuntimeException("Agendamento inválido");
+        }
 
         String sql = """
             INSERT INTO cardapio
@@ -42,8 +48,7 @@ public class CardapioDAO {
             return c;
 
         } catch (SQLException e) {
-            System.out.println("Erro ao inserir cardápio: " + e.getMessage());
-            return null;
+            throw new RuntimeException("Erro ao inserir cardápio: " + e.getMessage());
         }
     }
 
@@ -66,8 +71,7 @@ public class CardapioDAO {
             return c;
 
         } catch (SQLException e) {
-            System.out.println("Erro ao alterar: " + e.getMessage());
-            return null;
+            throw new RuntimeException("Erro ao alterar: " + e.getMessage());
         }
     }
 
@@ -81,8 +85,7 @@ public class CardapioDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Erro ao excluir: " + e.getMessage());
         }
     }
 
@@ -104,11 +107,12 @@ public class CardapioDAO {
 
                 AgendamentoAtividade a = new AgendamentoAtividade();
                 a.setId(rs.getInt("Agendamento_idAtividade"));
+
                 c.setAgendamento(a);
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro: " + e.getMessage());
+            throw new RuntimeException("Erro ao buscar: " + e.getMessage());
         }
 
         return c;
@@ -140,7 +144,7 @@ public class CardapioDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar cardápios: " + e.getMessage());
+            throw new RuntimeException("Erro ao listar: " + e.getMessage());
         }
 
         return lista;
