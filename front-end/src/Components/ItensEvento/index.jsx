@@ -147,8 +147,9 @@ export default function ItensEvento({ evento, voltar }) {
           qtd: i.qtd,
         }));
 
-      console.log("Payload para salvar:", payload);
-      await api.put("/itens-evento", payload);
+      if (payload.length === 0)
+        await api.delete(`/itens-evento/evento/${evento.id}`);
+      else await api.put("/itens-evento", payload);
 
       Swal.fire({
         icon: "success",

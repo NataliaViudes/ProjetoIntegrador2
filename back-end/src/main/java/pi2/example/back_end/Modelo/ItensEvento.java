@@ -58,4 +58,10 @@ public class ItensEvento {
         return dao.getPorIdEvento(idEvento);
     }
 
+    public boolean limparItens(Conexao con , Integer idEvento){
+        DAOItensEvento dao = new DAOItensEvento(con);
+        return dao.limparItens(idEvento);
+    }
+
+
 }

@@ -56,6 +56,32 @@ public class ItensEventoControl {
         }
     }
 
+
+    public ResponseEntity<?> limparTudo(Integer eventoId) {
+
+        if (eventoId == null || eventoId <= 0)
+            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
+        Conexao db = Banco.getConexao();
+        try {
+            if (!db.conectar())
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+
+            ItensEvento itensEvento = new ItensEvento();
+            itensEvento.limparItens(db,eventoId);
+
+            return ResponseEntity.ok("Itens atualizados com sucesso");
+
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro ao atualizar itens"));
+
+        } finally {
+            db.desconectar();
+        }
+    }
+
+
+
     // 🔹 UPDATE
     public ResponseEntity<?> alterar(List<ItensEvento> itens) {
 

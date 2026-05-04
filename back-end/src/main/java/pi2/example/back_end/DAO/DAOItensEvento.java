@@ -1,5 +1,6 @@
 package pi2.example.back_end.DAO;
 
+import ch.qos.logback.core.joran.event.BodyEvent;
 import pi2.example.back_end.Modelo.*;
 import pi2.example.back_end.db.Conexao;
 import java.sql.PreparedStatement;
@@ -56,6 +57,23 @@ public class DAOItensEvento {
             return null;
         }
     }
+
+    public boolean limparItens(Integer idEvento) {
+        String sql = "DELETE FROM itens_evento WHERE id_evento = ?";
+
+        try (PreparedStatement stmt = db.preparar(sql)) {
+
+            stmt.setInt(1,idEvento);
+
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+            return false;
+        }
+    }
+
 
     public void syncItensEvento(Integer eventoId, List<ItensEvento> novosItens) throws SQLException {
 

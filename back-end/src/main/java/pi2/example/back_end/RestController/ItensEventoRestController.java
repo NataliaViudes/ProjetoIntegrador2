@@ -31,7 +31,10 @@ public class ItensEventoRestController {
         return control.alterar(itensEventoList);
     }
 
-    
+    @DeleteMapping("/evento/{idEvento}")
+    public ResponseEntity<?> limpar(@PathVariable Integer idEvento) {
+        return control.limparTudo(idEvento);
+    }
 
     //  Deletar item (chave composta)
     @DeleteMapping
