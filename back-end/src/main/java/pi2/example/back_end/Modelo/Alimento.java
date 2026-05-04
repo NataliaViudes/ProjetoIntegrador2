@@ -63,6 +63,10 @@ public class Alimento {
         this.descricao = descricao;
     }
 
+
+
+
+
     public List<Alimento> buscarPorDescricao(Conexao db, String descricao) {
         DAOAlimento dao = new DAOAlimento(db);
         return dao.buscarPorDescricao(descricao);

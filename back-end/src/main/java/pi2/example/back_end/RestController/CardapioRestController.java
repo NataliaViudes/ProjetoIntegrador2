@@ -12,8 +12,30 @@ public class CardapioRestController {
 
     private final CardapioControl control = new CardapioControl();
 
-    @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody Cardapio c) {
-        return control.incluir(c);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getId(@PathVariable int id) {
+        return control.getById(id);
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return control.getAll();
+    }
+
+    @PostMapping
+    public ResponseEntity<?> salvar(@RequestBody Cardapio cardapio) {
+        return control.incluir(cardapio);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Cardapio cardapio) {
+        cardapio.setId(id);
+        return control.update(cardapio);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        return control.delete(id);
+    }
+
 }

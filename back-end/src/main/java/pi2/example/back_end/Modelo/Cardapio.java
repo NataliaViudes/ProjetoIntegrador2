@@ -9,11 +9,8 @@ public class Cardapio {
 
     private Integer id;
     private String descricao;
-    private String data;
     private String hora;
-    private Integer quantidade;
 
-    private Alimento alimento;
     private AgendamentoAtividade agendamento;
 
     public Cardapio() {}
@@ -22,29 +19,44 @@ public class Cardapio {
         this.id = id;
     }
 
+    public Cardapio(Integer id, String descricao, String hora, AgendamentoAtividade agendamento) {
+        this.id = id;
+        this.descricao = descricao;
+        this.hora = hora;
+        this.agendamento = agendamento;
+    }
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getData() { return data; }
-    public void setData(String data) { this.data = data; }
+    public String getDescricao() {
+        return descricao;
+    }
 
-    public String getHora() { return hora; }
-    public void setHora(String hora) { this.hora = hora; }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-    public Integer getQuantidade() { return quantidade; }
-    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+    public String getHora() {
+        return hora;
+    }
 
-    public Alimento getAlimento() { return alimento; }
-    public void setAlimento(Alimento alimento) { this.alimento = alimento; }
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
 
-    public AgendamentoAtividade getAgendamento() { return agendamento; }
-    public void setAgendamento(AgendamentoAtividade agendamento) { this.agendamento = agendamento; }
+    public AgendamentoAtividade getAgendamento() {
+        return agendamento;
+    }
 
-
+    public void setAgendamento(AgendamentoAtividade agendamento) {
+        this.agendamento = agendamento;
+    }
 
     public Cardapio incluir(Conexao con) {
         CardapioDAO dao = new CardapioDAO(con);
@@ -63,7 +75,7 @@ public class Cardapio {
 
     public Cardapio buscarPorId(Integer id, Conexao con) {
         CardapioDAO dao = new CardapioDAO(con);
-        return dao.get(id);
+        return dao.getPorId(id);
     }
 
     public List<Cardapio> buscarTodos(Conexao con) {

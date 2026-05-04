@@ -142,7 +142,7 @@ CREATE TABLE vincularbeneficiario (
 );
 
 
-CREATE TABLE IF NOT EXISTS ALIMENTO (
+CREATE TABLE IF NOT EXISTS alimento (
     id SERIAL,
     nome varchar(50),
     tipo varchar(50),
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS ALIMENTO (
 );
 
 
-CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
+CREATE TABLE IF NOT EXISTS tipo_estoque (
     id SERIAL,
     tipo varchar(50) NOT NULL,
     CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE (
 );
 
 
-CREATE TABLE IF NOT EXISTS ESTOQUE (
+CREATE TABLE IF NOT EXISTS estoque (
     id SERIAL,
     descricao varchar(200),
     qtd int,
@@ -169,28 +169,7 @@ CREATE TABLE IF NOT EXISTS ESTOQUE (
 );
 
 
-CREATE TABLE cardapio (
-    id SERIAL,
-    descricao VARCHAR(255),
-    data DATE NOT NULL,
-    hora TIME NOT NULL,
-    quantidade INTEGER,
-
-    id_alimento INTEGER NOT NULL,
-    id_agendamento INTEGER NOT NULL,
-
-    CONSTRAINT pk_cardapio PRIMARY KEY (id),
-
-    CONSTRAINT fk_cardapio_alimento
-        FOREIGN KEY (id_alimento)
-        REFERENCES alimento(id),
-
-    CONSTRAINT fk_cardapio_agendamento
-        FOREIGN KEY (id_agendamento)
-        REFERENCES agendamento_atividade(id_agendamento)
-);
-
-CREATE TABLE IF NOT EXISTS EVENTO(
+CREATE TABLE IF NOT EXISTS evento(
     id SERIAL,
     nome varchar(50) not null,
     qtd int not null,
@@ -216,34 +195,52 @@ CREATE TABLE IF NOT EXISTS Itens_Evento(
 );
 
 
+CREATE TABLE cardapio (
+    id SERIAL PRIMARY KEY,
+    descricao VARCHAR(255) NOT NULL,
+    hora TIME NOT NULL,
+    id_agendamento INTEGER,
 
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id)
+        ON DELETE SET NULL
+);
 
+CREATE TABLE itens_cardapio (
+    id_cardapio INTEGER NOT NULL,
+    id_alimento INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
 
+    PRIMARY KEY (id_cardapio, id_alimento),
+
+    CONSTRAINT fk_itens_cardapio_cardapio
+        FOREIGN KEY (id_cardapio)
+        REFERENCES cardapio(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_itens_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id)
+        ON DELETE CASCADE
+);
 
 
 
 
 -----------------------------------------
+
+
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('TESTE BANCO AGORA', 10, 'Sala Teste', 1, '2026-04-29', '09:00:00', '10:00:00', 1);
-
--- Evento 1
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('Reunião Pedagógica', 20, 'Sala 1', 1, '2026-05-10', '08:00:00', '10:00:00', 1);
-
--- Evento 2
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('Aula de Música', 15, 'Sala de Música', 2, '2026-05-10', '10:30:00', '12:00:00', 2);
-
--- Evento 3
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('Treino Esportivo', 25, 'Quadra', 3, '2026-05-11', '14:00:00', '16:00:00', 3);
-
--- Evento 4
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('Oficina de Artes', 10, 'Sala de Artes', 2, '2026-05-12', '09:00:00', '11:30:00', 1);
-
--- Evento 5
 INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
 VALUES ('Palestra Educativa', 50, 'Auditório', 1, '2026-05-13', '19:00:00', '21:00:00', 2);
 
@@ -255,33 +252,51 @@ INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa de Carnaval');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa Junina');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Palestra','Palestra sobre o meio ambiente');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa de Carnaval','Venha curtir o Carnaval ak no Cras');
-INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Caderno 100 folhas', 50, 1);
-
-INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Caneta azul', 200, 1);
-
-INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Faixa elástica', 30, 2);
-
-INSERT INTO ESTOQUE(descricao, qtd, id_tipo_estoque) VALUES ('Tinta acrílica', 80, 3);
-
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material escolar');
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material fisio');
-INSERT INTO TIPO_ESTOQUE(tipo) VALUES ('Material artesanato');
 
 
-INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
-INSERT INTO ALIMENTO(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
+INSERT INTO estoque(descricao, qtd, id_tipo_estoque) VALUES ('Caderno 100 folhas', 50, 1);
+INSERT INTO estoque(descricao, qtd, id_tipo_estoque) VALUES ('Caneta azul', 200, 1);
+INSERT INTO estoque(descricao, qtd, id_tipo_estoque) VALUES ('Faixa elástica', 30, 2);
+INSERT INTO estoque(descricao, qtd, id_tipo_estoque) VALUES ('Tinta acrílica', 80, 3);
+INSERT INTO tipo_estoque(tipo) VALUES ('Material escolar');
+INSERT INTO tipo_estoque(tipo) VALUES ('Material fisio');
+INSERT INTO tipo_estoque(tipo) VALUES ('Material artesanato');
+
+
+INSERT INTO alimento(nome, tipo, descricao) VALUES ('Pastel de queijo', 'salgado', 'pastel');
+INSERT INTO alimento(nome, tipo, descricao) VALUES ('Café', 'bebida', 'café');
+INSERT INTO alimento (id, nome) VALUES
+(1, 'Arroz'),
+(2, 'Feijão'),
+(3, 'Frango'),
+(4, 'Salada');
+
+
+INSERT INTO itens_cardapio (id_cardapio, id_alimento, quantidade) VALUES
+(1, 1, 200),  -- Arroz
+(1, 2, 150),  -- Feijão
+(1, 3, 250),  -- Frango
+(1, 4, 100);  -- Salada
+INSERT INTO itens_cardapio (id_cardapio, id_alimento, quantidade) VALUES
+(2, 3, 200),  -- Frango
+(2, 4, 150);  -- Salada
+
+
+INSERT INTO cardapio (descricao, hora, id_agendamento)
+VALUES
+('Almoço padrão', '12:00:00', 1),
+('Jantar leve', '19:00:00', 1);
+
 
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
-
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('Maria Oliveira', '98765432100', '18988888888', '22222222222', '1985-08-20', 'F', 'Rua B, 456', 'Analista');
-
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('Carlos Souza', '11122233344', '18977777777', '33333333333', '1992-12-01', 'M', 'Rua C, 789', 'Supervisor');
-
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
 VALUES ('Ana Costa', '55566677788', '18966666666', '44444444444', '1998-03-15', 'F', 'Rua D, 321', 'Assistente');
+
 
 INSERT INTO categoria (nome) VALUES
 ('Educação'),
@@ -289,6 +304,7 @@ INSERT INTO categoria (nome) VALUES
 ('Esporte'),
 ('Cultura'),
 ('Assistência Social');
+
 
 INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
 ('Oficina de leitura para crianças', 1, 2),
@@ -298,15 +314,15 @@ INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
 ('Roda de conversa sobre bem-estar', 2, 3),
 ('Campeonato recreativo interno', 3, 4);
 
+
 INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
-    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
 ) VALUES (
     'José Pereira', '1950-04-10', 75, '1234567', '12345678901',
     '99999999999', 1200.50, 'Rua A, 100', 'Centro',
     'Alvenaria', '18999999999', '18988888888', '18977777777',
     'Diabetes', 'Uso de insulina', 'Volei', 'Regular'
 );
-
 INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
     telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
 ) VALUES (
@@ -315,7 +331,6 @@ INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco
     'Vila Nova', 'Madeira', '18991111111', '18992222222',
     '18993333333', 'Nenhuma', 'Hipertensão', 'Natação', 'Regular'
 );
-
 INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
     telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
 ) VALUES (
@@ -324,7 +339,6 @@ INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco
     'Jardim Paulista', 'Alvenaria', '18994444444', '18995555555',
     '18996666666', 'Poeira', 'Asma', 'Volei', 'Regular'
 );
-
 INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
     telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
 ) VALUES (
@@ -333,7 +347,6 @@ INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco
     'Centro', 'Apartamento', '18997777777', '18998888888',
     '18999900000', 'Glúten', 'Dieta controlada', 'Volei', 'Regular'
 );
-
 INSERT INTO beneficiario (
     nome, nascimento, idade, rg, cpf, nis, renda,
     endereco, bairro, tipo_residencia,
@@ -345,7 +358,6 @@ INSERT INTO beneficiario (
     'Vila Esperança', 'Alvenaria', '18990000000', '18991112222',
     '18992223333', 'Nenhuma', 'Nenhum', 'Volei', 'Irregular'
 );
-
 INSERT INTO beneficiario (
     nome, nascimento, idade, rg, cpf, nis, renda,
     endereco, bairro, tipo_residencia,

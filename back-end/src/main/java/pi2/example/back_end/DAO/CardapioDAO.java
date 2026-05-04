@@ -1,5 +1,6 @@
 package pi2.example.back_end.DAO;
 
+import pi2.example.back_end.Modelo.AgendamentoAtividade;
 import pi2.example.back_end.Modelo.Cardapio;
 import pi2.example.back_end.db.Conexao;
 
@@ -21,18 +22,15 @@ public class CardapioDAO {
 
         String sql = """
             INSERT INTO cardapio
-            (descricao, data, hora, quantidade, id_alimento, id_agendamento)
-            VALUES (?,?,?,?,?,?)
+            (descricao, hora, Agendamento_idAtividade)
+            VALUES (?,?,?)
         """;
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, c.getDescricao());
-            stmt.setString(2, c.getData());
-            stmt.setString(3, c.getHora());
-            stmt.setInt(4, c.getQuantidade());
-            stmt.setInt(5, c.getAlimento().getId());
-            stmt.setInt(6, c.getAgendamento().getId());
+            stmt.setString(2, c.getHora());
+            stmt.setInt(3, c.getAgendamento().getId());
 
             stmt.executeUpdate();
 
@@ -44,49 +42,54 @@ public class CardapioDAO {
             return c;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir cardápio", e);
+            System.out.println("Erro ao inserir cardápio: " + e.getMessage());
+            return null;
         }
     }
 
     public Cardapio alterar(Cardapio c) {
+
         String sql = """
             UPDATE cardapio SET
-            descricao=?, data=?, hora=?, quantidade=?,
-            id_alimento=?, id_agendamento=?
-            WHERE id=?
+            descricao = ?, hora = ?, Agendamento_idAtividade = ?
+            WHERE idCardapio = ?
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, c.getDescricao());
-            stmt.setString(2, c.getData());
-            stmt.setString(3, c.getHora());
-            stmt.setInt(4, c.getQuantidade());
-            stmt.setInt(5, c.getAlimento().getId());
-            stmt.setInt(6, c.getAgendamento().getId());
-            stmt.setInt(7, c.getId());
+            stmt.setString(2, c.getHora());
+            stmt.setInt(3, c.getAgendamento().getId());
+            stmt.setInt(4, c.getId());
 
             stmt.executeUpdate();
             return c;
 
         } catch (SQLException e) {
+            System.out.println("Erro ao alterar: " + e.getMessage());
             return null;
         }
     }
 
     public boolean apagar(Cardapio c) {
-        String sql = "DELETE FROM cardapio WHERE id=?";
+
+        String sql = "DELETE FROM cardapio WHERE idCardapio = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
+
             stmt.setInt(1, c.getId());
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
+            System.out.println("Erro ao excluir: " + e.getMessage());
             return false;
         }
     }
 
-    public Cardapio get(int id) {
-        String sql = "SELECT * FROM cardapio WHERE id=?";
+    public Cardapio getPorId(int id) {
+
+        String sql = "SELECT * FROM cardapio WHERE idCardapio = ?";
+        Cardapio c = null;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -94,23 +97,25 @@ public class CardapioDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                Cardapio c = new Cardapio();
-
-                c.setId(rs.getInt("id"));
+                c = new Cardapio();
+                c.setId(rs.getInt("idCardapio"));
                 c.setDescricao(rs.getString("descricao"));
-                c.setData(rs.getString("data"));
                 c.setHora(rs.getString("hora"));
-                c.setQuantidade(rs.getInt("quantidade"));
 
-                return c;
+                AgendamentoAtividade a = new AgendamentoAtividade();
+                a.setId(rs.getInt("Agendamento_idAtividade"));
+                c.setAgendamento(a);
             }
-        } catch (SQLException e) {}
 
-        return null;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+        return c;
     }
 
-
     public List<Cardapio> getAll() {
+
         List<Cardapio> lista = new ArrayList<>();
 
         String sql = "SELECT * FROM cardapio";
@@ -120,18 +125,23 @@ public class CardapioDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Cardapio c = new Cardapio();
 
-                c.setId(rs.getInt("id"));
+                Cardapio c = new Cardapio();
+                c.setId(rs.getInt("idCardapio"));
                 c.setDescricao(rs.getString("descricao"));
-                c.setData(rs.getString("data"));
                 c.setHora(rs.getString("hora"));
-                c.setQuantidade(rs.getInt("quantidade"));
+
+                AgendamentoAtividade a = new AgendamentoAtividade();
+                a.setId(rs.getInt("Agendamento_idAtividade"));
+
+                c.setAgendamento(a);
 
                 lista.add(c);
             }
 
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar cardápios: " + e.getMessage());
+        }
 
         return lista;
     }
