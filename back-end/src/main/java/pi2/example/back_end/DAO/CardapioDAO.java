@@ -4,13 +4,9 @@ import pi2.example.back_end.Modelo.AgendamentoAtividade;
 import pi2.example.back_end.Modelo.Cardapio;
 import pi2.example.back_end.db.Conexao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.sql.*;
 
 public class CardapioDAO {
 
@@ -27,16 +23,17 @@ public class CardapioDAO {
         }
 
         String sql = """
-            INSERT INTO cardapio
-            (descricao, hora, Agendamento_idAtividade)
-            VALUES (?,?,?)
-        """;
+    INSERT INTO cardapio
+    (descricao, data, hora, id_agendamento)
+    VALUES (?,?,?,?)
+""";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, c.getDescricao());
-            stmt.setString(2, c.getHora());
-            stmt.setInt(3, c.getAgendamento().getId());
+            stmt.setDate(2, Date.valueOf(c.getData()));
+            stmt.setTime(3, Time.valueOf(c.getHora()));
+            stmt.setInt(4, c.getAgendamento().getId());
 
             stmt.executeUpdate();
 
@@ -54,18 +51,27 @@ public class CardapioDAO {
 
     public Cardapio alterar(Cardapio c) {
 
+        if (c.getAgendamento() == null || c.getAgendamento().getId() == null) {
+            throw new RuntimeException("Agendamento inválido");
+        }
+
         String sql = """
-            UPDATE cardapio SET
-            descricao = ?, hora = ?, Agendamento_idAtividade = ?
-            WHERE idCardapio = ?
-        """;
+    UPDATE cardapio SET
+    descricao = ?, 
+    data = ?, 
+    hora = ?, 
+    id_agendamento = ?
+    WHERE id = ?
+""";
+
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, c.getDescricao());
-            stmt.setString(2, c.getHora());
-            stmt.setInt(3, c.getAgendamento().getId());
-            stmt.setInt(4, c.getId());
+            stmt.setDate(2, Date.valueOf(c.getData()));
+            stmt.setTime(3, Time.valueOf(c.getHora()));
+            stmt.setInt(4, c.getAgendamento().getId());
+            stmt.setInt(5, c.getId());
 
             stmt.executeUpdate();
             return c;
@@ -77,7 +83,7 @@ public class CardapioDAO {
 
     public boolean apagar(Cardapio c) {
 
-        String sql = "DELETE FROM cardapio WHERE idCardapio = ?";
+        String sql = "DELETE FROM cardapio WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -91,7 +97,7 @@ public class CardapioDAO {
 
     public Cardapio getPorId(int id) {
 
-        String sql = "SELECT * FROM cardapio WHERE idCardapio = ?";
+        String sql = "SELECT * FROM cardapio WHERE id = ?";
         Cardapio c = null;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -100,13 +106,13 @@ public class CardapioDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                c = new Cardapio();
-                c.setId(rs.getInt("idCardapio"));
+                c.setId(rs.getInt("id"));
                 c.setDescricao(rs.getString("descricao"));
                 c.setHora(rs.getString("hora"));
+                c.setData(rs.getString("data"));
 
                 AgendamentoAtividade a = new AgendamentoAtividade();
-                a.setId(rs.getInt("Agendamento_idAtividade"));
+                a.setId(rs.getInt("id_agendamento"));
 
                 c.setAgendamento(a);
             }
@@ -131,13 +137,13 @@ public class CardapioDAO {
             while (rs.next()) {
 
                 Cardapio c = new Cardapio();
-                c.setId(rs.getInt("idCardapio"));
+                c.setId(rs.getInt("id"));
                 c.setDescricao(rs.getString("descricao"));
                 c.setHora(rs.getString("hora"));
+                c.setData(rs.getString("data"));
 
                 AgendamentoAtividade a = new AgendamentoAtividade();
-                a.setId(rs.getInt("Agendamento_idAtividade"));
-
+                a.setId(rs.getInt("id_agendamento"));
                 c.setAgendamento(a);
 
                 lista.add(c);

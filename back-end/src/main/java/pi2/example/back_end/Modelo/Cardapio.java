@@ -3,6 +3,7 @@ package pi2.example.back_end.Modelo;
 import pi2.example.back_end.DAO.CardapioDAO;
 import pi2.example.back_end.db.Conexao;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -11,6 +12,7 @@ public class Cardapio {
     private Integer id;
     private String descricao;
     private String hora;
+    private String data;
 
     private AgendamentoAtividade agendamento;
 
@@ -20,10 +22,11 @@ public class Cardapio {
         this.id = id;
     }
 
-    public Cardapio(Integer id, String descricao, String hora, AgendamentoAtividade agendamento) {
+    public Cardapio(Integer id, String descricao, String hora, String data, AgendamentoAtividade agendamento) {
         this.id = id;
         this.descricao = descricao;
         this.hora = hora;
+        this.data = data;
         this.agendamento = agendamento;
     }
 
@@ -45,6 +48,14 @@ public class Cardapio {
 
     public String getHora() {
         return hora;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public void setHora(String hora) {

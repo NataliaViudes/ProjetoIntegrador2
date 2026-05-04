@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS estoque (
 CREATE TABLE cardapio (
     id SERIAL PRIMARY KEY,
     descricao VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
     hora TIME NOT NULL,
     id_agendamento INTEGER,
 
@@ -108,7 +109,7 @@ CREATE TABLE cardapio (
         FOREIGN KEY (id_agendamento)
         REFERENCES agendamento_atividade(id_agendamento)
         ON DELETE SET NULL
-);
+);  
 
 CREATE TABLE itens_cardapio (
     id_cardapio INTEGER NOT NULL,
