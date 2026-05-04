@@ -42,7 +42,9 @@ function Cardapio() {
       ]);
 
       setCardapio(Array.isArray(respCardapio.data) ? respCardapio.data : []);
-      setAgendamentos(Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []);
+      setAgendamentos(
+        Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []
+      );
     } catch (e) {
       console.error("Erro ao carregar:", e);
     }
@@ -78,7 +80,7 @@ function Cardapio() {
   const eventosAtividades = useMemo(() => {
     return agendamentos.map((ag) => ({
       id: `ag-${ag.id}`,
-      title: ` ${ag.atividade?.descricao || "Atividade"}`,
+      title: `${ag.atividade?.descricao || "Atividade"}`,
       start: new Date(ag.dataInicio),
       end: new Date(ag.dataFim),
       resource: ag,
@@ -104,6 +106,17 @@ function Cardapio() {
     setIdAgendamento("");
   }
 
+  function horaDentroDaAtividade() {
+    const atividade = agendamentos.find((a) => a.id == idAgendamento);
+    if (!atividade) return false;
+
+    const inicio = moment(atividade.dataInicio);
+    const fim = moment(atividade.dataFim);
+    const horaSelecionada = moment(`${data}T${hora}`);
+
+    return horaSelecionada.isBetween(inicio, fim, null, "[)");
+  }
+
   async function salvar() {
     if (!descricao || !data || !hora || !idAgendamento) {
       alert("Preencha todos os campos.");
@@ -115,20 +128,29 @@ function Cardapio() {
       return;
     }
 
+    if (!horaDentroDaAtividade()) {
+      alert("Horário fora do intervalo da atividade.");
+      return;
+    }
+
     const payload = {
       id: cardapioEditando?.id || null,
       descricao,
       data,
-      hora,
+      hora: hora.length === 5 ? `${hora}:00` : hora,      
       agendamento: { id: Number(idAgendamento) },
     };
 
+    console.log(payload);
     try {
       if (cardapioEditando) {
         await api.put(`/cardapio/${cardapioEditando.id}`, payload);
       } else {
+        console.log(payload);
         await api.post("/cardapio", payload);
       }
+
+      
 
       limparFormulario();
       carregarTudo();
@@ -141,8 +163,9 @@ function Cardapio() {
     setCardapioEditando(c);
     setDescricao(c.descricao || "");
     setData(c.data || "");
-    setHora(c.hora || "");
-    setIdAgendamento(c.agendamento?.id || "");
+    setHora(c.hora ? c.hora.substring(0, 5) : "");
+    setIdAgendamento(c.agendamento?.id?.toString() || "");
+    setModo("lista");
   }
 
   async function excluir(id) {
@@ -154,6 +177,7 @@ function Cardapio() {
 
   function abrirItens(c) {
     setCardapioSelecionado(c);
+    limparFormulario();
     setModo("itens");
   }
 
@@ -162,13 +186,19 @@ function Cardapio() {
   }
 
   function selecionarEvento(evento) {
-    const ag = evento.resource;
+    const item = evento.resource;
 
-    if (!ag?.dataInicio) return;
+    if (evento.tipo === "atividade") {
+      setData(formatDate(item.dataInicio));
+      setHora(moment(item.dataInicio).format("HH:mm"));
+      setIdAgendamento(item.id.toString());
+      setCardapioEditando(null);
+      setCardapioSelecionado(null);
+    }
 
-    setData(formatDate(ag.dataInicio));
-    setHora(moment(ag.dataInicio).format("HH:mm"));
-    setIdAgendamento(ag.id);
+    if (evento.tipo === "cardapio") {
+      abrirItens(item);
+    }
   }
 
   return (
@@ -176,8 +206,6 @@ function Cardapio() {
       <Menu />
 
       <div className="conteudo-cardapio">
-
-        {/* FORM */}
         <section className="painel-formulario">
           <h2>Cardápios</h2>
 
@@ -195,9 +223,7 @@ function Cardapio() {
             onChange={(e) => setHora(e.target.value)}
           />
 
-          {/* ATIVIDADES DO DIA */}
           <label>Atividades do dia</label>
-
           <select
             value={idAgendamento}
             onChange={(e) => setIdAgendamento(e.target.value)}
@@ -228,21 +254,8 @@ function Cardapio() {
             </button>
 
             <button onClick={limparFormulario}>Limpar</button>
-
-            <button
-              onClick={() => {
-                if (!cardapioSelecionado) {
-                  alert("Selecione um cardápio");
-                  return;
-                }
-                setModo("itens");
-              }}
-            >
-              Itens
-            </button>
           </div>
 
-          {/* LISTA */}
           <div className="lista">
             <h3>Cardápios</h3>
 
@@ -250,7 +263,9 @@ function Cardapio() {
               <div key={c.id} className="item">
                 <div>
                   <strong>{c.descricao}</strong>
-                  <div>{c.data} {c.hora}</div>
+                  <div>
+                    {c.data} {c.hora}
+                  </div>
                   <div>Atividade: {c.agendamento?.id}</div>
                 </div>
 
@@ -264,7 +279,6 @@ function Cardapio() {
           </div>
         </section>
 
-        {/* ITENS */}
         {modo === "itens" && cardapioSelecionado && (
           <ItensCardapio
             cardapio={cardapioSelecionado}
@@ -272,7 +286,6 @@ function Cardapio() {
           />
         )}
 
-        {/* CALENDÁRIO */}
         <section className="painel-calendario">
           <Calendar
             localizer={localizer}
@@ -287,14 +300,11 @@ function Cardapio() {
             onView={setViewAtual}
             views={["month", "week", "day", "agenda"]}
             defaultView="month"
-
             onSelectSlot={selecionarSlot}
             onSelectEvent={selecionarEvento}
-
             style={{ height: "80vh" }}
           />
         </section>
-
       </div>
     </div>
   );
