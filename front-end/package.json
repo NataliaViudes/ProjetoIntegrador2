@@ -13,6 +13,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.13.6",
     "bootstrap": "^5.3.8",
+    "lucide-react": "^1.14.0",
     "notifyx": "^3.0.0",
     "react": "^19.2.0",
     "react-big-calendar": "^1.19.4",

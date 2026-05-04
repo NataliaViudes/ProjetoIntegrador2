@@ -20,7 +20,7 @@ export default function Eventos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/cat-evento/categoria");
+      const resp = await api.get("cat-eventos/descricao");
       const dados = Array.isArray(resp.data) ? resp.data : [];
 
       setEventos(dados);
@@ -75,12 +75,12 @@ export default function Eventos() {
         if (result.isConfirmed) {
           try {
             if (eventoEditando) {
-              await api.put("/cat-evento", {
+              await api.put("/cat-eventos", {
                 id: eventoEditando.id,
                 ...dados,
               });
             } else {
-              await api.post("/cat-evento", dados);
+              await api.post("/cat-eventos", dados);
             }
 
             limparFormulario();
@@ -112,7 +112,7 @@ export default function Eventos() {
 
   async function excluirEvento(id) {
     try {
-      await api.delete(`/cat-evento/${id}`);
+      await api.delete(`/cat-eventos/${id}`);
 
       if (eventoEditando && eventoEditando.id === id) {
         limparFormulario();

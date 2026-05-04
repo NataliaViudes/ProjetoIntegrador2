@@ -9,7 +9,8 @@ function Menu() {
           <button type="button">Cadastros</button>
 
           <div className="dropdown-conteudo">
-            <Link to="/atividades">Atividades</Link>
+            <Link to="/atividades">Atividades</Link> 
+            <Link to="/eventos">Eventos</Link> 
             <Link to="/auxilios">Auxílios</Link>
             <Link to="/beneficiarios">Beneficiários</Link>
             <Link to="/funcionario">Funcionários</Link>

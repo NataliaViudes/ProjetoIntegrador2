@@ -57,6 +57,64 @@ public class DAOItensEvento {
         }
     }
 
+    public void syncItensEvento(Integer eventoId, List<ItensEvento> novosItens) throws SQLException {
+
+        // 🔹 1. buscar atuais
+        String selectSql = "SELECT id_estoque FROM itens_evento WHERE id_evento = ?";
+        List<Integer> atuais = new ArrayList<>();
+
+        try (PreparedStatement stmt = db.preparar(selectSql)) {
+            stmt.setInt(1, eventoId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                atuais.add(rs.getInt("id_estoque"));
+            }
+        }
+
+        // 🔹 2. pegar ids novos
+        List<Integer> novosIds = novosItens.stream()
+                .map(ItensEvento::getEstoqueId)
+                .toList();
+
+        // 🔥 3. DELETE (quem não existe mais)
+        String deleteSql = "DELETE FROM itens_evento WHERE id_evento = ? AND id_estoque = ?";
+
+        for (Integer idAtual : atuais) {
+            if (!novosIds.contains(idAtual)) {
+                try (PreparedStatement stmt = db.preparar(deleteSql)) {
+                    stmt.setInt(1, eventoId);
+                    stmt.setInt(2, idAtual);
+                    stmt.executeUpdate();
+                }
+            }
+        }
+
+        // 🔥 4. INSERT ou UPDATE
+        for (ItensEvento item : novosItens) {
+
+            if (atuais.contains(item.getEstoqueId())) {
+                // UPDATE
+                String updateSql = "UPDATE itens_evento SET qtd=? WHERE id_evento=? AND id_estoque=?";
+                try (PreparedStatement stmt = db.preparar(updateSql)) {
+                    stmt.setInt(1, item.getQtd());
+                    stmt.setInt(2, eventoId);
+                    stmt.setInt(3, item.getEstoqueId());
+                    stmt.executeUpdate();
+                }
+
+            } else {
+                // INSERT
+                String insertSql = "INSERT INTO itens_evento (id_evento, id_estoque, qtd) VALUES (?, ?, ?)";
+                try (PreparedStatement stmt = db.preparar(insertSql)) {
+                    stmt.setInt(1, eventoId);
+                    stmt.setInt(2, item.getEstoqueId());
+                    stmt.setInt(3, item.getQtd());
+                    stmt.executeUpdate();
+                }
+            }
+        }
+    }
 
     public boolean apagar(ItensEvento entidade) {
         String sql = "DELETE FROM Itens_evento WHERE id_estoque = ? AND id_evento = ?";

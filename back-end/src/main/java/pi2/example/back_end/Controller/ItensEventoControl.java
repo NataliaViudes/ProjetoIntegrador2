@@ -57,19 +57,15 @@ public class ItensEventoControl {
     }
 
     // 🔹 UPDATE
-    public ResponseEntity<?> alterar(ItensEvento item) {
+    public ResponseEntity<?> alterar(List<ItensEvento> itens) {
 
-        if (item == null)
-            return ResponseEntity.badRequest().body(new Erro("Item nulo"));
+        if (itens == null || itens.isEmpty())
+            return ResponseEntity.badRequest().body(new Erro("Lista vazia"));
 
-        if (item.getEventoId() == null || item.getEventoId() <= 0)
+        Integer eventoId = itens.get(0).getEventoId();
+
+        if (eventoId == null || eventoId <= 0)
             return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
-
-        if (item.getEstoqueId() == null || item.getEstoqueId() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Estoque inválido"));
-
-        if (item.getQtd() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
 
         Conexao db = Banco.getConexao();
 
@@ -78,17 +74,14 @@ public class ItensEventoControl {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
 
             DAOItensEvento dao = new DAOItensEvento(db);
-            ItensEvento resultado = dao.alterar(item);
 
-            return ResponseEntity.ok(resultado);
+            dao.syncItensEvento(eventoId, itens);
 
-        } catch (SQLException e) {
-            System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+            return ResponseEntity.ok("Itens atualizados com sucesso");
 
         } catch (Exception e) {
-            System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+            System.out.println("Erro: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro ao atualizar itens"));
 
         } finally {
             db.desconectar();

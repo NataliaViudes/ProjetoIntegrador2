@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Controller.ItensEventoControl;
 import pi2.example.back_end.Modelo.ItensEvento;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/itens-evento")
@@ -25,9 +27,11 @@ public class ItensEventoRestController {
 
     //  Atualizar quantidade do item
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody ItensEvento item) {
-        return control.alterar(item);
+    public ResponseEntity<?> update(@RequestBody List<ItensEvento> itensEventoList) {
+        return control.alterar(itensEventoList);
     }
+
+    
 
     //  Deletar item (chave composta)
     @DeleteMapping

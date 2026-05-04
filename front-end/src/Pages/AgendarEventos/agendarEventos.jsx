@@ -3,7 +3,9 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import api from "../../services/api";
+
+import ItensEvento from "../../Components/ItensEvento";
+import api from "../../Services/api";
 import Menu from "../../Components/Menu/Menu";
 import "./agendarEventos.css";
 
@@ -11,6 +13,9 @@ moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
 function Eventos() {
+  const [modo, setModo] = useState("calendario");
+  const [eventoSelecionado, setEventoSelecionado] = useState(null);
+
   const [eventosApi, setEventosApi] = useState([]);
 
   const [nome, setNome] = useState("");
@@ -164,6 +169,11 @@ function Eventos() {
     }
   }
 
+  function selecionarEventoItens(evento) {
+    setEventoSelecionado(evento.resource);
+    setModo("itens");
+  }
+
   function selecionarEvento(evento) {
     editar(evento.resource);
   }
@@ -202,7 +212,7 @@ function Eventos() {
             <option value="">Selecione a categoria</option>
             {categorias.map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {cat.descricao}
+                {cat.categoria}
               </option>
             ))}
           </select>
@@ -251,6 +261,19 @@ function Eventos() {
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (!eventoSelecionado) {
+                  alert("Selecione um evento no calendário primeiro.");
+                  return;
+                }
+                setModo("itens");
+              }}
+            >
+              Adicionar Itens
+            </button>
           </div>
 
           <div className="lista-agendamentos">
@@ -283,40 +306,62 @@ function Eventos() {
             )}
           </div>
         </section>
+        {modo === "calendario" ? (
+          <section className="painel-calendario">
+            <Calendar
+              localizer={localizer}
+              culture="pt-BR"
+              events={eventos}
+              startAccessor="start"
+              endAccessor="end"
+              selectable
+              popup
+              date={dataAtual}
+              view={viewAtual}
+              onNavigate={(novaData) => setDataAtual(novaData)}
+              onView={(novaView) => setViewAtual(novaView)}
+              views={["month", "week", "day", "agenda"]}
+              defaultView="week"
+              onSelectEvent={(evento) => {
+                setEventoSelecionado(evento.resource);
+                editar(evento.resource);
+              }}
+              onSelectSlot={selecionarSlot}
+              messages={{
+                next: "Próximo",
+                previous: "Anterior",
+                today: "Hoje",
+                month: "Mês",
+                week: "Semana",
+                day: "Dia",
+                agenda: "Agenda",
+                date: "Data",
+                time: "Hora",
+                event: "Evento",
+                noEventsInRange: "Nenhum evento neste período",
+                allDay: "Dia inteiro",
+                showMore: (total) => `+ Ver mais (${total})`,
+              }}
+              style={{ height: "80vh" }}
+            />
+          </section>
+        ) : (
+          <>
+            {eventoSelecionado ? (
+              <ItensEvento
+                evento={eventoSelecionado}
+                voltar={() => setModo("calendario")}
+              />
+            ) : (
+              <div style={{ padding: "20px" }}>
+                <button onClick={() => setModo("calendario")}>⬅ Voltar</button>
 
-        <section className="painel-calendario">
-          <Calendar
-            localizer={localizer}
-            events={eventos}
-            startAccessor="start"
-            endAccessor="end"
-            selectable
-            popup
-            date={dataAtual}
-            view={viewAtual}
-            onNavigate={(novaData) => setDataAtual(novaData)}
-            onView={(novaView) => setViewAtual(novaView)}
-            views={["month", "week", "day", "agenda"]}
-            defaultView="week"
-            onSelectEvent={selecionarEvento}
-            onSelectSlot={selecionarSlot}
-            messages={{
-              next: "Próximo",
-              previous: "Anterior",
-              today: "Hoje",
-              month: "Mês",
-              week: "Semana",
-              day: "Dia",
-              agenda: "Agenda",
-              date: "Data",
-              time: "Hora",
-              event: "Evento",
-              noEventsInRange: "Nenhum evento neste período",
-              allDay: "Dia inteiro",
-            }}
-            style={{ height: "80vh" }}
-          />
-        </section>
+                <h2>Nenhum evento selecionado</h2>
+                <p>Selecione um evento antes de adicionar itens.</p>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
