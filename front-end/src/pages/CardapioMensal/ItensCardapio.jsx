@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Menu from "../../components/Menu";
 import "../Alimentos/Alimentos.css";  
 import api from "../../services/api";
+import Alimentos from "../Alimentos/Alimentos";
 
 function ItensCardapio({ cardapio, voltar }) {
   const [alimentos, setAlimentos] = useState([]);

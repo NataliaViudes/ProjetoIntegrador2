@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu";
-import "../Agendamentos/Agendamentos.css";
+import "../CardapioMensal/Cardapio.css";
 
 import ItensCardapio from "./ItensCardapio";
 
@@ -20,7 +20,7 @@ function Cardapio() {
   const [cardapio, setCardapio] = useState([]);
   const [agendamentos, setAgendamentos] = useState([]);
 
-  const [descricao, setDescricao] = useState("");
+  const [nome, setNome] = useState("");
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
   const [idAgendamento, setIdAgendamento] = useState("");
@@ -68,7 +68,7 @@ function Cardapio() {
 
       return {
         id: c.id,
-        title: `${c.descricao} (${c.agendamento?.atividade?.descricao || "Sem atividade"})`,
+        title: `${c.nome}`,
         start: dataHora,
         end: new Date(dataHora.getTime() + 60 * 60 * 1000),
         resource: c,
@@ -100,7 +100,7 @@ function Cardapio() {
 
   function limparFormulario() {
     setCardapioEditando(null);
-    setDescricao("");
+    setNome("");
     setData("");
     setHora("");
     setIdAgendamento("");
@@ -118,7 +118,7 @@ function Cardapio() {
   }
 
   async function salvar() {
-    if (!descricao || !data || !hora || !idAgendamento) {
+    if (!nome || !data || !hora || !idAgendamento) {
       alert("Preencha todos os campos.");
       return;
     }
@@ -135,9 +135,9 @@ function Cardapio() {
 
     const payload = {
       id: cardapioEditando?.id || null,
-      descricao,
+      nome,
       data,
-      hora: hora.length === 5 ? `${hora}:00` : hora,      
+      hora: hora.length === 5 ? `${hora}:00` : hora,
       agendamento: { id: Number(idAgendamento) },
     };
 
@@ -150,7 +150,7 @@ function Cardapio() {
         await api.post("/cardapio", payload);
       }
 
-      
+
 
       limparFormulario();
       carregarTudo();
@@ -161,7 +161,7 @@ function Cardapio() {
 
   function editar(c) {
     setCardapioEditando(c);
-    setDescricao(c.descricao || "");
+    setNome(c.nome || "");
     setData(c.data || "");
     setHora(c.hora ? c.hora.substring(0, 5) : "");
     setIdAgendamento(c.agendamento?.id?.toString() || "");
@@ -198,6 +198,28 @@ function Cardapio() {
 
     if (evento.tipo === "cardapio") {
       abrirItens(item);
+    }
+  }
+
+  function estiloEvento(evento) {
+    if (evento.tipo === "atividade") {
+      return {
+        style: {
+          backgroundColor: "#3174ad", // azul
+          color: "white",
+          borderRadius: "5px",
+        },
+      };
+    }
+
+    if (evento.tipo === "cardapio") {
+      return {
+        style: {
+          backgroundColor: "#28a745", // verde
+          color: "white",
+          borderRadius: "5px",
+        },
+      };
     }
   }
 
@@ -241,11 +263,11 @@ function Cardapio() {
             )}
           </select>
 
-          <label>Descrição</label>
-          <textarea
-            rows="4"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+          <label>Nome</label>
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
           />
 
           <div className="acoes-formulario">
@@ -256,26 +278,29 @@ function Cardapio() {
             <button onClick={limparFormulario}>Limpar</button>
           </div>
 
-          <div className="lista">
-            <h3>Cardápios</h3>
+          <div className="lista-cardapio">
+            <h3>Cardápios Agendados</h3>
 
-            {cardapio.map((c) => (
-              <div key={c.id} className="item">
+            {cardapio.length === 0 ? (
+              <p>Nenhum cardapio agendado.</p>
+            ) : (cardapio.map((c) => (
+              <div key={c.id} className="item-cardapio">
                 <div>
-                  <strong>{c.descricao}</strong>
+                  <strong>{c.nome}</strong>
                   <div>
                     {c.data} {c.hora}
                   </div>
                   <div>Atividade: {c.agendamento?.id}</div>
                 </div>
 
-                <div>
+                <div className="acoes-item">
                   <button onClick={() => editar(c)}>Editar</button>
                   <button onClick={() => excluir(c.id)}>Excluir</button>
                   <button onClick={() => abrirItens(c)}>Itens</button>
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </section>
 
@@ -302,6 +327,7 @@ function Cardapio() {
             defaultView="month"
             onSelectSlot={selecionarSlot}
             onSelectEvent={selecionarEvento}
+            eventPropGetter={estiloEvento}  
             style={{ height: "80vh" }}
           />
         </section>
