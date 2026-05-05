@@ -2,67 +2,87 @@
 INSERT INTO categoria (nome) VALUES
 ('Educação'),
 ('Saúde'),
-('Assistência Social');
+('Esporte'),
+('Cultura'),
+('Alimentação');
 
 -- CAT_EVENTO
 INSERT INTO cat_evento (nome, descricao) VALUES
-('Palestra', 'Eventos educativos'),
-('Oficina', 'Atividades práticas'),
-('Campanha', 'Ações sociais');
+('Palestra', 'Evento educativo com palestrante'),
+('Workshop', 'Treinamento prático'),
+('Reunião', 'Encontro interno'),
+('Campanha', 'Ação social'),
+('Treino', 'Atividade física orientada');
 
 -- CARGO
 INSERT INTO cargo (nome) VALUES
-('Assistente Social'),
+('Professor'),
+('Enfermeiro'),
+('Instrutor'),
 ('Coordenador'),
-('Voluntário');
+('Auxiliar');
 
 -- FUNCIONARIO
 INSERT INTO funcionario
-(nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
-VALUES
-('João Silva', '12345678901', '18999999999', '11111111111', '1985-05-10', 'M', 'Rua A', 'Coordenador'),
-('Maria Souza', '12345678902', '18988888888', '22222222222', '1990-03-15', 'F', 'Rua B', 'Assistente Social'),
-('Pedro Lima', '12345678905', '18977777777', '55555555555', '1988-11-22', 'M', 'Rua C', 'Voluntário');
+(nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo) VALUES
+('João Silva', '12345678901', '18999999999', '12345678901', '1985-03-10', 'M', 'Rua A, 123', 'Professor'),
+('Maria Souza', '12345678902', '18988888888', '12345678902', '1990-07-21', 'F', 'Rua B, 456', 'Enfermeiro'),
+('Carlos Lima', '12345678903', '18977777777', '12345678903', '1988-11-15', 'M', 'Rua C, 789', 'Instrutor'),
+('Ana Paula', '12345678904', '18966666666', '12345678904', '1995-01-30', 'F', 'Rua D, 321', 'Coordenador'),
+('Lucas Rocha', '12345678905', '18955555555', '12345678905', '1992-09-12', 'M', 'Rua E, 654', 'Auxiliar');
 
 -- ATIVIDADE
 INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
-('Aula de reforço', 1, 1),
-('Atendimento psicológico', 2, 2),
-('Distribuição de alimentos', 3, 3);
+('Aula de matemática', 1, 1),
+('Atendimento básico de saúde', 2, 2),
+('Treino funcional', 3, 3),
+('Oficina de pintura', 4, 4),
+('Distribuição de alimentos', 5, 5);
 
 -- AGENDAMENTO_ATIVIDADE
 INSERT INTO agendamento_atividade
-(id_atividade, data_inicio, data_fim, observacao)
-VALUES
-(1, '2026-05-10 08:00', '2026-05-10 10:00', 'Turma manhã'),
-(2, '2026-05-11 14:00', '2026-05-11 16:00', 'Sessão individual'),
-(3, '2026-05-12 09:00', '2026-05-12 12:00', 'Entrega mensal');
+(id_atividade, data_inicio, data_fim, observacao) VALUES
+(1, '2026-05-10 08:00', '2026-05-10 10:00', 'Turma iniciante'),
+(2, '2026-05-11 09:00', '2026-05-11 11:00', 'Atendimento livre'),
+(3, '2026-05-12 07:00', '2026-05-12 08:30', 'Treino ao ar livre'),
+(4, '2026-05-13 14:00', '2026-05-13 16:00', 'Material incluso'),
+(5, '2026-05-14 12:00', '2026-05-14 13:30', 'Entrega comunitária');
 
 -- ALIMENTO
 INSERT INTO alimento (nome, tipo, descricao) VALUES
 ('Arroz', 'Grão', 'Arroz branco'),
-('Feijão', 'Grão', 'Feijão carioca'),
-('Macarrão', 'Massa', 'Macarrão espaguete');
+('Feijão', 'Leguminosa', 'Feijão carioca'),
+('Frango', 'Carne', 'Frango grelhado'),
+('Salada', 'Vegetal', 'Salada mista'),
+('Suco', 'Bebida', 'Suco natural');
 
 -- TIPO_ESTOQUE
 INSERT INTO tipo_estoque (tipo) VALUES
-('Alimento'),
-('Limpeza');
+('Seco'),
+('Refrigerado'),
+('Congelado');
 
 -- ESTOQUE
 INSERT INTO estoque (descricao, qtd, id_tipo_estoque) VALUES
-('Arroz 5kg', 50, 1),
-('Feijão 1kg', 80, 1),
-('Detergente', 30, 2);
+('Arroz estoque', 100, 1),
+('Feijão estoque', 80, 1),
+('Frango congelado', 50, 3),
+('Verduras frescas', 30, 2),
+('Suco armazenado', 40, 2);
 
 -- CARDAPIO
-INSERT INTO cardapio (descricao, hora, id_agendamento) VALUES
-('Café da manhã', '08:00', 1),
-('Almoço', '12:00', 3);
+INSERT INTO cardapio (descricao, data, hora, id_agendamento) VALUES
+('Café da manhã', '2026-05-10', '08:00', 1),
+('Almoço', '2026-05-11', '12:00', 2),
+('Lanche da tarde', '2026-05-12', '15:00', 3);
 
 -- ITENS_CARDAPIO
 INSERT INTO itens_cardapio (id_cardapio, id_alimento, quantidade) VALUES
 (1, 1, 2),
-(1, 2, 1),
+(1, 5, 1),
 (2, 1, 3),
-(2, 3, 2);
+(2, 2, 2),
+(2, 3, 2),
+(2, 4, 1),
+(3, 5, 2),
+(3, 4, 1);
