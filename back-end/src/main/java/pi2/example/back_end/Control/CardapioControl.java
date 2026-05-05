@@ -11,7 +11,7 @@ import java.util.List;
 public class CardapioControl {
 
     private boolean invalido(Cardapio c) {
-        return c.getDescricao() == null || c.getDescricao().isEmpty()
+        return c.getNome() == null || c.getNome().isEmpty()
                 || c.getHora() == null || c.getHora().isEmpty()
                 || c.getData() == null || c.getData().isEmpty()
                 || c.getAgendamento() == null

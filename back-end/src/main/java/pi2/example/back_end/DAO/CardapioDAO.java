@@ -24,13 +24,13 @@ public class CardapioDAO {
 
         String sql = """
     INSERT INTO cardapio
-    (descricao, data, hora, id_agendamento)
+    (nome, data, hora, id_agendamento)
     VALUES (?,?,?,?)
 """;
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
-            stmt.setString(1, c.getDescricao());
+            stmt.setString(1, c.getNome());
             stmt.setDate(2, Date.valueOf(c.getData()));
             stmt.setTime(3, Time.valueOf(c.getHora()));
             stmt.setInt(4, c.getAgendamento().getId());
@@ -57,7 +57,7 @@ public class CardapioDAO {
 
         String sql = """
     UPDATE cardapio SET
-    descricao = ?, 
+    nome = ?, 
     data = ?, 
     hora = ?, 
     id_agendamento = ?
@@ -67,7 +67,7 @@ public class CardapioDAO {
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
-            stmt.setString(1, c.getDescricao());
+            stmt.setString(1, c.getNome());
             stmt.setDate(2, Date.valueOf(c.getData()));
             stmt.setTime(3, Time.valueOf(c.getHora()));
             stmt.setInt(4, c.getAgendamento().getId());
@@ -107,7 +107,7 @@ public class CardapioDAO {
 
             if (rs.next()) {
                 c.setId(rs.getInt("id"));
-                c.setDescricao(rs.getString("descricao"));
+                c.setNome(rs.getString("nome"));
                 c.setHora(rs.getString("hora"));
                 c.setData(rs.getString("data"));
 
@@ -138,7 +138,7 @@ public class CardapioDAO {
 
                 Cardapio c = new Cardapio();
                 c.setId(rs.getInt("id"));
-                c.setDescricao(rs.getString("descricao"));
+                c.setNome(rs.getString("nome"));
                 c.setHora(rs.getString("hora"));
                 c.setData(rs.getString("data"));
 

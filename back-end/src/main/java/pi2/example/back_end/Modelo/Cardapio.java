@@ -10,7 +10,7 @@ import java.util.List;
 public class Cardapio {
 
     private Integer id;
-    private String descricao;
+    private String nome;
     private String hora;
     private String data;
 
@@ -22,9 +22,9 @@ public class Cardapio {
         this.id = id;
     }
 
-    public Cardapio(Integer id, String descricao, String hora, String data, AgendamentoAtividade agendamento) {
+    public Cardapio(Integer id, String nome, String hora, String data, AgendamentoAtividade agendamento) {
         this.id = id;
-        this.descricao = descricao;
+        this.nome = nome;
         this.hora = hora;
         this.data = data;
         this.agendamento = agendamento;
@@ -38,12 +38,12 @@ public class Cardapio {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getNome() {
+        return nome;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getHora() {
