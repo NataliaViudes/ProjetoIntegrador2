@@ -66,17 +66,12 @@
 .item-cardapio {
     background-color: #dcdcdc;
     border: 1px solid #8f8f8f;
-    padding: 12px;
+    padding: 4px;
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     gap: 12px;
-}
-
-.acoes-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    font-size: 15px;
 }
 
 .painel-calendario .rbc-calendar {
@@ -89,3 +84,24 @@
         grid-template-columns: 1fr;
     }
 }
+
+.acoes-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acoes-item button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  
+  width: 24px;   
+  height: 20px;  
+  padding: 3px;  /* tamanho do icone*/
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+

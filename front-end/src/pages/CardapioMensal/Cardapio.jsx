@@ -2,13 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu";
 import "../CardapioMensal/Cardapio.css";
-
 import ItensCardapio from "./ItensCardapio";
-
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
+
+import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
+import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
+import { ReactComponent as Salad } from "../../assets/icons/salad.svg";
+
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
@@ -223,6 +227,11 @@ function Cardapio() {
     }
   }
 
+  function getNomeAtividade(idAgendamento) {
+  const ag = agendamentos.find(a => a.id === idAgendamento);
+  return ag?.atividade?.descricao || "Sem descrição";
+}
+
   return (
     <div className="pagina-cardapio">
       <Menu />
@@ -288,15 +297,27 @@ function Cardapio() {
                 <div>
                   <strong>{c.nome}</strong>
                   <div>
-                    {c.data} {c.hora}
+                    {c.data} 
                   </div>
-                  <div>Atividade: {c.agendamento?.id}</div>
+                  <div>
+                    {c.hora}
+                  </div>
+                  <div>Atividade: {getNomeAtividade(c.agendamento?.id)}</div>
                 </div>
 
                 <div className="acoes-item">
-                  <button onClick={() => editar(c)}>Editar</button>
-                  <button onClick={() => excluir(c.id)}>Excluir</button>
-                  <button onClick={() => abrirItens(c)}>Itens</button>
+                  <button onClick={() => abrirItens(c)} title="Itens">
+                    <Salad />
+                    
+                  </button>
+                  
+                  <button onClick={() => editar(c)} title="Editar">
+                    <Pencil />
+                  </button>
+
+                  <button onClick={() => excluir(c.id)} title="Excluir">
+                    <Trash />
+                  </button>
                 </div>
               </div>
             ))
@@ -327,7 +348,7 @@ function Cardapio() {
             defaultView="month"
             onSelectSlot={selecionarSlot}
             onSelectEvent={selecionarEvento}
-            eventPropGetter={estiloEvento}  
+            eventPropGetter={estiloEvento}
             style={{ height: "80vh" }}
           />
         </section>
