@@ -14,8 +14,11 @@ export default function ItensEvento({ evento, voltar }) {
     if (evento?.id) {
       carregarItens();
     }
+  }, [evento]); // 🔥 DEPENDE DO EVENTO
+
+  useEffect(() => {
     carregarEstoque();
-  }, [evento]);
+  }, []);
 
   async function carregarEstoque() {
     try {
@@ -33,6 +36,7 @@ export default function ItensEvento({ evento, voltar }) {
 
   async function carregarItens() {
     try {
+      setItens([]); // limpa itens antes de carregar novos
       const resp = await api.get(`/itens-evento/evento/${evento.id}`);
       setItens(resp.data);
     } catch (e) {
@@ -165,120 +169,142 @@ export default function ItensEvento({ evento, voltar }) {
   }
 
   return (
-    <div className="itens-container">
-      <div className="topo-itens">
-        <div>
-          <h2>{evento.nome}</h2>
-          <p>
-            <strong>Local:</strong> {evento.local}
-          </p>
+    <>
+      {!evento ? (
+        <div className="itens-container">
+          <div className="topo-itens">
+            <div>
+              <h2>Nenhum evento selecionado</h2>
+              <p>Selecione um evento para gerenciar os itens.</p>
+            </div>
+
+            <div className="acoes-topo">
+              <button className="btn btn-voltar" onClick={voltar}>
+                <ArrowLeft size={16} />
+                Voltar
+              </button>
+            </div>
+          </div>
         </div>
+      ) : (
+        <div className="itens-container">
+          <div className="topo-itens">
+            <div>
+              <h2>{evento.nome}</h2>
+              <p>
+                <strong>Local:</strong> {evento.local}
+              </p>
+            </div>
 
-        <div className="acoes-topo">
-          <button className="btn btn-voltar" onClick={voltar}>
-            <ArrowLeft size={16} />
-            Voltar
-          </button>
+            <div className="acoes-topo">
+              <button className="btn btn-voltar" onClick={voltar}>
+                <ArrowLeft size={16} />
+                Voltar
+              </button>
 
-          <button className="btn btn-add" onClick={adicionarLinha}>
-            <Plus size={16} />
-            Item
-          </button>
+              <button className="btn btn-add" onClick={adicionarLinha}>
+                <Plus size={16} />
+                Item
+              </button>
 
-          <button className="btn btn-save" onClick={salvarAlteracoes}>
-            <Save size={16} />
-            Salvar
-          </button>
-        </div>
-      </div>
+              <button className="btn btn-save" onClick={salvarAlteracoes}>
+                <Save size={16} />
+                Salvar
+              </button>
+            </div>
+          </div>
 
-      <table className="itens-tabela">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qtd</th>
-            <th>Max</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {itens.length === 0 ? (
-            <tr>
-              <td colSpan="4" style={{ textAlign: "center" }}>
-                Nenhum item
-              </td>
-            </tr>
-          ) : (
-            itens.map((item, index) => (
-              <tr
-                key={index}
-                className={item.estoque?.id ? "linha-selecionada" : ""}
-              >
-                <td style={{ position: "relative" }}>
-                  <input
-                    className={`input-busca ${
-                      item.estoque?.id ? "input-desabilitado" : ""
-                    }`}
-                    type="text"
-                    disabled={!!item.estoque?.id}
-                    value={busca[index] ?? item.estoque?.descricao ?? ""}
-                    onChange={(e) => buscarEstoque(index, e.target.value)}
-                    onFocus={() => buscarEstoque(index, "")}
-                    onBlur={() =>
-                      setTimeout(
-                        () =>
-                          setSugestoes({
-                            ...sugestoes,
-                            [index]: [],
-                          }),
-                        100,
-                      )
-                    }
-                    placeholder="Buscar item..."
-                  />
-
-                  {sugestoes[index]?.length > 0 && (
-                    <div className="sugestoes-box">
-                      {sugestoes[index].map((s) => (
-                        <div
-                          key={s.id}
-                          className="sugestao-item"
-                          onClick={() => selecionarItem(index, s)}
-                        >
-                          {s.descricao} (Estoque: {s.qtd})
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </td>
-
-                <td>
-                  <input
-                    className="input-qtd"
-                    type="number"
-                    value={item.qtd}
-                    min="1"
-                    max={item.estoque?.qtd || 0}
-                    onChange={(e) => alterarQtd(index, Number(e.target.value))}
-                  />
-                </td>
-
-                <td>{item.estoque?.qtd ?? "-"}</td>
-
-                <td>
-                  <button
-                    className="btn-delete"
-                    onClick={() => removerLinha(index)}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </td>
+          <table className="itens-tabela">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qtd</th>
+                <th>Max</th>
+                <th>Ações</th>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+
+            <tbody>
+              {itens.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center" }}>
+                    Nenhum item
+                  </td>
+                </tr>
+              ) : (
+                itens.map((item, index) => (
+                  <tr
+                    key={index}
+                    className={item.estoque?.id ? "linha-selecionada" : ""}
+                  >
+                    <td style={{ position: "relative" }}>
+                      <input
+                        className={`input-busca ${
+                          item.estoque?.id ? "input-desabilitado" : ""
+                        }`}
+                        type="text"
+                        disabled={!!item.estoque?.id}
+                        value={busca[index] ?? item.estoque?.descricao ?? ""}
+                        onChange={(e) => buscarEstoque(index, e.target.value)}
+                        onFocus={() => buscarEstoque(index, "")}
+                        onBlur={() =>
+                          setTimeout(
+                            () =>
+                              setSugestoes({
+                                ...sugestoes,
+                                [index]: [],
+                              }),
+                            100,
+                          )
+                        }
+                        placeholder="Buscar item..."
+                      />
+
+                      {sugestoes[index]?.length > 0 && (
+                        <div className="sugestoes-box">
+                          {sugestoes[index].map((s) => (
+                            <div
+                              key={s.id}
+                              className="sugestao-item"
+                              onClick={() => selecionarItem(index, s)}
+                            >
+                              {s.descricao} (Estoque: {s.qtd})
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </td>
+
+                    <td>
+                      <input
+                        className="input-qtd"
+                        type="number"
+                        value={item.qtd}
+                        min="1"
+                        max={item.estoque?.qtd || 0}
+                        onChange={(e) =>
+                          alterarQtd(index, Number(e.target.value))
+                        }
+                      />
+                    </td>
+
+                    <td>{item.estoque?.qtd ?? "-"}</td>
+
+                    <td>
+                      <button
+                        className="btn-delete"
+                        onClick={() => removerLinha(index)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 }

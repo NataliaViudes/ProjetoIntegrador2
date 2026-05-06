@@ -13,6 +13,7 @@ moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
 function Eventos() {
+  const [erros, setErros] = useState({});
   const [modo, setModo] = useState("calendario");
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
 
@@ -94,6 +95,7 @@ function Eventos() {
   }
 
   function limparFormulario() {
+    setEventoSelecionado(null);
     setEventoEditando(null);
     setNome("");
     setDataInicio("");
@@ -102,11 +104,21 @@ function Eventos() {
     setQtd("");
     setIdCatEvento("");
     setIdFuncionario("");
+    setErros({});
   }
 
   async function salvar() {
-    if (!nome || !dataInicio || !dataFim || !local || !qtd || !idCatEvento) {
-      alert("Preencha todos os campos.");
+    const novosErros = {};
+
+    if (!nome) novosErros.nome = true;
+    if (!dataInicio) novosErros.dataInicio = true;
+    if (!dataFim) novosErros.dataFim = true;
+    if (!local) novosErros.local = true;
+    if (!qtd) novosErros.qtd = true;
+    if (!idCatEvento) novosErros.idCatEvento = true;
+
+    if (Object.keys(novosErros).length > 0) {
+      setErros(novosErros);
       return;
     }
 
@@ -141,6 +153,7 @@ function Eventos() {
   }
 
   function editar(ev) {
+    setEventoSelecionado(ev);
     setEventoEditando(ev);
     setNome(ev.nome || "");
     setDataInicio(juntarDataHora(ev.data, ev.horaInicio));
@@ -179,6 +192,8 @@ function Eventos() {
   }
 
   function selecionarSlot(slotInfo) {
+     setErros((prev) => ({ ...prev, dataFim: false }));
+      setErros((prev) => ({ ...prev, dataInicio: false }));
     setDataInicio(
       juntarDataHora(
         slotInfo.start.toISOString().split("T")[0],
@@ -202,12 +217,17 @@ function Eventos() {
           <h2>Eventos</h2>
 
           <label>Nome do Evento</label>
-          <input value={nome} onChange={(e) => setNome(e.target.value)} />
+          <input
+            value={nome}
+            onChange={(e) =>{ setNome(e.target.value); setErros({...erros, nome: false}); }}
+            className={erros.nome ? "input-erro" : ""}
+          />
 
           <label>Categoria do evento</label>
           <select
             value={idCatEvento}
-            onChange={(e) => setIdCatEvento(e.target.value)}
+            onChange={(e) => { setIdCatEvento(e.target.value); setErros({...erros, idCatEvento: false}); }}
+            className={erros.idCatEvento ? "input-erro" : ""}
           >
             <option value="">Selecione a categoria</option>
             {categorias.map((cat) => (
@@ -229,28 +249,32 @@ function Eventos() {
           <input
             type="datetime-local"
             value={dataInicio}
-            onChange={(e) => setDataInicio(e.target.value)}
+            onChange={(e) => { setDataInicio(e.target.value); setErros({...erros, dataInicio: false}); }}
+            className={erros.dataInicio ? "input-erro" : ""}
           />
 
           <label>Data e hora final</label>
           <input
             type="datetime-local"
             value={dataFim}
-            onChange={(e) => setDataFim(e.target.value)}
+            onChange={(e) => { setDataFim(e.target.value); setErros({...erros, dataFim: false}); }}
+            className={erros.dataFim ? "input-erro" : ""}
           />
 
           <label>Local</label>
           <textarea
             rows="2"
             value={local}
-            onChange={(e) => setLocal(e.target.value)}
+            onChange={(e) => { setLocal(e.target.value); setErros({...erros, local: false}); }}
+            className={erros.local ? "input-erro" : ""}
           />
 
           <label>Quantidade</label>
           <input
             type="number"
             value={qtd}
-            onChange={(e) => setQtd(e.target.value)}
+            onChange={(e) => { setQtd(e.target.value); setErros({...erros, qtd: false}); }}
+            className={erros.qtd ? "input-erro" : ""}
           />
 
           <div className="acoes-formulario">
@@ -349,6 +373,7 @@ function Eventos() {
           <>
             {eventoSelecionado ? (
               <ItensEvento
+                key={eventoSelecionado?.id}
                 evento={eventoSelecionado}
                 voltar={() => setModo("calendario")}
               />

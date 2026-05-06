@@ -179,7 +179,7 @@ public class ItensEventoControl {
             if (lista != null && !lista.isEmpty())
                 return ResponseEntity.ok(lista);
             else
-                return ResponseEntity.status(404).body(new Erro("Nenhum item encontrado"));
+                return ResponseEntity.ok("");
 
         } catch (SQLException e) {
             System.out.println("Erro SQL: " + e.getMessage());
