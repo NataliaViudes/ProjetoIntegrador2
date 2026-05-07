@@ -160,3 +160,8 @@
     font-weight: bold;
     color: green;
 }
+
+.input-erro {
+  border: 2px solid red;
+  outline: none;
+}

@@ -8,11 +8,9 @@ import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-
 import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 import { ReactComponent as Salad } from "../../assets/icons/salad.svg";
-
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
@@ -33,6 +31,14 @@ function Cardapio() {
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("month");
+
+  const [erros, setErros] = useState({
+    nome: false,
+    data: false,
+    hora: false,
+    idAgendamento: false,
+    horaForaAtividade: false,
+  });
 
   useEffect(() => {
     carregarTudo();
@@ -60,16 +66,12 @@ function Cardapio() {
 
   const atividadesDia = useMemo(() => {
     if (!data) return [];
-
-    return agendamentos.filter((ag) => {
-      return onlyDate(ag.dataInicio) === data;
-    });
+    return agendamentos.filter((ag) => onlyDate(ag.dataInicio) === data);
   }, [data, agendamentos]);
 
   const eventosCardapio = useMemo(() => {
     return cardapio.map((c) => {
       const dataHora = new Date(`${c.data}T${c.hora}`);
-
       return {
         id: c.id,
         title: `${c.nome}`,
@@ -108,6 +110,13 @@ function Cardapio() {
     setData("");
     setHora("");
     setIdAgendamento("");
+    setErros({
+      nome: false,
+      data: false,
+      hora: false,
+      idAgendamento: false,
+      horaForaAtividade: false,
+    });
   }
 
   function horaDentroDaAtividade() {
@@ -121,21 +130,28 @@ function Cardapio() {
     return horaSelecionada.isBetween(inicio, fim, null, "[)");
   }
 
+  function validarFormulario() {
+    const novosErros = {
+      nome: !nome,
+      data: !data,
+      hora: !hora,
+      idAgendamento: !idAgendamento,
+      horaForaAtividade: false,
+    };
+
+    if (!novosErros.data && !novosErros.hora && !novosErros.idAgendamento) {
+      if (!horaDentroDaAtividade()) {
+        novosErros.horaForaAtividade = true;
+      }
+    }
+
+    setErros(novosErros);
+
+    return !Object.values(novosErros).some(Boolean);
+  }
+
   async function salvar() {
-    if (!nome || !data || !hora || !idAgendamento) {
-      alert("Preencha todos os campos.");
-      return;
-    }
-
-    if (atividadesDia.length === 0) {
-      alert("Não existe atividade neste dia.");
-      return;
-    }
-
-    if (!horaDentroDaAtividade()) {
-      alert("Horário fora do intervalo da atividade.");
-      return;
-    }
+    if (!validarFormulario()) return;
 
     const payload = {
       id: cardapioEditando?.id || null,
@@ -145,16 +161,12 @@ function Cardapio() {
       agendamento: { id: Number(idAgendamento) },
     };
 
-    console.log(payload);
     try {
       if (cardapioEditando) {
         await api.put(`/cardapio/${cardapioEditando.id}`, payload);
       } else {
-        console.log(payload);
         await api.post("/cardapio", payload);
       }
-
-
 
       limparFormulario();
       carregarTudo();
@@ -209,7 +221,7 @@ function Cardapio() {
     if (evento.tipo === "atividade") {
       return {
         style: {
-          backgroundColor: "#3174ad", // azul
+          backgroundColor: "#3174ad",
           color: "white",
           borderRadius: "5px",
         },
@@ -219,7 +231,7 @@ function Cardapio() {
     if (evento.tipo === "cardapio") {
       return {
         style: {
-          backgroundColor: "#28a745", // verde
+          backgroundColor: "#28a745",
           color: "white",
           borderRadius: "5px",
         },
@@ -228,7 +240,7 @@ function Cardapio() {
   }
 
   function getNomeAtividade(idAgendamento) {
-    const ag = agendamentos.find(a => a.id === idAgendamento);
+    const ag = agendamentos.find((a) => a.id === idAgendamento);
     return ag?.atividade?.descricao || "Sem descrição";
   }
 
@@ -245,6 +257,7 @@ function Cardapio() {
             type="date"
             value={data}
             onChange={(e) => setData(e.target.value)}
+            className={erros.data ? "input-erro" : ""}
           />
 
           <label>Hora</label>
@@ -252,15 +265,16 @@ function Cardapio() {
             type="time"
             value={hora}
             onChange={(e) => setHora(e.target.value)}
+            className={erros.hora || erros.horaForaAtividade ? "input-erro" : ""}
           />
 
           <label>Atividades do dia</label>
           <select
             value={idAgendamento}
             onChange={(e) => setIdAgendamento(e.target.value)}
+            className={erros.idAgendamento ? "input-erro" : ""}
           >
             <option value="">Selecione uma atividade</option>
-
             {atividadesDia.length === 0 ? (
               <option disabled>Nenhuma atividade neste dia</option>
             ) : (
@@ -277,6 +291,7 @@ function Cardapio() {
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            className={erros.nome ? "input-erro" : ""}
           />
 
           <div className="acoes-formulario">
@@ -291,36 +306,32 @@ function Cardapio() {
             <h3>Cardápios Agendados</h3>
 
             {cardapio.length === 0 ? (
-              <p>Nenhum cardapio agendado.</p>
-            ) : (cardapio.map((c) => (
-              <div key={c.id} className="item-cardapio">
-                <div>
-                  <strong>{c.nome}</strong>
+              <p>Nenhum cardápio agendado.</p>
+            ) : (
+              cardapio.map((c) => (
+                <div key={c.id} className="item-cardapio">
                   <div>
-                    {c.data}
+                    <strong>{c.nome}</strong>
+                    <div>{c.data}</div>
+                    <div>{c.hora}</div>
+                    <div>Atividade: {getNomeAtividade(c.agendamento?.id)}</div>
                   </div>
-                  <div>
-                    {c.hora}
+
+                  <div className="acoes-item">
+                    <button onClick={() => abrirItens(c)} title="Itens">
+                      <Salad />
+                    </button>
+
+                    <button onClick={() => editar(c)} title="Editar">
+                      <Pencil />
+                    </button>
+
+                    <button onClick={() => excluir(c.id)} title="Excluir">
+                      <Trash />
+                    </button>
                   </div>
-                  <div>Atividade: {getNomeAtividade(c.agendamento?.id)}</div>
                 </div>
-
-                <div className="acoes-item">
-                  <button onClick={() => abrirItens(c)} title="Itens">
-                    <Salad />
-
-                  </button>
-
-                  <button onClick={() => editar(c)} title="Editar">
-                    <Pencil />
-                  </button>
-
-                  <button onClick={() => excluir(c.id)} title="Excluir">
-                    <Trash />
-                  </button>
-                </div>
-              </div>
-            ))
+              ))
             )}
           </div>
         </section>
@@ -358,4 +369,4 @@ function Cardapio() {
   );
 }
 
-export default Cardapio;
+export default Cardapio;  
