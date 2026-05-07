@@ -35,14 +35,17 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
     <div style={{ padding: 20 }}>
       <section className="painel-itens">
         <button onClick={voltar}>⬅ Voltar</button>
-
-        <div>{cardapio?.nome}</div>
-        <div>{cardapio?.data}</div>
-        <div>{cardapio?.hora}</div>
-
-        <div>
-          Atividade: {getNomeAtividade()}
+        <div className="painel-itens2">
+          <strong>{cardapio?.nome}</strong>
+          <div>{cardapio?.data}</div>
+          <div>{cardapio?.hora}</div>
+          <div>
+            Atividade: {getNomeAtividade()}
+          </div>
         </div>
+
+
+
       </section>
     </div>
   );
