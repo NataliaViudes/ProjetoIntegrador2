@@ -18,7 +18,7 @@ public class CategoriaAtividadeDAOImpl {
     }
 
     public CategoriaAtividade gravar(CategoriaAtividade entidade) {
-        String sql = "INSERT INTO categoria (nome) VALUES (?)";
+        String sql = "INSERT INTO categoria_atividade (nome) VALUES (?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -31,12 +31,12 @@ public class CategoriaAtividadeDAOImpl {
 
             return entidade;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir categoria de atividade", e);
+            throw new RuntimeException("Erro ao incluir categoria de atividade", e);
         }
     }
 
     public CategoriaAtividade alterar(CategoriaAtividade entidade) {
-        String sql = "UPDATE categoria SET nome = ? WHERE id_categoria = ?";
+        String sql = "UPDATE categoria_atividade SET nome = ? WHERE id_categoria = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -51,7 +51,7 @@ public class CategoriaAtividadeDAOImpl {
     }
 
     public boolean apagar(CategoriaAtividade entidade) {
-        String sql = "DELETE FROM categoria WHERE id_categoria = ?";
+        String sql = "DELETE FROM categoria_atividade WHERE id_categoria = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setInt(1, entidade.getId());
@@ -72,7 +72,7 @@ public class CategoriaAtividadeDAOImpl {
     public CategoriaAtividade get(int id) {
         CategoriaAtividade categoria = null;
 
-        String sql = "SELECT id_categoria, nome FROM categoria WHERE id_categoria = ?";
+        String sql = "SELECT id_categoria, nome FROM categoria_atividade";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setInt(1, id);
@@ -93,7 +93,7 @@ public class CategoriaAtividadeDAOImpl {
 
         String sql = """
             SELECT id_categoria, nome
-            FROM categoria
+            FROM categoria_atividade
             WHERE nome ILIKE ?
             ORDER BY nome
         """;
@@ -115,7 +115,7 @@ public class CategoriaAtividadeDAOImpl {
     public List<CategoriaAtividade> getAll() {
         List<CategoriaAtividade> lista = new ArrayList<>();
 
-        String sql = "SELECT id_categoria, nome FROM categoria ORDER BY nome";
+        String sql = "SELECT id_categoria, nome FROM categoria_atividade ORDER BY nome";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -135,7 +135,7 @@ public class CategoriaAtividadeDAOImpl {
         String sql;
 
         if (nome == null || nome.isEmpty()) {
-            sql = "SELECT id_categoria, nome FROM categoria ORDER BY nome";
+            sql = "SELECT id_categoria, nome FROM categoria_atividade ORDER BY nome";
 
             try (PreparedStatement stmt = bd.preparar(sql)) {
                 ResultSet rs = stmt.executeQuery();
@@ -150,7 +150,7 @@ public class CategoriaAtividadeDAOImpl {
         } else {
             sql = """
                 SELECT id_categoria, nome
-                FROM categoria
+                FROM categoria_atividade
                 WHERE nome ILIKE '%' || ? || '%'
                 ORDER BY nome
             """;

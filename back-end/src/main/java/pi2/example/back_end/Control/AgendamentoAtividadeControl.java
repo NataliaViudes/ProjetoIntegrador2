@@ -7,6 +7,7 @@ import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class AgendamentoAtividadeControl {
@@ -14,13 +15,33 @@ public class AgendamentoAtividadeControl {
     public AgendamentoAtividadeControl() {}
 
     private boolean campoVazio(AgendamentoAtividade a) {
-        return a.getAtividade() == null || a.getAtividade().getId() == null
+        return a.getAtividade() == null
+                || a.getAtividade().getId() == null
                 || a.getDataInicio() == null || a.getDataInicio().isEmpty()
                 || a.getDataFim() == null || a.getDataFim().isEmpty();
     }
+    private boolean datasInvalidas(AgendamentoAtividade a) {
+        try {
+            Timestamp inicio = Timestamp.valueOf(a.getDataInicio().replace("T", " "));
+            Timestamp fim = Timestamp.valueOf(a.getDataFim().replace("T", " "));
+            return fim.before(inicio);
+        } catch (Exception e) {
+            return true;
+        }
+    }
 
     public ResponseEntity<?> incluir(AgendamentoAtividade agendamento) {
+        if (agendamento.getAtividade() == null || agendamento.getAtividade().getId() == null) {
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Atividade inválida"));
+        }
+
         if (!campoVazio(agendamento)) {
+            if (datasInvalidas(agendamento)) {
+                return ResponseEntity.badRequest()
+                        .body(new Erro("Data fim não pode ser antes da data início"));
+            }
+
             Conexao db = Banco.getConexao();
 
             try {
@@ -85,6 +106,11 @@ public class AgendamentoAtividadeControl {
 
         if (id != null && id > 0) {
             if (!campoVazio(agendamento)) {
+                if (datasInvalidas(agendamento)) {
+                    return ResponseEntity.badRequest()
+                            .body(new Erro("Data fim não pode ser antes da data início"));
+                }
+
                 Conexao db = Banco.getConexao();
 
                 try {

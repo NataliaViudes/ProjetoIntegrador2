@@ -38,7 +38,7 @@ public class DAOFuncionario {
             }
             return entidade;
         } catch (SQLException e){
-            throw new RuntimeException("Erro ao inserir funcionário", e);
+            throw new RuntimeException("Erro ao incluir funcionário", e);
         }
     }
 

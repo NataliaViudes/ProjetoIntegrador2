@@ -1,17 +1,17 @@
 package pi2.example.back_end.Modelo;
 
-public class EtapaMaterial {
+public class MaterialAtividade {
 
-    private int idEtapa;
+    private int idAgendamento;
     private int idItem;
     private int quantidade;
 
-    public int getIdEtapa() {
-        return idEtapa;
+    public int getIdAgendamento() {
+        return idAgendamento;
     }
 
-    public void setIdEtapa(int idEtapa) {
-        this.idEtapa = idEtapa;
+    public void setIdAgendamento(int idAgendamento) {
+        this.idAgendamento = idAgendamento;
     }
 
     public int getIdItem() {

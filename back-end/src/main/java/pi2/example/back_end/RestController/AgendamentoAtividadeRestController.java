@@ -12,13 +12,15 @@ public class AgendamentoAtividadeRestController {
 
     private final AgendamentoAtividadeControl control = new AgendamentoAtividadeControl();
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getId(@PathVariable("id") int id) {
         return control.getById(id);
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(required = false) String filtro) {
+    public ResponseEntity<?> get(
+            @RequestParam(name = "filtro", required = false) String filtro
+    ) {
         return control.getAllOrFilter(filtro);
     }
 
@@ -27,13 +29,13 @@ public class AgendamentoAtividadeRestController {
         return control.incluir(agendamento);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> apagar(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> apagar(@PathVariable("id") int id) {
         return control.delete(id);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody AgendamentoAtividade agendamento) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> alterar(@PathVariable("id") int id, @RequestBody AgendamentoAtividade agendamento) {
         agendamento.setId(id);
         return control.update(agendamento);
     }

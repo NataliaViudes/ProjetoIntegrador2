@@ -34,7 +34,7 @@ public class AtividadeDAOImpl {
 
             return entidade;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir atividade", e);
+            throw new RuntimeException("Erro ao incluir atividade", e);
         }
     }
 
@@ -93,7 +93,7 @@ public class AtividadeDAOImpl {
                    c.id_categoria, c.nome AS nome_categoria,
                    f.id_funcionario, f.nome AS nome_funcionario
             FROM atividade a
-            JOIN categoria c ON a.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
             JOIN funcionario f ON a.id_funcionario = f.id_funcionario
             WHERE a.id_atividade = ?
         """;
@@ -120,7 +120,7 @@ public class AtividadeDAOImpl {
                    c.id_categoria, c.nome AS nome_categoria,
                    f.id_funcionario, f.nome AS nome_funcionario
             FROM atividade a
-            JOIN categoria c ON a.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
             JOIN funcionario f ON a.id_funcionario = f.id_funcionario
             WHERE a.descricao ILIKE ?
             ORDER BY a.descricao
@@ -148,7 +148,7 @@ public class AtividadeDAOImpl {
                    c.id_categoria, c.nome AS nome_categoria,
                    f.id_funcionario, f.nome AS nome_funcionario
             FROM atividade a
-            JOIN categoria c ON a.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
             JOIN funcionario f ON a.id_funcionario = f.id_funcionario
             ORDER BY a.descricao
         """;
@@ -176,7 +176,7 @@ public class AtividadeDAOImpl {
                        c.id_categoria, c.nome AS nome_categoria,
                        f.id_funcionario, f.nome AS nome_funcionario
                 FROM atividade a
-                JOIN categoria c ON a.id_categoria = c.id_categoria
+                JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
                 JOIN funcionario f ON a.id_funcionario = f.id_funcionario
                 ORDER BY a.descricao
             """;
@@ -196,7 +196,7 @@ public class AtividadeDAOImpl {
                        c.id_categoria, c.nome AS nome_categoria,
                        f.id_funcionario, f.nome AS nome_funcionario
                 FROM atividade a
-                JOIN categoria c ON a.id_categoria = c.id_categoria
+                JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
                 JOIN funcionario f ON a.id_funcionario = f.id_funcionario
                 WHERE a.descricao ILIKE '%' || ? || '%'
                 ORDER BY a.descricao

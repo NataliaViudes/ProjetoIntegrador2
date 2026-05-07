@@ -12,18 +12,22 @@ public class FuncionarioRestController {
 
     private final FuncionarioControl control = new FuncionarioControl();
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
-        return  control.getById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getId(@PathVariable("id") int id) {
+        return control.getById(id);
     }
 
     @GetMapping("nome")
-    public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
+    public ResponseEntity<?> getNome(
+            @RequestParam(name = "nome", required = false) String nome
+    ) {
         return control.buscaPorNome(nome);
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(required = false) String filtro) {
+    public ResponseEntity<?> get(
+            @RequestParam(name = "filtro", required = false) String filtro
+    ) {
         return control.getAllOrFilter(filtro);
     }
 
@@ -39,13 +43,13 @@ public class FuncionarioRestController {
         return control.incluir(funcionario);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> apagar(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> apagar(@PathVariable("id") int id) {
         return control.delete(id);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody Funcionario funcionario) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> alterar(@PathVariable("id") int id, @RequestBody Funcionario funcionario) {
         funcionario.setId(id);
         return control.update(funcionario);
     }

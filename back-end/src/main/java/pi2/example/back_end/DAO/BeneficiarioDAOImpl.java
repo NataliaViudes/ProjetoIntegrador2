@@ -56,7 +56,7 @@ public class BeneficiarioDAOImpl {
 
             return entidade;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir beneficiário", e);
+            throw new RuntimeException("Erro ao incluir beneficiário", e);
         }
     }
 

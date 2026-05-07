@@ -55,7 +55,7 @@ public class AgendamentoAtividadeDAO {
 
             return entidade;
         } catch (SQLException e) {
-            System.out.println("Erro SQL ao inserir agendamento: " + e.getMessage());
+            System.out.println("Erro SQL ao incluir agendamento: " + e.getMessage());
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class AgendamentoAtividadeDAO {
                 data_inicio = ?,
                 data_fim = ?,
                 observacao = ?
-            WHERE id_agendamento = ?
+            WHERE id = ?
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -86,7 +86,7 @@ public class AgendamentoAtividadeDAO {
     }
 
     public boolean apagar(AgendamentoAtividade entidade) {
-        String sql = "DELETE FROM agendamento_atividade WHERE id_agendamento = ?";
+        String sql = "DELETE FROM agendamento_atividade WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setInt(1, entidade.getId());
@@ -113,10 +113,13 @@ public class AgendamentoAtividadeDAO {
         atividade.setFuncionario(funcionario);
 
         AgendamentoAtividade agendamento = new AgendamentoAtividade();
-        agendamento.setId(rs.getInt("id_agendamento"));
+        agendamento.setId(rs.getInt("id"));
         agendamento.setAtividade(atividade);
-        agendamento.setDataInicio(rs.getTimestamp("data_inicio").toLocalDateTime().toString());
-        agendamento.setDataFim(rs.getTimestamp("data_fim").toLocalDateTime().toString());
+        Timestamp inicio = rs.getTimestamp("data_inicio");
+        Timestamp fim = rs.getTimestamp("data_fim");
+
+        agendamento.setDataInicio(inicio != null ? inicio.toLocalDateTime().toString() : null);
+        agendamento.setDataFim(fim != null ? fim.toLocalDateTime().toString() : null);
         agendamento.setObservacao(rs.getString("observacao"));
 
         return agendamento;
@@ -126,7 +129,7 @@ public class AgendamentoAtividadeDAO {
         AgendamentoAtividade agendamento = null;
 
         String sql = """
-            SELECT ag.id_agendamento,
+            SELECT ag.id,
                    ag.data_inicio,
                    ag.data_fim,
                    ag.observacao,
@@ -138,9 +141,9 @@ public class AgendamentoAtividadeDAO {
                    f.nome AS func_nome
             FROM agendamento_atividade ag
             JOIN atividade at ON ag.id_atividade = at.id_atividade
-            JOIN categoria c ON at.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON at.id_categoria = c.id_categoria
             JOIN funcionario f ON at.id_funcionario = f.id_funcionario
-            WHERE ag.id_agendamento = ?
+            WHERE ag.id = ?
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -161,7 +164,7 @@ public class AgendamentoAtividadeDAO {
         List<AgendamentoAtividade> lista = new ArrayList<>();
 
         String sql = """
-            SELECT ag.id_agendamento,
+            SELECT ag.id,
                    ag.data_inicio,
                    ag.data_fim,
                    ag.observacao,
@@ -173,7 +176,7 @@ public class AgendamentoAtividadeDAO {
                    f.nome AS func_nome
             FROM agendamento_atividade ag
             JOIN atividade at ON ag.id_atividade = at.id_atividade
-            JOIN categoria c ON at.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON at.id_categoria = c.id_categoria
             JOIN funcionario f ON at.id_funcionario = f.id_funcionario
             WHERE at.descricao ILIKE ?
             ORDER BY ag.data_inicio
@@ -197,7 +200,7 @@ public class AgendamentoAtividadeDAO {
         List<AgendamentoAtividade> lista = new ArrayList<>();
 
         String sql = """
-            SELECT ag.id_agendamento,
+            SELECT ag.id,
                    ag.data_inicio,
                    ag.data_fim,
                    ag.observacao,
@@ -209,7 +212,7 @@ public class AgendamentoAtividadeDAO {
                    f.nome AS func_nome
             FROM agendamento_atividade ag
             JOIN atividade at ON ag.id_atividade = at.id_atividade
-            JOIN categoria c ON at.id_categoria = c.id_categoria
+            JOIN categoria_atividade c ON at.id_categoria = c.id_categoria
             JOIN funcionario f ON at.id_funcionario = f.id_funcionario
             ORDER BY ag.data_inicio
         """;
@@ -225,5 +228,38 @@ public class AgendamentoAtividadeDAO {
         }
 
         return lista;
+    }
+
+    public AgendamentoAtividade getPorAtividade(int idAtividade) {
+        String sql = """
+        SELECT ag.id,
+               ag.data_inicio,
+               ag.data_fim,
+               ag.observacao,
+               at.id_atividade,
+               at.descricao,
+               c.id_categoria AS cat_id,
+               c.nome AS cat_nome,
+               f.id_funcionario AS func_id,
+               f.nome AS func_nome
+        FROM agendamento_atividade ag
+        JOIN atividade at ON ag.id_atividade = at.id_atividade
+        JOIN categoria_atividade c ON at.id_categoria = c.id_categoria
+        JOIN funcionario f ON at.id_funcionario = f.id_funcionario
+        WHERE ag.id_atividade = ?
+    """;
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, idAtividade);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapAgendamento(rs);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar agendamento por atividade: " + e.getMessage());
+        }
+
+        return null;
     }
 }

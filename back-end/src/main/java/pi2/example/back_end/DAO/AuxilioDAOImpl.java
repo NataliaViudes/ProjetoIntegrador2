@@ -35,7 +35,7 @@ public class AuxilioDAOImpl {
 
             return entidade;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir auxílio", e);
+            throw new RuntimeException("Erro ao incluir auxílio", e);
         }
     }
 

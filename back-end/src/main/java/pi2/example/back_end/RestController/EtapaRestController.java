@@ -3,17 +3,14 @@ package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.EtapaControl;
-import pi2.example.back_end.DAO.DAOEtapa;
 import pi2.example.back_end.Modelo.Etapa;
-import pi2.example.back_end.db.Banco;
 
 
 @RestController
 @RequestMapping("/etapas")
 @CrossOrigin("*")
-public class RestControllerEtapa {
-
-    private final EtapaControl control = new EtapaControl(null);
+public class EtapaRestController {
+    private final EtapaControl control = new EtapaControl();
 
     @PostMapping
     public ResponseEntity<?> inserir(@RequestBody Etapa etapa) {
@@ -28,5 +25,11 @@ public class RestControllerEtapa {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluir(@PathVariable("id") int id) {
         return control.excluir(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable("id") int id,@RequestBody Etapa etapa) {
+        etapa.setId(id);
+        return control.atualizar(etapa);
     }
 }
