@@ -4,7 +4,7 @@ import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-import ItensEvento from "../../Components/ItensEvento";
+import ItensEvento from "../ItensEvento";
 import api from "../../Services/api";
 import Menu from "../../Components/Menu/Menu";
 import "./agendarEventos.css";
@@ -306,6 +306,7 @@ function Eventos() {
             {eventosApi.length === 0 ? (
               <p>Nenhum evento cadastrado.</p>
             ) : (
+              
               eventosApi.map((ev) => {
                 return (
                   <div key={ev.id} className="item-agendamento">

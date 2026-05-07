@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Menu from "./Components/Menu/Menu";
 import Eventos from "./Pages/Eventos";
 import Agendar from "./Pages/AgendarEventos/agendarEventos"
+import Cargos from "./Pages/Cargos";
+import Funcionarios from "./Pages/Funcionarios";
+import Familiares from "./Pages/Familiares";
 import { Toaster } from "react-hot-toast";
 export default function App() {
   return (
@@ -11,6 +14,9 @@ export default function App() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/agendarEventos" element={<Agendar />} />
+        <Route path="/funcionarios" element={<Funcionarios />} />
+        <Route path="/cargos" element={<Cargos />} />
+        <Route path="/familiares" element={<Familiares />} />
       </Routes>
 
       <Toaster
