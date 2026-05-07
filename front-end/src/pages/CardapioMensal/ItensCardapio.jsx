@@ -102,9 +102,9 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
           </div>
         </div>
 
+      </section>
 
-
-
+      <section className="painel-itens2">
         <div style={{ marginTop: 20 }}>
           {alimentos.map((alimento) => {
             const itemSalvo = itemJaExiste(alimento.id);
