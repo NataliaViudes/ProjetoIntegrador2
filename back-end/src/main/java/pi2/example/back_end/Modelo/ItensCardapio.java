@@ -5,7 +5,6 @@ import pi2.example.back_end.DAO.ItensCardapioDAO;
 import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
-
 public class ItensCardapio {
     private Alimento alimento;
     private Cardapio cardapio;
@@ -19,52 +18,53 @@ public class ItensCardapio {
         this.quantidade = quantidade;
     }
 
-    public Alimento getAlimento() {
-        return alimento;
-    }
+    // getters e setters
+    public Alimento getAlimento() { return alimento; }
+    public void setAlimento(Alimento alimento) { this.alimento = alimento; }
+    public Cardapio getCardapio() { return cardapio; }
+    public void setCardapio(Cardapio cardapio) { this.cardapio = cardapio; }
+    public Integer getQuantidade() { return quantidade; }
+    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
 
-    public void setAlimento(Alimento alimento) {
-        this.alimento = alimento;
-    }
-
-    public Cardapio getCardapio() {
-        return cardapio;
-    }
-
-    public void setCardapio(Cardapio cardapio) {
-        this.cardapio = cardapio;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
+    // métodos de persistência usando o DAO internamente
     public ItensCardapio incluir(Conexao con) {
-        ItensCardapioDAO dao = new ItensCardapioDAO(con);
-        return dao.gravar(this);
+        return new ItensCardapioDAO(con).gravar(this);
     }
 
     public ItensCardapio alterar(Conexao con) {
-        ItensCardapioDAO dao = new ItensCardapioDAO(con);
-        return dao.alterar(this);
+        return new ItensCardapioDAO(con).alterar(this);
     }
 
     public boolean apagar(Conexao con) {
-        ItensCardapioDAO dao = new ItensCardapioDAO(con);
-        return dao.apagar(this);
+        return new ItensCardapioDAO(con).apagar(this);
     }
 
     public ItensCardapio buscarPorIds(Conexao db, int idAlimento, int idCardapio) {
-        ItensCardapioDAO dao = new ItensCardapioDAO(db);
-        return dao.getByIds(idAlimento, idCardapio);
+        return new ItensCardapioDAO(db).getByIds(idCardapio, idAlimento);
     }
 
     public List<ItensCardapio> buscarPorCardapio(Conexao db, int idCardapio) {
-        ItensCardapioDAO dao = new ItensCardapioDAO(db);
-        return dao.buscarPorCardapio(idCardapio);
+        return new ItensCardapioDAO(db).buscarPorCardapio(idCardapio);
+    }
+
+    /**
+     * Salvar ou atualizar item, considerando quantidade 0 = remover
+     */
+    public ItensCardapio salvarOuAtualizar(Conexao db) throws Exception {
+        ItensCardapio existente = buscarPorIds(db, alimento.getId(), cardapio.getId());
+
+        if (quantidade <= 0) {
+            if (existente != null) {
+                existente.apagar(db);
+            }
+            return null; // null significa que foi removido
+        } else {
+            if (existente == null) {
+                return incluir(db);
+            } else {
+                existente.setQuantidade(quantidade);
+                return existente.alterar(db);
+            }
+        }
     }
 }

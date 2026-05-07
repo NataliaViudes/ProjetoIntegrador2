@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
-function ItensCardapio({
-  cardapio,
-  voltar,
-  agendamentos,
-}) {
+function ItensCardapio({ cardapio, voltar, agendamentos }) {
   const [alimentos, setAlimentos] = useState([]);
   const [itens, setItens] = useState([]);
 
@@ -15,253 +11,100 @@ function ItensCardapio({
 
   async function carregarTudo() {
     try {
-      const [respAlimentos, respItens] =
-        await Promise.all([
-          api.get("/alimento/descricao"),
-          api.get(
-            `/itens-cardapio/${cardapio.id}`
-          ),
-        ]);
+      const [respAlimentos, respItens] = await Promise.all([
+        api.get("/alimento/descricao"),
+        api.get(`/itens-cardapio/${cardapio.id}`),
+      ]);
 
-      setAlimentos(
-        Array.isArray(respAlimentos.data)
-          ? respAlimentos.data
-          : []
-      );
+      const alimentosData = Array.isArray(respAlimentos.data) ? respAlimentos.data : [];
+      setAlimentos(alimentosData);
 
-      setItens(
-        Array.isArray(respItens.data)
-          ? respItens.data
-          : []
-      );
+      const itensData = Array.isArray(respItens.data)
+        ? respItens.data.map(item => ({
+            ...item,
+            alimento: alimentosData.find(a => a.id === item.alimento.id) || item.alimento,
+            quantidade: item.quantidade || 0,
+          }))
+        : [];
+      setItens(itensData);
     } catch (e) {
       console.error(e);
     }
   }
 
-  function getNomeAtividade() {
-    const ag = agendamentos?.find(
-      (a) =>
-        a.id === cardapio?.agendamento?.id
-    );
-
-    return (
-      ag?.atividade?.descricao ||
-      "Sem atividade"
-    );
-  }
-
-  function buscarItem(idAlimento) {
-    return itens.find(
-      (i) =>
-        i.alimento?.id === idAlimento
-    );
-  }
-
-  function alterarQuantidade(
-    alimento,
-    quantidade
-  ) {
-    setItens((estadoAtual) => {
+  function alterarQuantidade(alimento, quantidade) {
+    setItens(estadoAtual => {
       const copia = [...estadoAtual];
-
-      const itemExistente = copia.find(
-        (i) =>
-          i.alimento?.id === alimento.id
-      );
+      const itemExistente = copia.find(i => i.alimento?.id === alimento.id);
 
       if (itemExistente) {
-        itemExistente.quantidade =
-          quantidade;
+        itemExistente.quantidade = quantidade;
       } else {
-        copia.push({
-          alimento,
-          quantidade,
-        });
+        copia.push({ alimento, quantidade });
       }
 
       return copia;
     });
   }
 
-  async function salvarItem(alimento) {
-    const item = buscarItem(alimento.id);
-
-    if (
-      !item?.quantidade ||
-      item.quantidade <= 0
-    ) {
-      alert("Informe uma quantidade");
-      return;
-    }
-
+  async function salvarTudo() {
     try {
-      await api.post("/itens-cardapio", {
-        cardapio: { id: cardapio.id },
-        alimento: { id: alimento.id },
-        quantidade: item.quantidade,
-      });
-
-      carregarTudo();
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao salvar");
-    }
-  }
-
-  async function atualizarItem(item) {
-    try {
-      await api.put(
-        `/itens-cardapio/${item.id}`,
-        {
-          ...item,
+      // Envia todos os itens de uma vez
+      for (const item of itens) {
+        if (item.quantidade == null) continue; // ignora itens sem quantidade
+        await api.post("/itens-cardapio", {
+          cardapio: { id: cardapio.id },
+          alimento: { id: item.alimento.id },
           quantidade: item.quantidade,
-        }
-      );
-
-      carregarTudo();
+        });
+      }
+      alert("Itens salvos com sucesso!");
+      carregarTudo(); // atualiza do backend
     } catch (e) {
       console.error(e);
-      alert("Erro ao atualizar");
-    }
-  }
-
-  async function excluirItem(idItem) {
-    try {
-      await api.delete(
-        `/itens-cardapio/${idItem}`
-      );
-
-      carregarTudo();
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao excluir");
+      alert("Erro ao salvar itens");
     }
   }
 
   return (
     <div className="pagina-cardapio">
       <section className="painel-itens">
-        <button
-          className="botao-itens"
-          onClick={voltar}
-        >
+        <button className="botao-itens" onClick={voltar}>
           ⬅ Voltar
         </button>
 
         <div className="painel-itens2">
           <strong>{cardapio?.nome}</strong>
-
           <div>{cardapio?.data}</div>
-
           <div>{cardapio?.hora}</div>
-
-          <div>
-            Atividade:{" "}
-            {getNomeAtividade()}
-          </div>
+          <div>Atividade: {agendamentos?.find(a => a.id === cardapio?.agendamento?.id)?.atividade?.descricao || "Sem atividade"}</div>
         </div>
       </section>
 
       <section className="painel-itens2">
         <div className="lista-alimentos">
-          {alimentos.map((alimento) => {
-            const item =
-              buscarItem(alimento.id);
-
-            const quantidade =
-              item?.quantidade || 0;
-
-            const itemSalvo =
-              Boolean(item?.id);
+          {alimentos.map(alimento => {
+            const item = itens.find(i => i.alimento?.id === alimento.id);
+            const quantidade = item?.quantidade || 0;
 
             return (
-              <div
-                key={alimento.id}
-                className="item-alimento"
-              >
-                <div className="nome-alimento">
-                  {alimento.nome}
-                </div>
+              <div key={alimento.id} className="item-alimento">
+                <div className="nome-alimento">{alimento.nome}</div>
 
                 <div className="controle-quantidade">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      alterarQuantidade(
-                        alimento,
-                        Math.max(
-                          0,
-                          quantidade - 1
-                        )
-                      )
-                    }
-                  >
-                    -
-                  </button>
-
-                  <input
-                    type="number"
-                    min="0"
-                    value={quantidade}
-                    onChange={(e) =>
-                      alterarQuantidade(
-                        alimento,
-                        Number(
-                          e.target.value
-                        )
-                      )
-                    }
-                    className="input-quantidade"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      alterarQuantidade(
-                        alimento,
-                        quantidade + 1
-                      )
-                    }
-                  >
-                    +
-                  </button>
+                  <button type="button" onClick={() => alterarQuantidade(alimento, Math.max(0, quantidade - 1))}>-</button>
+                  <input type="number" min="0" value={quantidade} onChange={e => alterarQuantidade(alimento, Number(e.target.value))} className="input-quantidade" />
+                  <button type="button" onClick={() => alterarQuantidade(alimento, quantidade + 1)}>+</button>
                 </div>
-
-                {!itemSalvo ? (
-                  <button
-                    className="botao-itens"
-                    onClick={() =>
-                      salvarItem(alimento)
-                    }
-                  >
-                    salvar
-                  </button>
-                ) : (
-                  <div className="acoes-alimento">
-                    <button
-                      className="botao-itens"
-                      onClick={() =>
-                        atualizarItem(item)
-                      }
-                    >
-                      atualizar
-                    </button>
-
-                    <button
-                      className="botao-itens"
-                      onClick={() =>
-                        excluirItem(item.id)
-                      }
-                    >
-                      excluir
-                    </button>
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
+
+        {/* Botão único de salvar */}
+        <button className="botao-itens" onClick={salvarTudo}>
+          Salvar tudo
+        </button>
       </section>
     </div>
   );

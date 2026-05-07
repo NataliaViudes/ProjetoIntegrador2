@@ -19,96 +19,80 @@ public class ItensCardapioDAO {
         this.bd = bd;
     }
 
+    // Inserir item (quantidade 0 permitida)
     public ItensCardapio gravar(ItensCardapio item) {
-
         String sql = """
-            INSERT INTO Alimento_has_Cardapio
-            (Alimento_idAlimento, Cardapio_idCardapio, quantidade)
-            VALUES (?,?,?)
+            INSERT INTO itens_cardapio
+            (id_cardapio, id_alimento, quantidade)
+            VALUES (?, ?, ?)
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
-
-            stmt.setInt(1, item.getAlimento().getId());
-            stmt.setInt(2, item.getCardapio().getId());
+            stmt.setInt(1, item.getCardapio().getId());
+            stmt.setInt(2, item.getAlimento().getId());
             stmt.setInt(3, item.getQuantidade());
-
             stmt.executeUpdate();
             return item;
-
         } catch (SQLException e) {
             System.out.println("Erro ao inserir item: " + e.getMessage());
             return null;
         }
     }
 
-    public boolean apagar(ItensCardapio item) {
-
-        String sql = """
-            DELETE FROM Alimento_has_Cardapio
-            WHERE Alimento_idAlimento = ? AND Cardapio_idCardapio = ?
-        """;
-
-        try (PreparedStatement stmt = bd.preparar(sql)) {
-
-            stmt.setInt(1, item.getAlimento().getId());
-            stmt.setInt(2, item.getCardapio().getId());
-
-            return stmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir item: " + e.getMessage());
-            return false;
-        }
-    }
-
+    // Atualizar quantidade
     public ItensCardapio alterar(ItensCardapio item) {
-
         String sql = """
-        UPDATE Alimento_has_Cardapio SET
-            quantidade = ?
-            WHERE Alimento_idAlimento = ?
-            AND Cardapio_idCardapio = ?
+            UPDATE itens_cardapio
+            SET quantidade = ?
+            WHERE id_cardapio = ? AND id_alimento = ?
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
-
             stmt.setInt(1, item.getQuantidade());
-            stmt.setInt(2, item.getAlimento().getId());
-            stmt.setInt(3, item.getCardapio().getId());
-
+            stmt.setInt(2, item.getCardapio().getId());
+            stmt.setInt(3, item.getAlimento().getId());
             stmt.executeUpdate();
             return item;
-
         } catch (SQLException e) {
             System.out.println("Erro ao alterar item: " + e.getMessage());
             return null;
         }
     }
 
-    public List<ItensCardapio> buscarPorCardapio(int idCardapio) {
-
-        List<ItensCardapio> lista = new ArrayList<>();
-
+    // Apagar item
+    public boolean apagar(ItensCardapio item) {
         String sql = """
-            SELECT * FROM Alimento_has_Cardapio
-            WHERE Cardapio_idCardapio = ?
+            DELETE FROM itens_cardapio
+            WHERE id_cardapio = ? AND id_alimento = ?
         """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, item.getCardapio().getId());
+            stmt.setInt(2, item.getAlimento().getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir item: " + e.getMessage());
+            return false;
+        }
+    }
 
+    // Buscar todos os itens de um cardápio
+    public List<ItensCardapio> buscarPorCardapio(int idCardapio) {
+        List<ItensCardapio> lista = new ArrayList<>();
+        String sql = "SELECT * FROM itens_cardapio WHERE id_cardapio = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setInt(1, idCardapio);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-
                 ItensCardapio item = new ItensCardapio();
 
                 Alimento a = new Alimento();
-                a.setId(rs.getInt("Alimento_idAlimento"));
+                a.setId(rs.getInt("id_alimento"));
 
                 Cardapio c = new Cardapio();
-                c.setId(rs.getInt("Cardapio_idCardapio"));
+                c.setId(rs.getInt("id_cardapio"));
 
                 item.setAlimento(a);
                 item.setCardapio(c);
@@ -124,30 +108,26 @@ public class ItensCardapioDAO {
         return lista;
     }
 
-    public ItensCardapio getByIds(int idAlimento, int idCardapio) {
-
+    // Buscar item específico
+    public ItensCardapio getByIds(int idCardapio, int idAlimento) {
         String sql = """
-        SELECT * FROM Alimento_has_Cardapio
-        WHERE Alimento_idAlimento = ?
-          AND Cardapio_idCardapio = ?
-    """;
+            SELECT * FROM itens_cardapio
+            WHERE id_cardapio = ? AND id_alimento = ?
+        """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
-
-            stmt.setInt(1, idAlimento);
-            stmt.setInt(2, idCardapio);
-
+            stmt.setInt(1, idCardapio);
+            stmt.setInt(2, idAlimento);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-
                 ItensCardapio item = new ItensCardapio();
 
                 Alimento a = new Alimento();
-                a.setId(rs.getInt("Alimento_idAlimento"));
+                a.setId(rs.getInt("id_alimento"));
 
                 Cardapio c = new Cardapio();
-                c.setId(rs.getInt("Cardapio_idCardapio"));
+                c.setId(rs.getInt("id_cardapio"));
 
                 item.setAlimento(a);
                 item.setCardapio(c);
@@ -162,5 +142,4 @@ public class ItensCardapioDAO {
 
         return null;
     }
-
 }
