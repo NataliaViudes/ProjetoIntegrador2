@@ -55,7 +55,7 @@ function Eventos() {
     }
   }
 
-  // 🔄 BACK → FRONT (calendar)
+  //  BACK → FRONT (calendar)
   const eventos = useMemo(() => {
     return eventosApi
       .map((ev) => {
@@ -79,7 +79,7 @@ function Eventos() {
       .filter(Boolean); // remove null
   }, [eventosApi]);
 
-  // 🔄 FRONT → BACK
+  //  FRONT → BACK
   function separarDataHora(datetime) {
     const d = new Date(datetime);
 

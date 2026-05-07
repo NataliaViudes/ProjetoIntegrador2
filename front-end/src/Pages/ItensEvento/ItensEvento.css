@@ -58,12 +58,12 @@
 
 .sugestoes-box {
   position: absolute;
-  top: 100%; /* 🔥 ESSENCIAL */
+  top: 100%; /*  ESSENCIAL */
   left: 0;
   background: white;
   border: 1px solid #ccc;
   width: 100%;
-  z-index: 9999; /* 🔥 garante aparecer */
+  z-index: 9999; /*  garante aparecer */
   max-height: 150px;
   overflow-y: auto;
 }
@@ -97,11 +97,11 @@
   justify-content: center;
   gap: 6px;
 
-  min-width: 120px; /* 🔥 mesmo tamanho */
+  min-width: 120px; /*  mesmo tamanho */
   height: 38px;
 
   padding: 0 12px;
-  border-radius: 8px; /* 🔥 borda arredondada */
+  border-radius: 8px; /*  borda arredondada */
   border: 1px solid #8f8f8f;
 
   font-size: 14px;

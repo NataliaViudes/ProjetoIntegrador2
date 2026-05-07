@@ -14,7 +14,7 @@ export default function ItensEvento({ evento, voltar }) {
     if (evento?.id) {
       carregarItens();
     }
-  }, [evento]); // 🔥 DEPENDE DO EVENTO
+  }, [evento]); //  DEPENDE DO EVENTO
 
   useEffect(() => {
     carregarEstoque();
