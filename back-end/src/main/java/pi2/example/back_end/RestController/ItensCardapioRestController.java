@@ -15,13 +15,11 @@ public class ItensCardapioRestController {
 
 
 
-    // ATUALIZAR quantidade
     @PutMapping
     public ResponseEntity<?> atualizar(@RequestBody ItensCardapio item) {
         return control.alterar(item);
     }
 
-    // DELETE via IDs (cardápio + alimento)
     @DeleteMapping("/{idCardapio}/{idAlimento}")
     public ResponseEntity<?> delete(
             @PathVariable int idCardapio,
@@ -41,7 +39,6 @@ public class ItensCardapioRestController {
         return control.salvarOuAtualizar(item);
     }
 
-    // GET itens por cardápio
     @GetMapping("/{idCardapio}")
     public ResponseEntity<?> getByCardapio(@PathVariable int idCardapio) {
         return control.getByCardapio(idCardapio);

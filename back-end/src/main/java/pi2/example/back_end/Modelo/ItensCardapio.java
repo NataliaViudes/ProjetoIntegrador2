@@ -18,7 +18,6 @@ public class ItensCardapio {
         this.quantidade = quantidade;
     }
 
-    // getters e setters
     public Alimento getAlimento() { return alimento; }
     public void setAlimento(Alimento alimento) { this.alimento = alimento; }
     public Cardapio getCardapio() { return cardapio; }
@@ -26,7 +25,6 @@ public class ItensCardapio {
     public Integer getQuantidade() { return quantidade; }
     public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
 
-    // métodos de persistência usando o DAO internamente
     public ItensCardapio incluir(Conexao con) {
         return new ItensCardapioDAO(con).gravar(this);
     }
@@ -47,9 +45,6 @@ public class ItensCardapio {
         return new ItensCardapioDAO(db).buscarPorCardapio(idCardapio);
     }
 
-    /**
-     * Salvar ou atualizar item, considerando quantidade 0 = remover
-     */
     public ItensCardapio salvarOuAtualizar(Conexao db) throws Exception {
         ItensCardapio existente = buscarPorIds(db, alimento.getId(), cardapio.getId());
 
@@ -57,7 +52,7 @@ public class ItensCardapio {
             if (existente != null) {
                 existente.apagar(db);
             }
-            return null; // null significa que foi removido
+            return null;
         } else {
             if (existente == null) {
                 return incluir(db);

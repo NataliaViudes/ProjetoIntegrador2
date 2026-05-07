@@ -49,9 +49,8 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
 
   async function salvarTudo() {
     try {
-      // Envia todos os itens de uma vez
       for (const item of itens) {
-        if (item.quantidade == null) continue; // ignora itens sem quantidade
+        if (item.quantidade == null) continue; 
         await api.post("/itens-cardapio", {
           cardapio: { id: cardapio.id },
           alimento: { id: item.alimento.id },
@@ -59,7 +58,7 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
         });
       }
       alert("Itens salvos com sucesso!");
-      carregarTudo(); // atualiza do backend
+      carregarTudo(); 
     } catch (e) {
       console.error(e);
       alert("Erro ao salvar itens");
@@ -101,7 +100,6 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
           })}
         </div>
 
-        {/* Botão único de salvar */}
         <button className="botao-itens" onClick={salvarTudo}>
           Salvar tudo
         </button>
