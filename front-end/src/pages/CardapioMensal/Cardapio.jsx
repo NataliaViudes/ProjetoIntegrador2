@@ -228,9 +228,9 @@ function Cardapio() {
   }
 
   function getNomeAtividade(idAgendamento) {
-  const ag = agendamentos.find(a => a.id === idAgendamento);
-  return ag?.atividade?.descricao || "Sem descrição";
-}
+    const ag = agendamentos.find(a => a.id === idAgendamento);
+    return ag?.atividade?.descricao || "Sem descrição";
+  }
 
   return (
     <div className="pagina-cardapio">
@@ -297,7 +297,7 @@ function Cardapio() {
                 <div>
                   <strong>{c.nome}</strong>
                   <div>
-                    {c.data} 
+                    {c.data}
                   </div>
                   <div>
                     {c.hora}
@@ -308,9 +308,9 @@ function Cardapio() {
                 <div className="acoes-item">
                   <button onClick={() => abrirItens(c)} title="Itens">
                     <Salad />
-                    
+
                   </button>
-                  
+
                   <button onClick={() => editar(c)} title="Editar">
                     <Pencil />
                   </button>
@@ -329,6 +329,7 @@ function Cardapio() {
           <ItensCardapio
             cardapio={cardapioSelecionado}
             voltar={() => setModo("lista")}
+            agendamentos={agendamentos}
           />
         )}
 

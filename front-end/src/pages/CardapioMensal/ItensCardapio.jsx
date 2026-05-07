@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
-import Menu from "../../components/Menu";
-import "../Alimentos/Alimentos.css";  
 import api from "../../services/api";
-import Alimentos from "../Alimentos/Alimentos";
 
-function ItensCardapio({ cardapio, voltar }) {
+function ItensCardapio({ cardapio, voltar, agendamentos }) {
   const [alimentos, setAlimentos] = useState([]);
   const [itens, setItens] = useState([]);
-  const [quantidade, setQuantidade] = useState("");
-
-  const [idAlimento, setIdAlimento] = useState("");
 
   useEffect(() => {
     carregarTudo();
@@ -29,69 +23,27 @@ function ItensCardapio({ cardapio, voltar }) {
     }
   }
 
-  async function adicionarItem() {
-    if (!idAlimento) {
-      alert("Selecione um alimento.");
-      return;
-    }
+  function getNomeAtividade() {
+    const ag = agendamentos?.find(
+      (a) => a.id === cardapio?.agendamento?.id
+    );
 
-    try {
-      await api.post("/itens-cardapio", {
-        cardapio: { id: cardapio.id },
-        alimento: { id: Number(idAlimento) },
-      });
-
-      setIdAlimento("");
-      carregarTudo();
-    } catch (e) {
-      console.error("Erro ao adicionar item:", e);
-    }
-  }
-
-  async function removerItem(item) {
-    try {
-      await api.delete("/itens-cardapio", {
-        data: item,
-      });
-
-      carregarTudo();
-    } catch (e) {
-      console.error("Erro ao remover item:", e);
-    }
+    return ag?.atividade?.descricao || "Sem atividade";
   }
 
   return (
     <div style={{ padding: 20 }}>
-      <button onClick={voltar}>⬅ Voltar</button>
+      <section className="painel-itens">
+        <button onClick={voltar}>⬅ Voltar</button>
 
-      <h2>Itens do Cardápio: {cardapio.descricao}</h2>
+        <div>{cardapio?.nome}</div>
+        <div>{cardapio?.data}</div>
+        <div>{cardapio?.hora}</div>
 
-      <div>
-        <select value={idAlimento} onChange={(e) => setIdAlimento(e.target.value)}>
-          <option value="">Selecione alimento</option>
-          {alimentos.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.descricao}
-            </option>
-          ))}
-        </select>
-
-        <button onClick={adicionarItem}>Adicionar</button>
-      </div>
-
-      <hr />
-
-      <h3>Itens cadastrados</h3>
-
-      {itens.map((item, i) => (
-        <div key={i}>
-          {item.alimento?.descricao}
-
-          <button onClick={() => removerItem(item)}>
-            Remover
-          </button>
+        <div>
+          Atividade: {getNomeAtividade()}
         </div>
-      ))}
+      </section>
     </div>
   );
 }
