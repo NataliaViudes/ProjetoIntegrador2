@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.ItensCardapioControl;
 import pi2.example.back_end.Modelo.ItensCardapio;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/itens-cardapio")
 public class ItensCardapioRestController {
