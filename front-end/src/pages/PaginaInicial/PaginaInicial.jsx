@@ -3,9 +3,11 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import api from "../../services/api";
 import Menu from "../../components/Menu";
-import Button from "../../components/Button/Button";
+
+import "./PaginaInicial.css";
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
@@ -16,6 +18,8 @@ function PaginaInicial() {
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("month");
+
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     carregarTudo();
@@ -29,10 +33,15 @@ function PaginaInicial() {
       ]);
 
       setAgendamentos(
-        Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []
+        Array.isArray(respAgendamentos.data)
+          ? respAgendamentos.data
+          : []
       );
+
       setCardapios(
-        Array.isArray(respCardapios.data) ? respCardapios.data : []
+        Array.isArray(respCardapios.data)
+          ? respCardapios.data
+          : []
       );
     } catch (e) {
       console.error("Erro ao carregar dados:", e);
@@ -42,32 +51,38 @@ function PaginaInicial() {
   const eventos = useMemo(() => {
     const eventosList = [];
 
-    // Atividades
     agendamentos.forEach((ag) => {
       eventosList.push({
         id: `atividade-${ag.id}`,
-        title: `${ag.atividade?.descricao || "Atividade"}${
-          ag.atividade?.funcionario ? " - " + ag.atividade.funcionario.nome : ""
-        }`,
+
+        title:
+          `${ag.atividade?.descricao || "Atividade"}` +
+          `${ag.atividade?.funcionario
+            ? " - " + ag.atividade.funcionario.nome
+            : ""
+          }`,
+
         start: new Date(ag.dataInicio),
         end: new Date(ag.dataFim),
+
         resource: ag,
         tipo: "atividade",
       });
     });
 
-    // Cardápios
     cardapios.forEach((c) => {
-      // Só exibe se tiver data
       if (!c.data || !c.hora) return;
 
       const dataHora = new Date(`${c.data}T${c.hora}`);
 
       eventosList.push({
         id: `cardapio-${c.id}`,
+
         title: c.nome,
+
         start: dataHora,
-        end: new Date(dataHora.getTime() + 60 * 60 * 1000), // 1 hora
+        end: new Date(dataHora.getTime() + 60 * 60 * 1000),
+
         resource: c,
         tipo: "cardapio",
       });
@@ -79,26 +94,31 @@ function PaginaInicial() {
   function selecionarEvento(evento) {
     if (evento.tipo === "atividade") {
       alert(
-        `Atividade: ${evento.resource.atividade?.descricao}\nFuncionário: ${
-          evento.resource.atividade?.funcionario?.nome || "Não informado"
-        }\nData/Hora: ${new Date(
+        `Atividade: ${evento.resource.atividade?.descricao}
+Funcionário: ${evento.resource.atividade?.funcionario?.nome ||
+        "Não informado"
+        }
+Data/Hora: ${new Date(
           evento.resource.dataInicio
-        ).toLocaleString()} - ${new Date(evento.resource.dataFim).toLocaleString()}`
+        ).toLocaleString()} - ${new Date(
+          evento.resource.dataFim
+        ).toLocaleString()}`
       );
     }
 
     if (evento.tipo === "cardapio") {
       alert(
-        `Cardápio: ${evento.resource.nome}\nData/Hora: ${evento.resource.data} ${
-          evento.resource.hora
-        }`
+        `Cardápio: ${evento.resource.nome}
+Data/Hora: ${evento.resource.data} ${evento.resource.hora}`
       );
     }
   }
 
   function selecionarSlot(slotInfo) {
     alert(
-      `Selecionou período: ${slotInfo.start.toLocaleString()} - ${slotInfo.end.toLocaleString()}`
+      `Selecionou período:
+${slotInfo.start.toLocaleString()}
+${slotInfo.end.toLocaleString()}`
     );
   }
 
@@ -122,6 +142,8 @@ function PaginaInicial() {
         },
       };
     }
+
+    return {};
   }
 
   return (
@@ -156,14 +178,40 @@ function PaginaInicial() {
             date: "Data",
             time: "Hora",
             event: "Evento",
-            noEventsInRange: "Nenhum agendamento neste período",
+            noEventsInRange:
+              "Nenhum agendamento neste período",
             allDay: "Dia inteiro",
           }}
           style={{ height: "70vh" }}
         />
       </section>
 
-      <Button />
+
+          
+      <section>
+        <div className="container">
+          <div className={`menu ${open ? "open" : ""}`}>
+            <div className="items">
+              <div className="item">
+                <div className="circle">🍔</div>
+                <span>Planejar Cardápio</span>
+              </div>
+
+              <div className="item">
+                <div className="circle">📅</div>
+                <span>Agendar Atividade</span>
+              </div>
+            </div>
+
+            <button
+              className="main-btn"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? "✕" : "+"}
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

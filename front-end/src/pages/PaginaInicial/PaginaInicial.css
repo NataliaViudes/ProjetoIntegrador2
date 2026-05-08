@@ -96,3 +96,108 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================= */
+/* BOTÃO FLUTUANTE */
+/* ========================= */
+
+.container {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 9999;
+}
+
+/* MENU */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* BOTÃO PRINCIPAL */
+.main-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ITENS */
+.items {
+  display: flex;
+  gap: 20px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transform: translateX(40px);
+
+  transition: all 0.4s ease;
+}
+
+/* QUANDO ABERTO */
+.menu.open .items {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* ITEM INDIVIDUAL */
+.item {
+  text-align: center;
+  cursor: pointer;
+}
+
+/* CÍRCULO */
+.circle {
+  width: 60px;
+  height: 60px;
+
+  background: #f3f4f6;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+  color: #6b7280;
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+
+  transition: 0.3s;
+}
+
+.circle img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.circle:hover {
+  transform: scale(1.1);
+}
+
+/* TEXTO */
+.item span {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+  color: #374151;
+  font-size: 14px;
+}

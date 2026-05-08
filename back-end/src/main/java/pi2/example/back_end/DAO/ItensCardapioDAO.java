@@ -130,7 +130,7 @@ public class ItensCardapioDAO {
 
                 return item;
             }
-            
+
         } catch (SQLException e) {
             System.out.println("Erro ao buscar item: " + e.getMessage());
         }
