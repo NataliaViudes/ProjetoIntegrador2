@@ -6,14 +6,13 @@ import pi2.example.back_end.Control.ItensCardapioControl;
 import pi2.example.back_end.Modelo.Alimento;
 import pi2.example.back_end.Modelo.Cardapio;
 import pi2.example.back_end.Modelo.ItensCardapio;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/itens-cardapio")
 public class ItensCardapioRestController {
 
     private final ItensCardapioControl control = new ItensCardapioControl();
-
-
 
     @PutMapping
     public ResponseEntity<?> atualizar(@RequestBody ItensCardapio item) {

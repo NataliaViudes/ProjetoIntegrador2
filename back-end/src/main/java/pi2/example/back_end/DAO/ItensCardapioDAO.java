@@ -19,7 +19,6 @@ public class ItensCardapioDAO {
         this.bd = bd;
     }
 
-    // Inserir item (quantidade 0 permitida)
     public ItensCardapio gravar(ItensCardapio item) {
         String sql = """
             INSERT INTO itens_cardapio
@@ -39,7 +38,6 @@ public class ItensCardapioDAO {
         }
     }
 
-    // Atualizar quantidade
     public ItensCardapio alterar(ItensCardapio item) {
         String sql = """
             UPDATE itens_cardapio
@@ -59,7 +57,6 @@ public class ItensCardapioDAO {
         }
     }
 
-    // Apagar item
     public boolean apagar(ItensCardapio item) {
         String sql = """
             DELETE FROM itens_cardapio
@@ -76,7 +73,6 @@ public class ItensCardapioDAO {
         }
     }
 
-    // Buscar todos os itens de um cardápio
     public List<ItensCardapio> buscarPorCardapio(int idCardapio) {
         List<ItensCardapio> lista = new ArrayList<>();
         String sql = "SELECT * FROM itens_cardapio WHERE id_cardapio = ?";
@@ -108,7 +104,6 @@ public class ItensCardapioDAO {
         return lista;
     }
 
-    // Buscar item específico
     public ItensCardapio getByIds(int idCardapio, int idAlimento) {
         String sql = """
             SELECT * FROM itens_cardapio
@@ -135,11 +130,10 @@ public class ItensCardapioDAO {
 
                 return item;
             }
-
+            
         } catch (SQLException e) {
             System.out.println("Erro ao buscar item: " + e.getMessage());
         }
-
         return null;
     }
 }

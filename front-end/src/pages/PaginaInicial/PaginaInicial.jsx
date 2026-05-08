@@ -1,27 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import api from "../../services/api";
 import Menu from "../../components/Menu";
-import Button from "../../components/Button/Button"
-
+import Button from "../../components/Button/Button";
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
 function PaginaInicial() {
-const [agendamentos, setAgendamentos] = useState([]);
-  const [atividades, setAtividades] = useState([]);
-
-  const [atividadeId, setAtividadeId] = useState("");
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
-  const [observacao, setObservacao] = useState("");
-
-  const [agendamentoEditando, setAgendamentoEditando] = useState(null);
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [cardapios, setCardapios] = useState([]);
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("month");
@@ -32,133 +23,149 @@ const [agendamentos, setAgendamentos] = useState([]);
 
   async function carregarTudo() {
     try {
-      const [respAgendamentos, respAtividades] = await Promise.all([
+      const [respAgendamentos, respCardapios] = await Promise.all([
         api.get("/agendamentos"),
-        api.get("/atividades")
+        api.get("/cardapio"),
       ]);
 
-      setAgendamentos(Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []);
-      setAtividades(Array.isArray(respAtividades.data) ? respAtividades.data : []);
+      setAgendamentos(
+        Array.isArray(respAgendamentos.data) ? respAgendamentos.data : []
+      );
+      setCardapios(
+        Array.isArray(respCardapios.data) ? respCardapios.data : []
+      );
     } catch (e) {
-      console.error("Erro ao carregar agendamentos:", e);
+      console.error("Erro ao carregar dados:", e);
     }
   }
 
   const eventos = useMemo(() => {
-    return agendamentos.map((ag) => ({
-      id: ag.id,
-      title: `${ag.atividade?.descricao || "Atividade"} - ${ag.atividade?.funcionario?.nome || ""}`,
-      start: new Date(ag.dataInicio),
-      end: new Date(ag.dataFim),
-      resource: ag
-    }));
-  }, [agendamentos]);
+    const eventosList = [];
 
-  function formatarDatetimeLocal(valor) {
-    const d = new Date(valor);
-    const ano = d.getFullYear();
-    const mes = String(d.getMonth() + 1).padStart(2, "0");
-    const dia = String(d.getDate()).padStart(2, "0");
-    const hora = String(d.getHours()).padStart(2, "0");
-    const minuto = String(d.getMinutes()).padStart(2, "0");
+    // Atividades
+    agendamentos.forEach((ag) => {
+      eventosList.push({
+        id: `atividade-${ag.id}`,
+        title: `${ag.atividade?.descricao || "Atividade"}${
+          ag.atividade?.funcionario ? " - " + ag.atividade.funcionario.nome : ""
+        }`,
+        start: new Date(ag.dataInicio),
+        end: new Date(ag.dataFim),
+        resource: ag,
+        tipo: "atividade",
+      });
+    });
 
-    return `${ano}-${mes}-${dia}T${hora}:${minuto}`;
-  }
+    // Cardápios
+    cardapios.forEach((c) => {
+      // Só exibe se tiver data
+      if (!c.data || !c.hora) return;
 
-  function limparFormulario() {
-    setAgendamentoEditando(null);
-    setAtividadeId("");
-    setDataInicio("");
-    setDataFim("");
-    setObservacao("");
-  }
+      const dataHora = new Date(`${c.data}T${c.hora}`);
 
-  async function salvar() {
-    if (!atividadeId || !dataInicio || !dataFim) {
-      alert("Preencha atividade, data e hora inicial e data e hora final.");
-      return;
-    }
+      eventosList.push({
+        id: `cardapio-${c.id}`,
+        title: c.nome,
+        start: dataHora,
+        end: new Date(dataHora.getTime() + 60 * 60 * 1000), // 1 hora
+        resource: c,
+        tipo: "cardapio",
+      });
+    });
 
-    const payload = {
-      atividade: { id: Number(atividadeId) },
-      dataInicio: dataInicio,
-      dataFim: dataFim,
-      observacao: observacao
-    };
-
-    try {
-      if (agendamentoEditando) {
-        await api.put(`/agendamentos/${agendamentoEditando.id}`, payload);
-      } else {
-        await api.post("/agendamentos", payload);
-      }
-
-      limparFormulario();
-      carregarTudo();
-    } catch (e) {
-      console.error("Erro ao salvar agendamento:", e);
-      alert("Erro ao salvar agendamento.");
-    }
-  }
-
-  function editar(ag) {
-    setAgendamentoEditando(ag);
-    setAtividadeId(String(ag.atividade?.id || ""));
-    setDataInicio(formatarDatetimeLocal(ag.dataInicio));
-    setDataFim(formatarDatetimeLocal(ag.dataFim));
-    setObservacao(ag.observacao || "");
-  }
-
+    return eventosList;
+  }, [agendamentos, cardapios]);
 
   function selecionarEvento(evento) {
-    editar(evento.resource);
+    if (evento.tipo === "atividade") {
+      alert(
+        `Atividade: ${evento.resource.atividade?.descricao}\nFuncionário: ${
+          evento.resource.atividade?.funcionario?.nome || "Não informado"
+        }\nData/Hora: ${new Date(
+          evento.resource.dataInicio
+        ).toLocaleString()} - ${new Date(evento.resource.dataFim).toLocaleString()}`
+      );
+    }
+
+    if (evento.tipo === "cardapio") {
+      alert(
+        `Cardápio: ${evento.resource.nome}\nData/Hora: ${evento.resource.data} ${
+          evento.resource.hora
+        }`
+      );
+    }
   }
 
   function selecionarSlot(slotInfo) {
-    setDataInicio(formatarDatetimeLocal(slotInfo.start));
-    setDataFim(formatarDatetimeLocal(slotInfo.end));
+    alert(
+      `Selecionou período: ${slotInfo.start.toLocaleString()} - ${slotInfo.end.toLocaleString()}`
+    );
+  }
+
+  function estiloEvento(evento) {
+    if (evento.tipo === "atividade") {
+      return {
+        style: {
+          backgroundColor: "#3174ad",
+          color: "white",
+          borderRadius: "5px",
+        },
+      };
+    }
+
+    if (evento.tipo === "cardapio") {
+      return {
+        style: {
+          backgroundColor: "#28a745",
+          color: "white",
+          borderRadius: "5px",
+        },
+      };
+    }
   }
 
   return (
     <div className="pagina-inicial" translate="no">
       <Menu />
-        <section className="painel-calendario">
-          <Calendar
-            localizer={localizer}
-            events={eventos}
-            startAccessor="start"
-            endAccessor="end"
-            selectable
-            popup
-            date={dataAtual}
-            view={viewAtual}
-            onNavigate={(novaData) => setDataAtual(novaData)}
-            onView={(novaView) => setViewAtual(novaView)}
-            views={["month", "week", "day", "agenda"]}
-            defaultView="month"
-            onSelectEvent={selecionarEvento}
-            onSelectSlot={selecionarSlot}
-            messages={{
-              next: "Próximo",
-              previous: "Anterior",
-              today: "Hoje",
-              month: "Mês",
-              week: "Semana",
-              day: "Dia",
-              agenda: "Agenda",
-              date: "Data",
-              time: "Hora",
-              event: "Evento",
-              noEventsInRange: "Nenhum agendamento neste período",
-              allDay: "Dia inteiro"
-            }}
-            style={{ height: "70vh" }}
-          />
-          
-        </section>
-        <Button/>
-        
-      </div>
+
+      <section className="painel-calendario">
+        <Calendar
+          localizer={localizer}
+          events={eventos}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          popup
+          date={dataAtual}
+          view={viewAtual}
+          onNavigate={setDataAtual}
+          onView={setViewAtual}
+          views={["month", "week", "day", "agenda"]}
+          defaultView="month"
+          onSelectEvent={selecionarEvento}
+          onSelectSlot={selecionarSlot}
+          eventPropGetter={estiloEvento}
+          messages={{
+            next: "Próximo",
+            previous: "Anterior",
+            today: "Hoje",
+            month: "Mês",
+            week: "Semana",
+            day: "Dia",
+            agenda: "Agenda",
+            date: "Data",
+            time: "Hora",
+            event: "Evento",
+            noEventsInRange: "Nenhum agendamento neste período",
+            allDay: "Dia inteiro",
+          }}
+          style={{ height: "70vh" }}
+        />
+      </section>
+
+      <Button />
+    </div>
   );
 }
+
 export default PaginaInicial;

@@ -8,7 +8,6 @@ import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
 
-
 public class ItensCardapioControl {
 
     private boolean camposInvalidos(ItensCardapio i) {
@@ -16,7 +15,6 @@ public class ItensCardapioControl {
                 || i.getCardapio() == null || i.getCardapio().getId() == null
                 || i.getQuantidade() == null;
     }
-
 
     public ResponseEntity<?> salvarOuAtualizar(ItensCardapio item) {
         if (item.getAlimento() == null || item.getCardapio() == null || item.getQuantidade() == null) {
@@ -54,8 +52,6 @@ public class ItensCardapioControl {
             db.desconectar();
         }
     }
-
-
 
     public ResponseEntity<?> incluir(ItensCardapio item) {
         if (camposInvalidos(item)) {
