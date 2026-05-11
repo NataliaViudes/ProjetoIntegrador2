@@ -7,6 +7,7 @@ import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,10 @@ public class EventoControl {
 
         if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
             return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
+
+        if (evento.getData().isBefore(LocalDate.now()))
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Não é permitido cadastrar eventos em datas passadas"));
 
         Conexao db = Banco.getConexao();
 
@@ -196,11 +201,25 @@ public class EventoControl {
         if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
             return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
 
+        if (evento.getData().isBefore(LocalDate.now()))
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Não é permitido atualizar eventos em datas passadas"));
+
         Conexao db = Banco.getConexao();
 
         try {
             if (!db.conectar())
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+
+            Evento existente = new Evento().buscarPorId(db, evento.getId());
+
+            if (existente == null)
+                return ResponseEntity.badRequest()
+                        .body(new Erro("Evento não encontrado"));
+
+            if (existente.getData().isBefore(LocalDate.now()))
+                return ResponseEntity.badRequest()
+                        .body(new Erro("Eventos passados não podem ser alterados"));
 
             Evento resultado = evento.alterar(db);
 

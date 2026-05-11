@@ -41,18 +41,36 @@ function Eventos() {
 
   async function carregarTudo() {
     try {
-      const [respEventos, respCategorias] = await Promise.all([
-        api.get("/evento/nome"),
-        api.get("/cat-eventos/categoria"),
-      ]);
+      const [respEventos, respCategorias, respFuncionarios] = await Promise.all(
+        [
+          api.get("/evento/nome"),
+          api.get("/cat-eventos/categoria"),
+          api.get("/funcionarios"),
+        ],
+      );
 
       setEventosApi(Array.isArray(respEventos.data) ? respEventos.data : []);
       setCategorias(
         Array.isArray(respCategorias.data) ? respCategorias.data : [],
       );
+      setFuncionarios(
+        Array.isArray(respFuncionarios.data) ? respFuncionarios.data : [],
+      );
     } catch (e) {
       console.error("Erro ao carregar dados:", e);
     }
+  }
+
+  function eventoJaPassou(dataEvento) {
+    const [ano, mes, dia] = dataEvento.split("-").map(Number);
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const data = new Date(ano, mes - 1, dia);
+    data.setHours(0, 0, 0, 0);
+
+    return data < hoje;
   }
 
   //  BACK → FRONT (calendar)
@@ -108,8 +126,25 @@ function Eventos() {
   }
 
   async function salvar() {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataEvento = new Date(dataInicio.split("T")[0] + "T00:00:00");
+
+    dataEvento.setHours(0, 0, 0, 0);
+
+    if (dataEvento < hoje) {
+      alert("Não é permitido criar eventos em datas passadas.");
+      return;
+    }
+
+    if (new Date(dataFim) <= new Date(dataInicio)) {
+      alert("A data/hora final deve ser maior que a inicial.");
+      return;
+    }
     const novosErros = {};
 
+    if (!idFuncionario) novosErros.idFuncionario = true;
     if (!nome) novosErros.nome = true;
     if (!dataInicio) novosErros.dataInicio = true;
     if (!dataFim) novosErros.dataFim = true;
@@ -153,6 +188,10 @@ function Eventos() {
   }
 
   function editar(ev) {
+    if (eventoJaPassou(ev.data)) {
+      alert("Eventos antigos não podem ser editados.");
+      return;
+    }
     setEventoSelecionado(ev);
     setEventoEditando(ev);
     setNome(ev.nome || "");
@@ -192,8 +231,8 @@ function Eventos() {
   }
 
   function selecionarSlot(slotInfo) {
-     setErros((prev) => ({ ...prev, dataFim: false }));
-      setErros((prev) => ({ ...prev, dataInicio: false }));
+    setErros((prev) => ({ ...prev, dataFim: false }));
+    setErros((prev) => ({ ...prev, dataInicio: false }));
     setDataInicio(
       juntarDataHora(
         slotInfo.start.toISOString().split("T")[0],
@@ -219,14 +258,20 @@ function Eventos() {
           <label>Nome do Evento</label>
           <input
             value={nome}
-            onChange={(e) =>{ setNome(e.target.value); setErros({...erros, nome: false}); }}
+            onChange={(e) => {
+              setNome(e.target.value);
+              setErros({ ...erros, nome: false });
+            }}
             className={erros.nome ? "input-erro" : ""}
           />
 
           <label>Categoria do evento</label>
           <select
             value={idCatEvento}
-            onChange={(e) => { setIdCatEvento(e.target.value); setErros({...erros, idCatEvento: false}); }}
+            onChange={(e) => {
+              setIdCatEvento(e.target.value);
+              setErros({ ...erros, idCatEvento: false });
+            }}
             className={erros.idCatEvento ? "input-erro" : ""}
           >
             <option value="">Selecione a categoria</option>
@@ -238,18 +283,29 @@ function Eventos() {
           </select>
 
           <label>Funcionário</label>
-          <input
-            type="number"
+
+          <select
             value={idFuncionario}
             onChange={(e) => setIdFuncionario(e.target.value)}
-            placeholder="ID do funcionário"
-          />
+            className={erros.idFuncionario ? "input-erro" : ""}
+          >
+            <option value="">Selecione um funcionário</option>
+
+            {funcionarios.map((func) => (
+              <option key={func.id} value={func.id}>
+                {func.nome}
+              </option>
+            ))}
+          </select>
 
           <label>Data e hora inicial</label>
           <input
             type="datetime-local"
             value={dataInicio}
-            onChange={(e) => { setDataInicio(e.target.value); setErros({...erros, dataInicio: false}); }}
+            onChange={(e) => {
+              setDataInicio(e.target.value);
+              setErros({ ...erros, dataInicio: false });
+            }}
             className={erros.dataInicio ? "input-erro" : ""}
           />
 
@@ -257,7 +313,10 @@ function Eventos() {
           <input
             type="datetime-local"
             value={dataFim}
-            onChange={(e) => { setDataFim(e.target.value); setErros({...erros, dataFim: false}); }}
+            onChange={(e) => {
+              setDataFim(e.target.value);
+              setErros({ ...erros, dataFim: false });
+            }}
             className={erros.dataFim ? "input-erro" : ""}
           />
 
@@ -265,7 +324,10 @@ function Eventos() {
           <textarea
             rows="2"
             value={local}
-            onChange={(e) => { setLocal(e.target.value); setErros({...erros, local: false}); }}
+            onChange={(e) => {
+              setLocal(e.target.value);
+              setErros({ ...erros, local: false });
+            }}
             className={erros.local ? "input-erro" : ""}
           />
 
@@ -273,7 +335,10 @@ function Eventos() {
           <input
             type="number"
             value={qtd}
-            onChange={(e) => { setQtd(e.target.value); setErros({...erros, qtd: false}); }}
+            onChange={(e) => {
+              setQtd(e.target.value);
+              setErros({ ...erros, qtd: false });
+            }}
             className={erros.qtd ? "input-erro" : ""}
           />
 
@@ -306,14 +371,17 @@ function Eventos() {
             {eventosApi.length === 0 ? (
               <p>Nenhum evento cadastrado.</p>
             ) : (
-              
               eventosApi.map((ev) => {
                 return (
                   <div key={ev.id} className="item-agendamento">
                     <div>
                       <strong>{ev.nome}</strong>
                       <div>Categoria: {ev.categoria?.descricao}</div>
-                      <div>Funcionário: {ev.idFuncionario}</div>
+                      <div>
+                        Funcionário:{" "}
+                        {funcionarios.find((f) => f.id === ev.idFuncionario)
+                          ?.nome || "Não informado"}
+                      </div>
                       <div>Local: {ev.local}</div>
                       <div>Qtd: {ev.qtd}</div>
                       <div>
