@@ -73,18 +73,37 @@ function Atividades() {
     setCategoriaId(atividade.categoria?.id || "");
   }
 
-  async function excluirAtividade(id) {
-    try {
-      await api.delete(`/atividades/${id}`);
-      if (atividadeEditando && atividadeEditando.id === id) {
-        limparFormulario();
-      }
-      carregarTudo();
-    } catch (error) {
-      console.error("Erro ao excluir:", error);
+ async function excluirAtividade(id) {
+
+  const confirmar = window.confirm(
+    "Deseja realmente excluir esta atividade?"
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+    await api.delete(`/atividades/${id}`);
+
+    if (atividadeEditando && atividadeEditando.id === id) {
+      limparFormulario();
+    }
+
+    carregarTudo();
+
+    alert("Atividade excluída com sucesso!");
+
+  } catch (error) {
+    console.error("Erro ao excluir:", error);
+
+    if (error.response?.data) {
+      alert(error.response.data);
+    } else {
       alert("Erro ao excluir atividade.");
     }
   }
+}
 
   function limparFormulario() {
     setAtividadeEditando(null);

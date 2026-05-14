@@ -25,6 +25,9 @@ function Agendamentos() {
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("week");
 
+  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
+const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
+
   useEffect(() => {
     carregarTudo();
   }, []);
@@ -76,34 +79,71 @@ function Agendamentos() {
     return new Date(data.replace(" ", "T"));
   }
 
-  async function salvar() {
-    if (!atividadeId || !dataInicio || !dataFim) {
-      alert("Preencha atividade, data e hora inicial e data e hora final.");
-      return;
+ async function salvar() {
+  if (!atividadeId || !dataInicio || !dataFim) {
+    alert("Preencha atividade, data e hora inicial e data e hora final.");
+    return;
+  }
+
+  const inicio = new Date(dataInicio);
+  const fim = new Date(dataFim);
+  const agora = new Date();
+
+  if (inicio < agora) {
+    alert("Não é possível cadastrar agendamento em data ou horário que já passou.");
+    return;
+  }
+
+  if (fim <= inicio) {
+    alert("A data final deve ser maior que a data inicial.");
+    return;
+  }
+
+  const conflito = agendamentos.some((ag) => {
+    if (agendamentoEditando && ag.id === agendamentoEditando.id) {
+      return false;
     }
 
-    const payload = {
-      atividade: { id: Number(atividadeId) },
-      dataInicio: dataInicio + ":00",
-      dataFim: dataFim + ":00",
-      observacao: observacao
-    };
+    const inicioExistente = parseData(ag.dataInicio);
+    const fimExistente = parseData(ag.dataFim);
 
-    try {
-      if (agendamentoEditando) {
-        await api.put(`/agendamentos/${agendamentoEditando.id}`, payload);
-      } else {
-        console.log(payload);
-        await api.post("/agendamentos", payload);
-      }
+    return inicio < fimExistente && fim > inicioExistente;
+  });
 
-      limparFormulario();
-      carregarTudo();
-    } catch (e) {
-      console.error("Erro ao salvar agendamento:", e);
+  if (conflito) {
+    alert("Já existe um agendamento nesse intervalo de horário.");
+    return;
+  }
+
+  const payload = {
+    atividade: { id: Number(atividadeId) },
+    dataInicio: dataInicio + ":00",
+    dataFim: dataFim + ":00",
+    observacao: observacao
+  };
+
+  try {
+    if (agendamentoEditando) {
+      await api.put(`/agendamentos/${agendamentoEditando.id}`, payload);
+    } else {
+      await api.post("/agendamentos", payload);
+    }
+
+    limparFormulario();
+    carregarTudo();
+    alert(agendamentoEditando ? "Agendamento atualizado com sucesso!" : "Agendamento cadastrado com sucesso!");
+  } catch (e) {
+    console.error("Erro ao salvar agendamento:", e);
+
+    if (e.response?.data?.mensagem) {
+      alert(e.response.data.mensagem);
+    } else if (e.response?.data) {
+      alert(e.response.data);
+    } else {
       alert("Erro ao salvar agendamento.");
     }
   }
+}
 
   function editar(ag) {
     setAgendamentoEditando(ag);
@@ -131,15 +171,22 @@ function Agendamentos() {
     }
   }
 
-  function selecionarEvento(evento) {
-    editar(evento.resource);
-  }
+ function selecionarEvento(evento) {
+  setAgendamentoSelecionado(evento.resource);
+  setMostrarOpcoes(true);
+}
 
   function selecionarSlot(slotInfo) {
-    setDataInicio(formatarDatetimeLocal(slotInfo.start));
-    setDataFim(formatarDatetimeLocal(slotInfo.end));
+  const agora = new Date();
+
+  if (slotInfo.start < agora) {
+    alert("Não é possível selecionar uma data ou horário que já passou.");
+    return;
   }
 
+  setDataInicio(formatarDatetimeLocal(slotInfo.start));
+  setDataFim(formatarDatetimeLocal(slotInfo.end));
+}
   return (
     <div className="pagina-agendamentos" translate="no">
       <Menu />
@@ -162,6 +209,7 @@ function Agendamentos() {
           <input
             type="datetime-local"
             value={dataInicio}
+            min={formatarDatetimeLocal(new Date())}
             onChange={(e) => setDataInicio(e.target.value)}
           />
 
@@ -169,14 +217,8 @@ function Agendamentos() {
           <input
             type="datetime-local"
             value={dataFim}
+            min={dataInicio || formatarDatetimeLocal(new Date())}
             onChange={(e) => setDataFim(e.target.value)}
-          />
-
-          <label>Observação</label>
-          <textarea
-            rows="5"
-            value={observacao}
-            onChange={(e) => setObservacao(e.target.value)}
           />
 
 
@@ -196,32 +238,7 @@ function Agendamentos() {
             )}
           </div>
 
-          <div className="lista-agendamentos">
-            <h3>Agendamentos</h3>
 
-            {agendamentos.length === 0 ? (
-              <p>Nenhum agendamento cadastrado.</p>
-            ) : (
-              agendamentos.map((ag) => (
-                <div key={ag.id} className="item-agendamento">
-                  <div>
-                    <strong>{ag.atividade?.descricao}</strong>
-                    <div>Funcionário: {ag.atividade?.funcionario?.nome || "Não informado"}</div>
-                    <div>
-                      {new Date(ag.dataInicio).toLocaleString()} -{" "}
-                      {new Date(ag.dataFim).toLocaleString()}
-                    </div>
-                    {ag.observacao && <div>Obs: {ag.observacao}</div>}
-                  </div>
-
-                  <div className="acoes-item">
-                    <button onClick={() => editar(ag)}>Editar</button>
-                    <button onClick={() => excluir(ag.id)}>Excluir</button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
         </section>
 
         <section className="painel-calendario">
@@ -258,6 +275,53 @@ function Agendamentos() {
           />
         </section>
       </div>
+
+      {mostrarOpcoes && agendamentoSelecionado && (
+  <div className="modal-overlay">
+    <div className="modal-opcoes">
+
+      <h3>Agendamento</h3>
+
+      <p>
+        <strong>Atividade:</strong>{" "}
+        {agendamentoSelecionado.atividade?.descricao}
+      </p>
+
+      <p>
+        <strong>Funcionário:</strong>{" "}
+        {agendamentoSelecionado.atividade?.funcionario?.nome}
+      </p>
+
+      <div className="acoes-modal">
+
+        <button
+          onClick={() => {
+            editar(agendamentoSelecionado);
+            setMostrarOpcoes(false);
+          }}
+        >
+          Editar
+        </button>
+
+        <button
+          onClick={() => {
+            excluir(agendamentoSelecionado.id);
+            setMostrarOpcoes(false);
+          }}
+        >
+          Excluir
+        </button>
+
+        <button
+          onClick={() => setMostrarOpcoes(false)}
+        >
+          Fechar
+        </button>
+
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

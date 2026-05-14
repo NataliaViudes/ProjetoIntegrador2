@@ -6,6 +6,8 @@ import Atividades from "./pages/Atividades/Atividades";
 import Funcionario from "./pages/Funcionarios/Funcionario";
 import Cargo from "./pages/Cargo/Cargo";
 import PlanejarEtapa from "./pages/PlanejarEtapa/PlanejarEtapa";
+import CategoriaAuxilio from "./pages/CategoriaAuxilio/CategoriaAuxilio";
+import CategoriaAtividade from "./pages/CategoriaAtividade/CategoriaAtividade";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/funcionario" element={<Funcionario />} />
         <Route path="/cargos" element={<Cargo />} />
         <Route path="/planejar-etapa/:id" element={<PlanejarEtapa />} />
+        <Route path="/categoriaAuxilio" element={<CategoriaAuxilio />} />
+        <Route path="/categoriaAtividade" element={<CategoriaAtividade />} />
 
       </Routes>
     </BrowserRouter>

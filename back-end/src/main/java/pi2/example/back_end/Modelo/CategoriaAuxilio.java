@@ -57,4 +57,19 @@ public class CategoriaAuxilio {
         CatAuxilioDAOImpl dao = new CatAuxilioDAOImpl(con);
         return dao.buscarPorNome(nome);
     }
+
+    public CategoriaAuxilio incluir(Conexao con) {
+        CatAuxilioDAOImpl dao = new CatAuxilioDAOImpl(con);
+        return dao.gravar(this);
+    }
+
+    public CategoriaAuxilio alterar(Conexao con) {
+        CatAuxilioDAOImpl dao = new CatAuxilioDAOImpl(con);
+        return dao.alterar(this);
+    }
+
+    public boolean apagar(Conexao con) {
+        CatAuxilioDAOImpl dao = new CatAuxilioDAOImpl(con);
+        return dao.apagar(this);
+    }
 }

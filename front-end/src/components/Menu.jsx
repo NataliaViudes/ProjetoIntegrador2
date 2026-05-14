@@ -14,6 +14,8 @@ function Menu() {
             <Link to="/beneficiarios">Beneficiários</Link>
             <Link to="/funcionario">Funcionários</Link>
             <Link to="/cargos">Cargos</Link>
+            <Link to="/categoriaAtividade">Categoria de Atividade</Link>
+            <Link to="/categoriaAuxilio">Categoria Auxílio</Link>
           </div>
         </div>
 

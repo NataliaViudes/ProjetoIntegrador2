@@ -124,4 +124,49 @@ public class CatAuxilioDAOImpl {
 
         return lista;
     }
+
+    public CategoriaAuxilio gravar(CategoriaAuxilio entidade) {
+        String sql = "INSERT INTO categoria_auxilio (nome) VALUES (?)";
+
+        try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
+            stmt.setString(1, entidade.getNome());
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                entidade.setId(rs.getInt(1));
+            }
+
+            return entidade;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao incluir categoria de auxílio", e);
+        }
+    }
+
+    public CategoriaAuxilio alterar(CategoriaAuxilio entidade) {
+        String sql = "UPDATE categoria_auxilio SET nome = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setString(1, entidade.getNome());
+            stmt.setInt(2, entidade.getId());
+
+            stmt.executeUpdate();
+            return entidade;
+        } catch (SQLException e) {
+            System.out.println("Erro ao alterar categoria de auxílio: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean apagar(CategoriaAuxilio entidade) {
+        String sql = "DELETE FROM categoria_auxilio WHERE id = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, entidade.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir categoria de auxílio: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -72,7 +72,11 @@ public class CategoriaAtividadeDAOImpl {
     public CategoriaAtividade get(int id) {
         CategoriaAtividade categoria = null;
 
-        String sql = "SELECT id_categoria, nome FROM categoria_atividade";
+        String sql = """
+        SELECT id_categoria, nome
+        FROM categoria_atividade
+        WHERE id_categoria = ?
+    """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setInt(1, id);
