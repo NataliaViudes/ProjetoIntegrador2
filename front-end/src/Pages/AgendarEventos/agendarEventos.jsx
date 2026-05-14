@@ -3,17 +3,23 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
+import Swal from "sweetalert2";
 import ItensEvento from "../ItensEvento";
 import api from "../../Services/api";
 import Menu from "../../Components/Menu/Menu";
 import "./agendarEventos.css";
 
-moment.locale("pt-br");
+moment.updateLocale("pt-br", {
+  week: {
+    dow: 0,
+  },
+});
+
 const localizer = momentLocalizer(moment);
 
 function Eventos() {
   const [erros, setErros] = useState({});
+  const [somenteLeitura, setSomenteLeitura] = useState(false);
   const [modo, setModo] = useState("calendario");
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
 
@@ -112,6 +118,24 @@ function Eventos() {
     return `${data}T${hora.substring(0, 5)}`;
   }
 
+  function possuiConflitoHorario() {
+    const inicioNovo = new Date(dataInicio);
+    const fimNovo = new Date(dataFim);
+
+    return eventosApi.some((ev) => {
+      // ignora o próprio evento quando estiver editando
+      if (eventoEditando && ev.id === eventoEditando.id) {
+        return false;
+      }
+
+      const inicioExistente = new Date(juntarDataHora(ev.data, ev.horaInicio));
+
+      const fimExistente = new Date(juntarDataHora(ev.data, ev.horaFim));
+
+      return inicioNovo < fimExistente && fimNovo > inicioExistente;
+    });
+  }
+
   function limparFormulario() {
     setEventoSelecionado(null);
     setEventoEditando(null);
@@ -123,9 +147,15 @@ function Eventos() {
     setIdCatEvento("");
     setIdFuncionario("");
     setErros({});
+    setSomenteLeitura(false);
   }
 
   async function salvar() {
+    if (possuiConflitoHorario()) {
+      Swal.fire("Erro", "Já existe um evento nesse horário", "error");
+      return;
+    }
+
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
@@ -134,12 +164,20 @@ function Eventos() {
     dataEvento.setHours(0, 0, 0, 0);
 
     if (dataEvento < hoje) {
-      alert("Não é permitido criar eventos em datas passadas.");
+      Swal.fire(
+        "Erro",
+        "Não é permitido criar eventos em datas passadas.",
+        "error",
+      );
       return;
     }
 
     if (new Date(dataFim) <= new Date(dataInicio)) {
-      alert("A data/hora final deve ser maior que a inicial.");
+      Swal.fire(
+        "Erro",
+        "A data/hora final deve ser maior que a inicial.",
+        "error",
+      );
       return;
     }
     const novosErros = {};
@@ -188,12 +226,13 @@ function Eventos() {
   }
 
   function editar(ev) {
-    if (eventoJaPassou(ev.data)) {
-      alert("Eventos antigos não podem ser editados.");
-      return;
-    }
+    const eventoAntigo = eventoJaPassou(ev.data);
+
+    setSomenteLeitura(eventoAntigo);
+
     setEventoSelecionado(ev);
     setEventoEditando(ev);
+
     setNome(ev.nome || "");
     setDataInicio(juntarDataHora(ev.data, ev.horaInicio));
     setDataFim(juntarDataHora(ev.data, ev.horaFim));
@@ -204,8 +243,16 @@ function Eventos() {
   }
 
   async function excluir(id) {
-    const confirmou = window.confirm("Deseja excluir este evento?");
-    if (!confirmou) return;
+    const result = await Swal.fire({
+      title: "Deseja excluir esse evento?",
+      text: "Essa ação não pode ser desfeita",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, remover",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await api.delete(`/evento/${id}`);
@@ -257,6 +304,7 @@ function Eventos() {
 
           <label>Nome do Evento</label>
           <input
+            disabled={somenteLeitura}
             value={nome}
             onChange={(e) => {
               setNome(e.target.value);
@@ -267,6 +315,7 @@ function Eventos() {
 
           <label>Categoria do evento</label>
           <select
+            disabled={somenteLeitura}
             value={idCatEvento}
             onChange={(e) => {
               setIdCatEvento(e.target.value);
@@ -285,6 +334,7 @@ function Eventos() {
           <label>Funcionário</label>
 
           <select
+            disabled={somenteLeitura}
             value={idFuncionario}
             onChange={(e) => setIdFuncionario(e.target.value)}
             className={erros.idFuncionario ? "input-erro" : ""}
@@ -307,10 +357,12 @@ function Eventos() {
               setErros({ ...erros, dataInicio: false });
             }}
             className={erros.dataInicio ? "input-erro" : ""}
+            disabled={somenteLeitura}
           />
 
           <label>Data e hora final</label>
           <input
+            disabled={somenteLeitura}
             type="datetime-local"
             value={dataFim}
             onChange={(e) => {
@@ -322,6 +374,7 @@ function Eventos() {
 
           <label>Local</label>
           <textarea
+            disabled={somenteLeitura}
             rows="2"
             value={local}
             onChange={(e) => {
@@ -340,10 +393,11 @@ function Eventos() {
               setErros({ ...erros, qtd: false });
             }}
             className={erros.qtd ? "input-erro" : ""}
+            disabled={somenteLeitura}
           />
 
           <div className="acoes-formulario">
-            <button onClick={salvar}>
+            <button onClick={salvar} disabled={somenteLeitura}>
               {eventoEditando ? "Atualizar" : "Salvar"}
             </button>
 
@@ -402,6 +456,7 @@ function Eventos() {
         {modo === "calendario" ? (
           <section className="painel-calendario">
             <Calendar
+              
               localizer={localizer}
               culture="pt-BR"
               events={eventos}
@@ -442,6 +497,7 @@ function Eventos() {
           <>
             {eventoSelecionado ? (
               <ItensEvento
+                somenteLeitura={somenteLeitura}
                 key={eventoSelecionado?.id}
                 evento={eventoSelecionado}
                 voltar={() => setModo("calendario")}

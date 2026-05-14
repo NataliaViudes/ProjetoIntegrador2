@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import api from "../../Services/api";
 import "./ItensEvento.css";
 
-export default function ItensEvento({ evento, voltar }) {
+export default function ItensEvento({ evento, voltar, somenteLeitura }) {
   const [itens, setItens] = useState([]);
   const [busca, setBusca] = useState({});
   const [sugestoes, setSugestoes] = useState({});
@@ -141,8 +141,28 @@ export default function ItensEvento({ evento, voltar }) {
     setBusca({ ...busca, [index]: item.descricao });
   }
 
+  function possuiConflitoHorario() {
+    const inicioNovo = new Date(dataInicio);
+    const fimNovo = new Date(dataFim);
+
+    return eventosApi.some((ev) => {
+      // ignora o próprio evento na edição
+      if (eventoEditando && ev.id === eventoEditando.id) {
+        return false;
+      }
+
+      const inicioExistente = new Date(juntarDataHora(ev.data, ev.horaInicio));
+
+      const fimExistente = new Date(juntarDataHora(ev.data, ev.horaFim));
+
+      return inicioNovo < fimExistente && fimNovo > inicioExistente;
+    });
+  }
+
   async function salvarAlteracoes() {
     try {
+     
+
       const payload = itens
         .filter((i) => i.estoque?.id) // só itens válidos
         .map((i) => ({
@@ -202,12 +222,20 @@ export default function ItensEvento({ evento, voltar }) {
                 Voltar
               </button>
 
-              <button className="btn btn-add" onClick={adicionarLinha}>
+              <button
+                className="btn btn-add"
+                onClick={adicionarLinha}
+                disabled={somenteLeitura}
+              >
                 <Plus size={16} />
                 Item
               </button>
 
-              <button className="btn btn-save" onClick={salvarAlteracoes}>
+              <button
+                className="btn btn-save"
+                onClick={salvarAlteracoes}
+                disabled={somenteLeitura}
+              >
                 <Save size={16} />
                 Salvar
               </button>
@@ -240,10 +268,12 @@ export default function ItensEvento({ evento, voltar }) {
                     <td style={{ position: "relative" }}>
                       <input
                         className={`input-busca ${
-                          item.estoque?.id ? "input-desabilitado" : ""
+                          item.estoque?.id || somenteLeitura
+                            ? "input-desabilitado"
+                            : ""
                         }`}
                         type="text"
-                        disabled={!!item.estoque?.id}
+                        disabled={!!item.estoque?.id || somenteLeitura}
                         value={busca[index] ?? item.estoque?.descricao ?? ""}
                         onChange={(e) => buscarEstoque(index, e.target.value)}
                         onFocus={() => buscarEstoque(index, "")}
@@ -277,6 +307,7 @@ export default function ItensEvento({ evento, voltar }) {
 
                     <td>
                       <input
+                        disabled={!item.estoque?.id || somenteLeitura}
                         className="input-qtd"
                         type="number"
                         value={item.qtd}
@@ -292,6 +323,7 @@ export default function ItensEvento({ evento, voltar }) {
 
                     <td>
                       <button
+                        disabled={somenteLeitura}
                         className="btn-delete"
                         onClick={() => removerLinha(index)}
                       >

@@ -3,64 +3,47 @@ package pi2.example.back_end.Modelo;
 import pi2.example.back_end.DAO.DAOEvento;
 import pi2.example.back_end.db.Conexao;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Evento {
+
     private Integer id;
-    private LocalDate data;
-    private LocalTime horaInicio;
-    private LocalTime horaFim;
+    private LocalDateTime inicio;
+    private LocalDateTime fim;
     private String nome;
     private String local;
     private Integer qtd;
     private Cat_Evento categoria;
-    private Integer idFuncionario; /// mudar para funcionario
-
+    private Funcionario funcionario;
 
     public Evento() {
     }
 
-    public Evento(LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Cat_Evento cat, Integer idFuncionario) {
-        this.data = data;
-        this.horaInicio = horaInicio;
-        this.horaFim = horaFim;
-        this.nome = nome;
-        this.local = local;
-        this.qtd = qtd;
-        this.categoria = cat;
-        this.idFuncionario = idFuncionario;
-    }
-
-    public Evento(Integer id, LocalDate data, LocalTime horaInicio, LocalTime horaFim, String nome, String local, Integer qtd, Cat_Evento cat, Integer idFuncionario) {
+    public Evento(Integer id, LocalDateTime inicio, LocalDateTime fim, String nome, String local, Integer qtd, Cat_Evento categoria, Funcionario funcionario) {
         this.id = id;
-        this.data = data;
-        this.horaInicio = horaInicio;
-        this.horaFim = horaFim;
+        this.inicio = inicio;
+        this.fim = fim;
         this.nome = nome;
         this.local = local;
         this.qtd = qtd;
-        this.categoria = cat;
-        this.idFuncionario = idFuncionario;
-    }
-
-    public Cat_Evento getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Cat_Evento categoria) {
         this.categoria = categoria;
+        this.funcionario = funcionario;
     }
 
-    public Integer getIdFuncionario() {
-        return idFuncionario;
+    public Evento(LocalDateTime inicio, LocalDateTime fim, String nome, String local, Integer qtd, Cat_Evento categoria, Funcionario funcionario) {
+        this.inicio = inicio;
+        this.fim = fim;
+        this.nome = nome;
+        this.local = local;
+        this.qtd = qtd;
+        this.categoria = categoria;
+        this.funcionario = funcionario;
     }
 
-    public void setIdFuncionario(Integer idFuncionario) {
-        this.idFuncionario = idFuncionario;
-    }
+    // =====================================================
+    // GETTERS E SETTERS
+    // =====================================================
 
     public Integer getId() {
         return id;
@@ -70,28 +53,20 @@ public class Evento {
         this.id = id;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDateTime getInicio() {
+        return inicio;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setInicio(LocalDateTime inicio) {
+        this.inicio = inicio;
     }
 
-    public LocalTime getHoraInicio() {
-        return horaInicio;
+    public LocalDateTime getFim() {
+        return fim;
     }
 
-    public void setHoraInicio(LocalTime horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public LocalTime getHoraFim() {
-        return horaFim;
-    }
-
-    public void setHoraFim(LocalTime horaFim) {
-        this.horaFim = horaFim;
+    public void setFim(LocalDateTime fim) {
+        this.fim = fim;
     }
 
     public String getNome() {
@@ -118,6 +93,60 @@ public class Evento {
         this.qtd = qtd;
     }
 
+    public Cat_Evento getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Cat_Evento categoria) {
+        this.categoria = categoria;
+    }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    // =====================================================
+    // Validaçao
+    // =====================================================
+
+    public String validar() {
+
+        if (categoria == null || categoria.getId() == null || categoria.getId() <= 0)
+            return "Categoria inválida";
+
+        if (qtd == null || qtd <= 0)
+            return "Quantidade inválida";
+
+        if (nome == null || nome.trim().isEmpty())
+            return "Nome inválido";
+
+        if (local == null || local.trim().isEmpty())
+            return "Local inválido";
+
+        if (inicio == null)
+            return "Data/hora inicial obrigatória";
+
+        if (fim == null)
+            return "Data/hora final obrigatória";
+
+        if (!fim.isAfter(inicio))
+            return "Data final deve ser após a inicial";
+
+        if (inicio.isBefore(LocalDateTime.now()))
+            return "Não é permitido criar eventos no passado";
+
+        return null;
+    }
+
+
+
+    // =====================================================
+    // DAO
+    // =====================================================
 
     public List<Evento> listar(Conexao con) {
         DAOEvento dao = new DAOEvento(con);
@@ -154,9 +183,15 @@ public class Evento {
         return dao.apagar(this);
     }
 
-
+    // =====================================================
+    // AUXILIARES
+    // =====================================================
 
     public Integer getIdCatEvento() {
+
+        if (categoria == null)
+            return null;
+
         return categoria.getId();
     }
 }

@@ -7,7 +7,7 @@ import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,272 +16,418 @@ public class EventoControl {
     public EventoControl() {
     }
 
-    // 🔹 INSERT
+    // =====================================================
+    // REGRAS DE NEGÓCIO
+    // =====================================================
+
+    private boolean eventoFinalizado(Evento evento) {
+
+        return evento.getFim().isBefore(LocalDateTime.now());
+    }
+
+    private boolean eventoEmAndamento(Evento evento) {
+        LocalDateTime agora = LocalDateTime.now();
+        return (evento.getInicio().isBefore(agora) || evento.getInicio().isEqual(agora)) && (evento.getFim().isAfter(agora) || evento.getFim().isEqual(agora));
+    }
+
+    private boolean possuiConflitoHorario(Evento evento, List<Evento> eventos) {
+
+        boolean conflito = false;
+
+        for (Evento ev : eventos) {
+
+            boolean mesmoEvento = false;
+            if (evento.getId() != null) {
+                mesmoEvento = ev.getId().equals(evento.getId());
+            }
+
+            boolean mesmoLocal =
+                    evento.getLocal().trim()
+                            .equalsIgnoreCase(ev.getLocal().trim());
+
+            boolean conflitoHorario =
+                    evento.getInicio().isBefore(ev.getFim())
+                            &&
+                            evento.getFim().isAfter(ev.getInicio());
+
+            if (!mesmoEvento && mesmoLocal && conflitoHorario) {
+
+                conflito = true;
+            }
+        }
+
+        return conflito;
+    }
+
+    // =====================================================
+    // INSERT
+    // =====================================================
+
     public ResponseEntity<?> incluir(Evento evento) {
 
         if (evento == null)
-            return ResponseEntity.badRequest().body(new Erro("Evento nulo"));
-
-        if (evento.getIdCatEvento() == null || evento.getIdCatEvento() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Categoria inválida"));
-
-        if (evento.getQtd() == null || evento.getQtd() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
-
-        if (evento.getNome() == null || evento.getNome().isEmpty())
-            return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
-
-        if (evento.getData() == null)
-            return ResponseEntity.badRequest().body(new Erro("Data obrigatória"));
-
-        if (evento.getHoraInicio() == null || evento.getHoraFim() == null)
-            return ResponseEntity.badRequest().body(new Erro("Horário inválido"));
-
-        if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
-            return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
-
-        if (evento.getData().isBefore(LocalDate.now()))
             return ResponseEntity.badRequest()
-                    .body(new Erro("Não é permitido cadastrar eventos em datas passadas"));
+                    .body(new Erro("Evento nulo"));
+
+        String erroValidacao = evento.validar();
+
+        if (erroValidacao != null)
+            return ResponseEntity.badRequest()
+                    .body(new Erro(erroValidacao));
 
         Conexao db = Banco.getConexao();
 
         try {
+
             if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
+
+            Evento ev = new Evento();
+
+            List<Evento> eventosMesmoLocal =
+                    ev.buscarPorLocal(db, evento.getLocal());
+
+            if (possuiConflitoHorario(evento, eventosMesmoLocal)) {
+
+                return ResponseEntity.badRequest()
+                        .body(new Erro(
+                                "Já existe um evento nesse local nesse horário"
+                        ));
+            }
 
             Evento resultado = evento.incluir(db);
 
             if (resultado != null)
                 return ResponseEntity.ok(resultado);
-            else
-                return ResponseEntity.badRequest().body(new Erro("Erro ao inserir evento"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao inserir evento"));
 
         } catch (SQLException e) {
+
             System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro no banco"));
 
         } catch (Exception e) {
+
             System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
 
         } finally {
+
             db.desconectar();
         }
     }
 
+    // =====================================================
     // GET BY ID
+    // =====================================================
+
     public ResponseEntity<?> getById(int id) {
-        if (id < 0) {
-            return ResponseEntity.badRequest().body(new Erro("Id invalido"));
-        } else {
-            Evento ev = new Evento();
-            Conexao db = Banco.getConexao();
 
-            try {
-                if (!db.conectar()) {
-                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                }
+        if (id <= 0)
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Id inválido"));
 
-                Evento resultado = ev.buscarPorId(db, id);
-                if (resultado != null) {
-                    return ResponseEntity.ok(resultado);
-                } else {
-                    return ResponseEntity.badRequest().body(new Erro("Evento não encontrado id: " + id));
-                }
-
-            } catch (SQLException e) {
-                System.out.println("Erro SQL: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro ao conectar com o banco de dados"));
-
-            } catch (Exception e) {
-                System.out.println("Erro geral: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-            } finally {
-                db.desconectar();
-            }
-        }
-    }
-
-    // 🔹 BUSCAR POR NOME
-    public ResponseEntity<?> buscarPorNome(String nome) {
-        List<Evento> eventos = new ArrayList<>();
         Evento ev = new Evento();
-
-        if (nome == null) nome = "";
 
         Conexao db = Banco.getConexao();
 
         try {
-            if (!db.conectar()) {
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-            }
+
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
+
+            Evento resultado = ev.buscarPorId(db, id);
+
+            if (resultado != null)
+                return ResponseEntity.ok(resultado);
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Evento não encontrado"));
+
+        } catch (SQLException e) {
+
+            System.out.println("Erro SQL: " + e.getMessage());
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao conectar com o banco"));
+
+        } catch (Exception e) {
+
+            System.out.println("Erro geral: " + e.getMessage());
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
+
+        } finally {
+
+            db.desconectar();
+        }
+    }
+
+    // =====================================================
+    // BUSCAR POR NOME
+    // =====================================================
+
+    public ResponseEntity<?> buscarPorNome(String nome) {
+
+        List<Evento> eventos = new ArrayList<>();
+
+        Evento ev = new Evento();
+
+        if (nome == null)
+            nome = "";
+
+        Conexao db = Banco.getConexao();
+
+        try {
+
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
 
             eventos = ev.buscarPorNome(db, nome);
 
-            if (eventos != null && !eventos.isEmpty()) {
+            if (eventos != null && !eventos.isEmpty())
                 return ResponseEntity.ok(eventos);
-            } else {
-                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar evento: " + nome));
-            }
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Nenhum evento encontrado"));
 
         } catch (SQLException e) {
+
             System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro com o banco"));
 
         } catch (Exception e) {
+
             System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
 
         } finally {
+
             db.desconectar();
         }
     }
 
-    // 🔹 BUSCAR POR LOCAL
+    // =====================================================
+    // BUSCAR POR LOCAL
+    // =====================================================
+
     public ResponseEntity<?> buscarPorLocal(String local) {
+
         List<Evento> eventos = new ArrayList<>();
+
         Evento ev = new Evento();
 
-        if (local == null) local = "";
+        if (local == null)
+            local = "";
 
         Conexao db = Banco.getConexao();
 
         try {
-            if (!db.conectar()) {
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-            }
+
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
 
             eventos = ev.buscarPorLocal(db, local);
 
-            if (eventos != null && !eventos.isEmpty()) {
+            if (eventos != null && !eventos.isEmpty())
                 return ResponseEntity.ok(eventos);
-            } else {
-                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar evento no local: " + local));
-            }
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Nenhum evento encontrado"));
 
         } catch (SQLException e) {
+
             System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro com o banco"));
 
         } catch (Exception e) {
+
             System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
 
         } finally {
+
             db.desconectar();
         }
     }
 
-    //  UPDATE
+    // =====================================================
+    // UPDATE
+    // =====================================================
+
     public ResponseEntity<?> alterar(Evento evento) {
 
         if (evento == null)
-            return ResponseEntity.badRequest().body(new Erro("Evento nulo"));
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Evento nulo"));
 
         if (evento.getId() == null || evento.getId() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Id inválido"));
-
-        if (evento.getIdCatEvento() == null || evento.getIdCatEvento() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Categoria inválida"));
-
-        if (evento.getQtd() == null || evento.getQtd() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
-
-        if (evento.getNome() == null || evento.getNome().isEmpty())
-            return ResponseEntity.badRequest().body(new Erro("Nome inválido"));
-
-        if (evento.getData() == null)
-            return ResponseEntity.badRequest().body(new Erro("Data obrigatória"));
-
-        if (evento.getHoraInicio() == null || evento.getHoraFim() == null)
-            return ResponseEntity.badRequest().body(new Erro("Horário inválido"));
-
-        if (!evento.getHoraFim().isAfter(evento.getHoraInicio()))
-            return ResponseEntity.badRequest().body(new Erro("Hora fim deve ser após início"));
-
-        if (evento.getData().isBefore(LocalDate.now()))
             return ResponseEntity.badRequest()
-                    .body(new Erro("Não é permitido atualizar eventos em datas passadas"));
+                    .body(new Erro("Id inválido"));
+
+        String erroValidacao = evento.validar();
+
+        if (erroValidacao != null)
+            return ResponseEntity.badRequest()
+                    .body(new Erro(erroValidacao));
 
         Conexao db = Banco.getConexao();
 
         try {
-            if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
 
-            Evento existente = new Evento().buscarPorId(db, evento.getId());
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
+
+            Evento ev = new Evento();
+
+            Evento existente =
+                    ev.buscarPorId(db, evento.getId());
 
             if (existente == null)
                 return ResponseEntity.badRequest()
                         .body(new Erro("Evento não encontrado"));
 
-            if (existente.getData().isBefore(LocalDate.now()))
+            if (eventoFinalizado(existente))
                 return ResponseEntity.badRequest()
-                        .body(new Erro("Eventos passados não podem ser alterados"));
+                        .body(new Erro(
+                                "Eventos finalizados não podem ser alterados"
+                        ));
+
+            List<Evento> eventosMesmoLocal =
+                    ev.buscarPorLocal(db, evento.getLocal());
+
+            if (possuiConflitoHorario(evento, eventosMesmoLocal)) {
+
+                return ResponseEntity.badRequest()
+                        .body(new Erro(
+                                "Já existe um evento nesse local nesse horário"
+                        ));
+            }
 
             Evento resultado = evento.alterar(db);
 
             if (resultado != null)
                 return ResponseEntity.ok(resultado);
-            else
-                return ResponseEntity.badRequest().body(new Erro("Erro ao alterar evento"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao alterar evento"));
 
         } catch (SQLException e) {
+
             System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro no banco"));
 
         } catch (Exception e) {
+
             System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
 
         } finally {
+
             db.desconectar();
         }
     }
 
-    //  DELETE
+    // =====================================================
+    // DELETE
+    // =====================================================
+
     public ResponseEntity<?> delete(Integer id) {
-        if (id != null && id > 0) {
 
-            Conexao db = Banco.getConexao();
+        if (id == null || id <= 0)
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Id inválido"));
 
-            try {
-                if (!db.conectar()) {
-                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                }
+        Conexao db = Banco.getConexao();
 
-                Evento ev = new Evento();
-                Evento existente = ev.buscarPorId(db, id);
+        try {
 
-                if (existente != null) {
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro ao conectar: "
+                                + db.getMensagemErro()
+                );
 
-                    existente.setId(id);
+            Evento ev = new Evento();
 
-                    if (existente.apagar(db))
-                        return ResponseEntity.ok(true);
-                    else
-                        return ResponseEntity.badRequest().body(new Erro("Erro ao excluir evento"));
+            Evento existente =
+                    ev.buscarPorId(db, id);
 
-                } else {
-                    return ResponseEntity.badRequest().body(new Erro("Evento não encontrado"));
-                }
+            if (existente == null)
+                return ResponseEntity.badRequest()
+                        .body(new Erro("Evento não encontrado"));
 
-            } catch (SQLException e) {
-                System.out.println("Erro SQL: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+            if (eventoEmAndamento(existente))
+                return ResponseEntity.badRequest()
+                        .body(new Erro(
+                                "Eventos em andamento não podem ser removidos"
+                        ));
 
-            } catch (Exception e) {
-                System.out.println("Erro geral: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+            if (eventoFinalizado(existente))
+                return ResponseEntity.badRequest()
+                        .body(new Erro(
+                                "Eventos finalizados não podem ser removidos"
+                        ));
 
-            } finally {
-                db.desconectar();
-            }
+            existente.setId(id);
 
-        } else {
-            return ResponseEntity.badRequest().body(new Erro("id invalido"));
+            if (existente.apagar(db))
+                return ResponseEntity.ok(true);
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao excluir evento"));
+
+        } catch (SQLException e) {
+
+            System.out.println("Erro SQL: " + e.getMessage());
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro com o banco"));
+
+        } catch (Exception e) {
+
+            System.out.println("Erro geral: " + e.getMessage());
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro geral"));
+
+        } finally {
+
+            db.desconectar();
         }
     }
 }
