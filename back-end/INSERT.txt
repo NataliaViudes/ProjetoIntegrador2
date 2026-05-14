@@ -1,0 +1,205 @@
+-- =========================================
+-- CATEGORIA_ATIVIDADE
+-- =========================================
+INSERT INTO categoria_atividade (nome) VALUES
+('Educação'),
+('Saúde'),
+('Esporte'),
+('Cultura'),
+('Alimentação');
+
+-- =========================================
+-- CAT_EVENTO
+-- =========================================
+INSERT INTO cat_evento (nome, descricao) VALUES
+('Palestra', 'Evento educativo com palestrante'),
+('Workshop', 'Treinamento prático'),
+('Reunião', 'Encontro interno'),
+('Campanha', 'Ação social'),
+('Treino', 'Atividade física orientada');
+
+-- =========================================
+-- CARGO
+-- =========================================
+INSERT INTO cargo (nome) VALUES
+('Professor'),
+('Enfermeiro'),
+('Instrutor'),
+('Coordenador'),
+('Auxiliar');
+
+-- =========================================
+-- FUNCIONARIO
+-- =========================================
+INSERT INTO funcionario
+(nome, cpf, telefone, nis, nascimento, sexo, endereco, id_cargo)
+VALUES
+('João Silva', '12345678901', '18999999999', '12345678901', '1985-03-10', 'M', 'Rua A, 123', 1),
+
+('Maria Souza', '12345678902', '18988888888', '12345678902', '1990-07-21', 'F', 'Rua B, 456', 2),
+
+('Carlos Lima', '12345678903', '18977777777', '12345678903', '1988-11-15', 'M', 'Rua C, 789', 3),
+
+('Ana Paula', '12345678904', '18966666666', '12345678904', '1995-01-30', 'F', 'Rua D, 321', 4),
+
+('Lucas Rocha', '12345678905', '18955555555', '12345678905', '1992-09-12', 'M', 'Rua E, 654', 5);
+
+-- =========================================
+-- ATIVIDADE
+-- =========================================
+INSERT INTO atividade
+(descricao, id_categoria, id_funcionario)
+VALUES
+('Aula de matemática', 1, 1),
+('Atendimento básico de saúde', 2, 2),
+('Treino funcional', 3, 3),
+('Oficina de pintura', 4, 4),
+('Distribuição de alimentos', 5, 5);
+
+-- =========================================
+-- AGENDAMENTO_ATIVIDADE
+-- =========================================
+INSERT INTO agendamento_atividade
+(id_atividade, data_inicio, data_fim, observacao)
+VALUES
+(1, '2026-05-10 08:00:00', '2026-05-10 10:00:00', 'Turma iniciante'),
+
+(2, '2026-05-11 09:00:00', '2026-05-11 11:00:00', 'Atendimento livre'),
+
+(3, '2026-05-12 07:00:00', '2026-05-12 08:30:00', 'Treino ao ar livre'),
+
+(4, '2026-05-13 14:00:00', '2026-05-13 16:00:00', 'Material incluso'),
+
+(5, '2026-05-14 12:00:00', '2026-05-14 13:30:00', 'Entrega comunitária');
+
+-- =========================================
+-- ALIMENTO
+-- =========================================
+INSERT INTO alimento
+(nome, tipo, descricao)
+VALUES
+('Arroz', 'Grão', 'Arroz branco'),
+('Feijão', 'Leguminosa', 'Feijão carioca'),
+('Frango', 'Carne', 'Frango grelhado'),
+('Salada', 'Vegetal', 'Salada mista'),
+('Suco', 'Bebida', 'Suco natural');
+
+-- =========================================
+-- TIPO_ESTOQUE
+-- =========================================
+INSERT INTO tipo_estoque (tipo) VALUES
+('Seco'),
+('Refrigerado'),
+('Congelado');
+
+-- =========================================
+-- ESTOQUE
+-- =========================================
+INSERT INTO estoque
+(descricao, qtd, id_tipo_estoque)
+VALUES
+('Arroz estoque', 100, 1),
+('Feijão estoque', 80, 1),
+('Frango congelado', 50, 3),
+('Verduras frescas', 30, 2),
+('Suco armazenado', 40, 2);
+
+-- =========================================
+-- CARDAPIO
+-- =========================================
+INSERT INTO cardapio
+(nome, data, hora, id_agendamento)
+VALUES
+('Café da manhã', '2026-05-10', '08:00:00', 1),
+
+('Almoço', '2026-05-11', '12:00:00', 2),
+
+('Lanche da tarde', '2026-05-12', '15:00:00', 3);
+
+-- =========================================
+-- ITENS_CARDAPIO
+-- =========================================
+INSERT INTO itens_cardapio
+(id_cardapio, id_alimento, quantidade)
+VALUES
+(1, 1, 2),
+(1, 5, 1),
+
+(2, 1, 3),
+(2, 2, 2),
+(2, 3, 2),
+(2, 4, 1),
+
+(3, 5, 2),
+(3, 4, 1);
+
+INSERT INTO categoria_auxilio (nome) VALUES
+('Ajuda Financeira'),
+('Doença'),
+('Moradia'),
+('Alimentação'),
+('Transporte'),
+('Educação');
+
+
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'José Pereira', '1950-04-10', 75, '1234567', '12345678901',
+    '99999999999', 1200.50, 'Rua A, 100', 'Centro',
+    'Alvenaria', '18999999999', '18988888888', '18977777777',
+    'Diabetes', 'Uso de insulina', 'Volei', 'Regular'
+);
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Maria Souza', '1965-08-22', 60, '7654321',
+    '98765432100', '88888888888', 950.00, 'Rua B, 200',
+    'Vila Nova', 'Madeira', '18991111111', '18992222222',
+    '18993333333', 'Nenhuma', 'Hipertensão', 'Natação', 'Regular'
+);
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Carlos Mendes', '1972-01-15', 62, '1112223',
+    '11122233344', '77777777777', 1800.75, 'Rua C, 300',
+    'Jardim Paulista', 'Alvenaria', '18994444444', '18995555555',
+    '18996666666', 'Poeira', 'Asma', 'Volei', 'Regular'
+);
+
+INSERT INTO beneficiario (nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado, alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Ana Lima', '1980-12-05', 74, '9988776',
+    '55566677788', '66666666666', 2100.00, 'Rua D, 400',
+    'Centro', 'Apartamento', '18997777777', '18998888888',
+    '18999900000', 'Glúten', 'Dieta controlada', 'Volei', 'Regular'
+);
+
+INSERT INTO beneficiario (
+    nome, nascimento, idade, rg, cpf, nis, renda,
+    endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado,
+    alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Paulo Henrique', '1995-06-18', 81, '5544332',
+    '22233344455', '55555555555', 1300.00, 'Rua E, 500',
+    'Vila Esperança', 'Alvenaria', '18990000000', '18991112222',
+    '18992223333', 'Nenhuma', 'Nenhum', 'Volei', 'Irregular'
+);
+
+INSERT INTO beneficiario (
+    nome, nascimento, idade, rg, cpf, nis, renda,
+    endereco, bairro, tipo_residencia,
+    telefone, celular, celular_recado,
+    alergias, tratamentos, participacao, situacao
+) VALUES (
+    'Fernanda Rocha', '1978-03-30', 65, '2233445',
+    '33344455566', '44444444444', 1700.90, 'Rua F, 600',
+    'Jardim das Flores', 'Casa', '18993334444', '18994445555',
+    '18995556666', 'Lactose', 'Suplementação', 'Natação', 'Acompanhamento'
+);
+

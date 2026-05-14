@@ -1,0 +1,432 @@
+CREATE TABLE  IF NOT EXISTS categoria_atividade (
+    id_categoria SERIAL,
+    nome VARCHAR(100) NOT NULL,
+
+    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+    CONSTRAINT un_categoria_nome UNIQUE (nome)
+);
+
+CREATE TABLE IF NOT EXISTS cat_evento (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Cargo (
+    id_cargo SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Funcionario (
+    id_funcionario SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) UNIQUE NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) UNIQUE NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    id_cargo INTEGER,
+    FOREIGN KEY (id_cargo) REFERENCES Cargo(id_cargo)
+);
+
+CREATE TABLE IF NOT EXISTS atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_atividade(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+CREATE TABLE IF NOT EXISTS agendamento_atividade (
+    id_agendamento SERIAL PRIMARY KEY,
+
+    id_atividade INTEGER NOT NULL,
+
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP NOT NULL,
+
+    observacao TEXT,
+
+    CONSTRAINT fk_agendamento_atividade
+        FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
+);
+
+CREATE TABLE IF NOT EXISTS alimento (
+    id SERIAL,
+    nome varchar(50),
+    tipo varchar(50),
+    descricao varchar(200),
+    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS tipo_estoque (
+    id SERIAL,
+    tipo varchar(50) NOT NULL,
+    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
+    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
+);
+
+
+CREATE TABLE IF NOT EXISTS estoque (
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque int,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS cardapio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    id_agendamento INTEGER,
+
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento)
+        ON DELETE SET NULL
+);  
+
+CREATE TABLE IF NOT EXISTS itens_cardapio (
+    id_cardapio INTEGER NOT NULL,
+    id_alimento INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    PRIMARY KEY (id_cardapio, id_alimento),
+
+    CONSTRAINT fk_itens_cardapio_cardapio
+        FOREIGN KEY (id_cardapio)
+        REFERENCES cardapio(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_itens_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE  IF NOT EXISTS categoria_atividade (
+    id_categoria SERIAL,
+    nome VARCHAR(100) NOT NULL,
+
+    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+    CONSTRAINT un_categoria_nome UNIQUE (nome)
+);
+
+CREATE TABLE IF NOT EXISTS cat_evento (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Cargo (
+    id_cargo SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Funcionario (
+    id_funcionario SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) UNIQUE NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) UNIQUE NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    id_cargo INTEGER,
+    FOREIGN KEY (id_cargo) REFERENCES Cargo(id_cargo)
+);
+
+CREATE TABLE IF NOT EXISTS atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_atividade(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+CREATE TABLE IF NOT EXISTS agendamento_atividade (
+    id_agendamento SERIAL PRIMARY KEY,
+
+    id_atividade INTEGER NOT NULL,
+
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP NOT NULL,
+
+    observacao TEXT,
+
+    CONSTRAINT fk_agendamento_atividade
+        FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
+);
+
+CREATE TABLE IF NOT EXISTS alimento (
+    id SERIAL,
+    nome varchar(50),
+    tipo varchar(50),
+    descricao varchar(200),
+    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS tipo_estoque (
+    id SERIAL,
+    tipo varchar(50) NOT NULL,
+    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
+    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
+);
+
+
+CREATE TABLE IF NOT EXISTS estoque (
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque int,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS cardapio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    id_agendamento INTEGER,
+
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento)
+        ON DELETE SET NULL
+);  
+
+CREATE TABLE IF NOT EXISTS itens_cardapio (
+    id_cardapio INTEGER NOT NULL,
+    id_alimento INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    PRIMARY KEY (id_cardapio, id_alimento),
+
+    CONSTRAINT fk_itens_cardapio_cardapio
+        FOREIGN KEY (id_cardapio)
+        REFERENCES cardapio(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_itens_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE  IF NOT EXISTS categoria_atividade (
+    id_categoria SERIAL,
+    nome VARCHAR(100) NOT NULL,
+
+    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+    CONSTRAINT un_categoria_nome UNIQUE (nome)
+);
+
+CREATE TABLE IF NOT EXISTS cat_evento (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Cargo (
+    id_cargo SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Funcionario (
+    id_funcionario SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) UNIQUE NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) UNIQUE NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    id_cargo INTEGER,
+    FOREIGN KEY (id_cargo) REFERENCES Cargo(id_cargo)
+);
+
+CREATE TABLE IF NOT EXISTS atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_atividade(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+CREATE TABLE IF NOT EXISTS agendamento_atividade (
+    id_agendamento SERIAL PRIMARY KEY,
+
+    id_atividade INTEGER NOT NULL,
+
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP NOT NULL,
+
+    observacao TEXT,
+
+    CONSTRAINT fk_agendamento_atividade
+        FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
+);
+
+CREATE TABLE IF NOT EXISTS alimento (
+    id SERIAL,
+    nome varchar(50),
+    tipo varchar(50),
+    descricao varchar(200),
+    CONSTRAINT PK_ALIMENTO PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS tipo_estoque (
+    id SERIAL,
+    tipo varchar(50) NOT NULL,
+    CONSTRAINT PK_TIPOESTOQUE PRIMARY KEY (id),
+    CONSTRAINT UN_TIPO_TIPOESTOQUE UNIQUE (tipo)
+);
+
+
+CREATE TABLE IF NOT EXISTS estoque (
+    id SERIAL,
+    descricao varchar(200),
+    qtd int,
+    id_tipo_estoque int,
+    CONSTRAINT PK_ESTOQUE PRIMARY KEY (id),
+    CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque) REFERENCES TIPO_ESTOQUE(id)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS cardapio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    id_agendamento INTEGER,
+
+    CONSTRAINT fk_cardapio_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento)
+        ON DELETE SET NULL
+);  
+
+CREATE TABLE IF NOT EXISTS itens_cardapio (
+    id_cardapio INTEGER NOT NULL,
+    id_alimento INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    PRIMARY KEY (id_cardapio, id_alimento),
+
+    CONSTRAINT fk_itens_cardapio_cardapio
+        FOREIGN KEY (id_cardapio)
+        REFERENCES cardapio(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_itens_cardapio_alimento
+        FOREIGN KEY (id_alimento)
+        REFERENCES alimento(id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE beneficiario (
+    id SERIAL,
+
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE NOT NULL,
+    idade INTEGER,
+
+    rg VARCHAR(20),
+    cpf CHAR(11) NOT NULL,
+    nis CHAR(11),
+
+    renda NUMERIC(10,2),
+
+    endereco VARCHAR(200),
+    bairro VARCHAR(100),
+    tipo_residencia VARCHAR(50),
+
+    telefone VARCHAR(15),
+    celular VARCHAR(15),
+    celular_recado VARCHAR(15),
+
+    alergias VARCHAR(255),
+    tratamentos VARCHAR(255),
+
+    participacao VARCHAR(100),
+    situacao VARCHAR(50),
+
+    CONSTRAINT pk_beneficiario PRIMARY KEY (id),
+
+    CONSTRAINT un_beneficiario_cpf UNIQUE (cpf),
+    CONSTRAINT un_beneficiario_nis UNIQUE (nis),
+
+    CONSTRAINT chk_beneficiario_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_beneficiario_nis_format CHECK (nis IS NULL OR nis ~ '^[0-9]{11}$'),
+
+    CONSTRAINT chk_beneficiario_telefone CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular CHECK (celular IS NULL OR celular ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular_recado CHECK (celular_recado IS NULL OR celular_recado ~ '^[0-9]+$')
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS categoria_auxilio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS auxilio (
+    id SERIAL,
+    descricao TEXT NOT NULL,
+    id_beneficiario INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    CONSTRAINT pk_auxilio PRIMARY KEY (id),
+    CONSTRAINT fk_auxilio_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_auxilio_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_auxilio(id)
+);
+
+
