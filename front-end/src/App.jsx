@@ -6,6 +6,10 @@ import Alimentos from "./pages/Alimentos/Alimentos";
 import Beneficiarios from "./pages/Beneficiarios/Beneficiarios";
 import Agendamentos from "./pages/Agendamentos/Agendamentos";
 import Vincular from "./pages/VincularBeneficiario/VincularBeneficiario"
+import TipoEstoque from "./pages/Estoque/TipoEstoque";
+import Estoque from "./pages/Estoque/Estoque";
+import Cardapio from "./pages/CardapioMensal/Cardapio";
+import PaginaInicial from "./pages/PaginaInicial/PaginaInicial";
 
 function App() {
   return (
@@ -19,7 +23,10 @@ function App() {
         <Route path="/beneficiarios" element={<Beneficiarios />} />
         <Route path="/agendamentos" element={<Agendamentos />} />
         <Route path="/vincular" element={<Vincular />} />
-
+        <Route path="/tipo-estoque" element={<TipoEstoque />} />
+        <Route path="/estoque" element={<Estoque />} />
+        <Route path="/cardapio" element={<Cardapio />} />
+        <Route path="/pagina-inicial" element={<PaginaInicial />} />
       </Routes>
     </BrowserRouter>
   );

@@ -3,6 +3,8 @@ import api from "../../services/api";
 import Menu from "../../components/Menu";
 import "../Agendamentos/Agendamentos.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 function VincularBeneficiario() {
   const location = useLocation();
@@ -175,6 +177,8 @@ function VincularBeneficiario() {
                 >
                   Limpar Seleção
                 </button>
+                <Link to={"/agendamentos"}><button>Voltar</button></Link>
+
               </>
             ) : (
               <>
@@ -186,6 +190,7 @@ function VincularBeneficiario() {
                 >
                   Limpar Seleção
                 </button>
+                <Link to={"/agendamentos"}><button>Voltar</button></Link>
               </>
             )}
           </div>
