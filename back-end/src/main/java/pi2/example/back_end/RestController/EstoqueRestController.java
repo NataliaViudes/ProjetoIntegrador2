@@ -3,6 +3,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.EstoqueControl;
 import pi2.example.back_end.Modelo.Estoque;
+import pi2.example.back_end.Modelo.MaterialAtividade;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -39,5 +42,24 @@ public class EstoqueRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listarTodos(@RequestParam(value = "filtro", required = false) String filtro) {
+        return control.getAllOrFilter(filtro);
+    }
+    @PostMapping("/agendamento-material")
+    public ResponseEntity<?> salvarMateriaisEtapa(@RequestBody List<MaterialAtividade> materiais) {
+        return control.salvarMateriaisEtapa(materiais);
+    }
+
+    @GetMapping("/agendamento-material/{idAgendamento}")
+    public ResponseEntity<?> buscarMateriais(@PathVariable(value = "idAgendamento") int idAgendamento) {
+        return control.buscarMateriaisPorAgendamento(idAgendamento);
+    }
+
+    @DeleteMapping("/agendamento-material")
+    public ResponseEntity<?> deletarMaterial(@RequestBody MaterialAtividade mat) {
+        return control.removerMaterial(mat);
     }
 }

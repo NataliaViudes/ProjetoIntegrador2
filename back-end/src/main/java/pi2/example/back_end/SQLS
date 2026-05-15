@@ -243,6 +243,38 @@ CREATE TABLE agendamento_atividade (
         FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade)
 );
 
+CREATE TABLE etapa (
+    id SERIAL PRIMARY KEY,
+    id_agendamento INTEGER NOT NULL,
+    descricao TEXT NOT NULL,
+    data_hora_inicio TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (id_agendamento)
+	REFERENCES agendamento_atividade(id_agendamento)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE agendamento_material (
+    id SERIAL PRIMARY KEY,
+
+    id_agendamento INTEGER NOT NULL,
+    id_item INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    CONSTRAINT fk_agendamento_material_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id_agendamento),
+
+    CONSTRAINT fk_agendamento_material_item
+        FOREIGN KEY (id_item)
+        REFERENCES estoque(id),
+
+    CONSTRAINT uq_agendamento_item
+        UNIQUE (id_agendamento, id_item)
+);
+
+
+
 
 ALTER TABLE vincularbeneficiario
 DROP CONSTRAINT fk_vb_agendamento,

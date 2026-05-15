@@ -11,6 +11,7 @@ import Estoque from "./pages/Estoque/Estoque";
 import Cardapio from "./pages/CardapioMensal/Cardapio";
 import Funcionarios from "./pages/Funcionarios/Funcionario";
 import PaginaInicial from "./pages/PaginaInicial/PaginaInicial";
+import PlanejarEtapa from "./pages/PlanejarEtapa/PlanejarEtapa";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/beneficiarios" element={<Beneficiarios />} />
         <Route path="/agendamentos" element={<Agendamentos />} />
         <Route path="/vincular" element={<Vincular />} />
+        <Route path="/planejar-etapa/:id" element={<PlanejarEtapa />} />
         <Route path="/tipo-estoque" element={<TipoEstoque />} />
         <Route path="/estoque" element={<Estoque />} />
         <Route path="/cardapio" element={<Cardapio />} />

@@ -176,21 +176,9 @@ function Agendamentos() {
 
           <h3 style={{ marginTop: "20px" }}>Vinculação de Beneficiários</h3>
 
-          
+
 
           <div className="acoes-formulario">
-            <Link
-            to="/vincular"
-            state={{
-              atividadeId,
-              dataInicio,
-              dataFim,
-              observacao,
-              idAgendamento: agendamentoEditando?.id || null
-            }}
-          >
-            <button>Ir para Vinculação</button>
-          </Link>
             <button onClick={salvar}>
               {agendamentoEditando ? "Atualizar" : "Salvar"}
             </button>
@@ -198,6 +186,28 @@ function Agendamentos() {
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
+          </div>
+
+          <div className="acoes-formulario">{agendamentoEditando && (
+            <Link to={`/planejar-etapa/${agendamentoEditando.id}`}>
+              <button type="button">Planejar</button>
+            </Link>
+          )}
+
+            {agendamentoEditando && (
+              <Link
+                to="/vincular"
+                state={{
+                  atividadeId,
+                  dataInicio,
+                  dataFim,
+                  observacao,
+                  idAgendamento: agendamentoEditando?.id || null
+                }}
+              >
+                <button>Ir para Vinculação</button>
+              </Link>
+            )}
           </div>
 
           <div className="lista-agendamentos">
