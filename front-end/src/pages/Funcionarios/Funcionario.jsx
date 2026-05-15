@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
-import Menu from "../components/Menu";
+import api from "../../services/api";
+import Menu from "../../components/Menu";
 import "./Funcionario.css";
 
 function Funcionario() {
@@ -10,6 +10,8 @@ function Funcionario() {
 
     const [tela, setTela] = useState("tabela"); // tabela | detalhes | cadastro
     const [editando, setEditando] = useState(false);
+
+    const [cargos, setCargos] = useState([]);
 
     const [erros, setErros] = useState({});
 
@@ -22,20 +24,45 @@ function Funcionario() {
         nascimento: "",
         sexo: "",
         endereco: "",
-        cargo: ""
+        cargoId: ""
     });
 
     useEffect(() => {
         carregar();
+        carregarCargos();
     }, []);
+
+    async function carregarCargos() {
+        try {
+            const resp = await api.get("/cargos");
+            setCargos(Array.isArray(resp.data) ? resp.data : []);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     async function carregar() {
         try {
-            const resp = await api.get("/funcionario");
+            const resp = await api.get("/funcionarios");
             setFuncionarios(Array.isArray(resp.data) ? resp.data : []);
         } catch (e) {
             console.error(e);
         }
+    }
+
+    function novo() {
+        setForm({
+            nome: "",
+            cpf: "",
+            telefone: "",
+            nis: "",
+            nascimento: "",
+            sexo: "",
+            endereco: "",
+            cargoId: ""
+        });
+        setEditando(true);
+        setTela("cadastro");
     }
 
     function formatCPF(value) {
@@ -105,6 +132,7 @@ function Funcionario() {
     function verDetalhes(f) {
         setForm({
             ...f,
+            cargoId: f.cargo?.id || "",
             nascimento: formatarDataParaInput(f.nascimento),
             cpf: formatCPFView(f.cpf),
             telefone: formatTelefoneView(f.telefone),
@@ -115,15 +143,6 @@ function Funcionario() {
         setTela("detalhes");
     }
 
-    function novo() {
-        setForm({
-            nome: "", cpf: "", telefone: "", nis: "",
-            nascimento: "", sexo: "", endereco: "", cargo: ""
-        });
-        setEditando(true);
-        setTela("cadastro");
-    }
-
     function limparNumero(valor) {
         return valor.replace(/\D/g, "");
     }
@@ -132,7 +151,7 @@ function Funcionario() {
         let novosErros = {};
 
         if (!form.nome) novosErros.nome = "Nome é obrigatório";
-        if (!form.cargo) novosErros.cargo = "Cargo é obrigatório";
+        if (!form.cargoId) novosErros.cargo = "Cargo é obrigatório";
 
         if (!form.cpf) {
             novosErros.cpf = "CPF é obrigatório";
@@ -154,25 +173,26 @@ function Funcionario() {
             return;
         }
 
-        if (Object.keys(novosErros).length > 0) {
-            setErros(novosErros);
-            return;
-        }
-
         setErros({});
 
         const payload = {
-            ...form,
+            nome: form.nome,
             cpf: limparNumero(form.cpf),
             telefone: limparNumero(form.telefone),
-            nis: form.nis ? limparNumero(form.nis) : null
+            nis: form.nis ? limparNumero(form.nis) : null,
+            nascimento: form.nascimento,
+            sexo: form.sexo,
+            endereco: form.endereco,
+            cargo: {
+                id: Number(form.cargoId)
+            }
         };
 
         try {
             if (tela === "cadastro") {
-                await api.post("/funcionario", payload);
+                await api.post("/funcionarios", payload);
             } else {
-                await api.put(`/funcionario/${form.id}`, payload);
+                await api.put(`/funcionarios/${form.id}`, payload);
             }
 
             setTela("tabela");
@@ -187,7 +207,7 @@ function Funcionario() {
     async function deletar(id) {
         if (!window.confirm("Deseja desligar o funcionário?")) return;
 
-        await api.delete(`/funcionario/${id}`);
+        await api.delete(`/funcionarios/${id}`);
         carregar();
     }
 
@@ -199,7 +219,7 @@ function Funcionario() {
     if (tela === "tabela") {
         return (
             <div className="pagina-funcionario" translate="no">
-      <Menu />
+                <Menu />
 
                 <div className="topo">
                     <input
@@ -222,7 +242,7 @@ function Funcionario() {
                             {filtrados.map(f => (
                                 <tr key={f.id}>
                                     <td>{f.nome}</td>
-                                    <td>{f.cargo}</td>
+                                    <td>{f.cargo?.nome}</td>
                                     <td>
                                         <button onClick={() => verDetalhes(f)}>Ver</button>
                                         <button onClick={() => deletar(f.id)}>Desligar</button>
@@ -243,8 +263,8 @@ function Funcionario() {
 
     // tela === "detalhes" | "cadastro" -> formulário de detalhes ou cadastro
     return (
-         <div className="pagina-funcionario" translate="no">
-      <Menu />
+        <div className="pagina-funcionario" translate="no">
+            <Menu />
 
             <div className="form-grid">
 
@@ -262,13 +282,20 @@ function Funcionario() {
 
                 <div className="campo">
                     <label>Cargo</label>
-                    <input
-                        name="cargo"
-                        value={form.cargo || ""}
+                    <select
+                        name="cargoId"
+                        value={form.cargoId || ""}
                         disabled={!editando}
                         onChange={handleChange}
                         className={erros.cargo ? "input-erro" : ""}
-                    />
+                    >
+                        <option value="">Selecione</option>
+                        {cargos.map(c => (
+                            <option key={c.id} value={c.id}>
+                                {c.nome}
+                            </option>
+                        ))}
+                    </select>
                     {erros.cargo && <span className="erro-texto">{erros.cargo}</span>}
                 </div>
 

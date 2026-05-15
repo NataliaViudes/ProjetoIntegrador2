@@ -8,25 +8,23 @@ CREATE TABLE categoria (
     CONSTRAINT un_categoria_nome UNIQUE (nome)
 );
 
-CREATE TABLE funcionario (
-    id_funcionario SERIAL,
+CREATE TABLE Cargo (
+    id_cargo SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE Funcionario (
+    id_funcionario SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    cpf CHAR(11) NOT NULL,
+    cpf CHAR(11) UNIQUE NOT NULL,
     telefone VARCHAR(15),
-    nis CHAR(11) NOT NULL,
+    nis CHAR(11) UNIQUE NOT NULL,
     nascimento DATE NOT NULL,
     sexo CHAR(1) NOT NULL,
     endereco VARCHAR(200),
-    cargo VARCHAR(50),
+    id_cargo INTEGER,
 
-    CONSTRAINT pk_funcionario PRIMARY KEY (id_funcionario),
-    CONSTRAINT un_cpf UNIQUE (cpf),
-    CONSTRAINT un_nis UNIQUE (nis),
-
-    CONSTRAINT chk_sexo CHECK (sexo IN ('M', 'F', 'O')),
-    CONSTRAINT chk_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
-    CONSTRAINT chk_nis_format CHECK (nis ~ '^[0-9]{11}$'),
-    CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
+    FOREIGN KEY (id_cargo) REFERENCES Cargo(id_cargo)
 );
 
 CREATE TABLE atividade (
@@ -114,17 +112,46 @@ CREATE TABLE prescricao(
                 REFERENCES remedio(id)
 );
 
-INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
-VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
+CREATE TABLE IF NOT EXISTS auxilio (
+    id SERIAL,
+    descricao TEXT NOT NULL,
+    data DATE NOT NULL,
+    status Varchar(10),
+    id_beneficiario INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
 
-INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
-VALUES ('Maria Oliveira', '98765432100', '18988888888', '22222222222', '1985-08-20', 'F', 'Rua B, 456', 'Analista');
+    CONSTRAINT pk_auxilio PRIMARY KEY (id),
 
-INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
-VALUES ('Carlos Souza', '11122233344', '18977777777', '33333333333', '1992-12-01', 'M', 'Rua C, 789', 'Supervisor');
+    CONSTRAINT fk_auxilio_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE,
 
-INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
-VALUES ('Ana Costa', '55566677788', '18966666666', '44444444444', '1998-03-15', 'F', 'Rua D, 321', 'Assistente');
+    CONSTRAINT fk_auxilio_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_auxilio(id)
+);
+
+CREATE TABLE categoria_auxilio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+INSERT INTO cargo (nome) VALUES
+('Professor'),
+('Enfermeiro'),
+('Instrutor'),
+('Coordenador'),
+('Auxiliar');
+
+INSERT INTO funcionario
+(nome, cpf, telefone, nis, nascimento, sexo, endereco, id_cargo) VALUES
+('João Silva', '12345678901', '18999999999', '12345678901', '1985-03-10', 'M', 'Rua A, 123', 1),
+('Maria Souza', '12345678902', '18988888888', '12345678902', '1990-07-21', 'F', 'Rua B, 456', 2),
+('Carlos Lima', '12345678903', '18977777777', '12345678903', '1988-11-15', 'M', 'Rua C, 789', 3),
+('Ana Paula', '12345678904', '18966666666', '12345678904', '1995-01-30', 'F', 'Rua D, 321', 4),
+('Lucas Rocha', '12345678905', '18955555555', '12345678905', '1992-09-12', 'M', 'Rua E, 654', 5);
 
 INSERT INTO categoria (nome) VALUES
 ('Educação'),

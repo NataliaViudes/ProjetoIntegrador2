@@ -1,5 +1,5 @@
 package pi2.example.back_end.RestController;
-
+/*
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.RemedioControl;
@@ -56,3 +56,4 @@ public class RemedioRestController {
         return control.delete(id);
     }
 }
+*/

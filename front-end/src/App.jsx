@@ -9,13 +9,14 @@ import Vincular from "./pages/VincularBeneficiario/VincularBeneficiario"
 import TipoEstoque from "./pages/Estoque/TipoEstoque";
 import Estoque from "./pages/Estoque/Estoque";
 import Cardapio from "./pages/CardapioMensal/Cardapio";
+import Funcionarios from "./pages/Funcionarios/Funcionario";
 import PaginaInicial from "./pages/PaginaInicial/PaginaInicial";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/menu" />} />
+        <Route path="/" element={<Navigate to="/pagina-inicial" />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/atividades" element={<Atividades />} />
         <Route path="/auxilios" element={<Auxilios />} />
@@ -26,6 +27,7 @@ function App() {
         <Route path="/tipo-estoque" element={<TipoEstoque />} />
         <Route path="/estoque" element={<Estoque />} />
         <Route path="/cardapio" element={<Cardapio />} />
+        <Route path="/funcionarios" element={<Funcionarios />} />
         <Route path="/pagina-inicial" element={<PaginaInicial />} />
       </Routes>
     </BrowserRouter>

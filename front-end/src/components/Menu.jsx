@@ -30,7 +30,7 @@ function Menu() {
             <Link to="/auxilios">Auxílios</Link>
             <Link to="/beneficiarios">Beneficiários</Link>
             <Link to="/estoque">Estoque</Link>
-            <Link to="/funcionario">Funcionários</Link>
+            <Link to="/funcionarios">Funcionários</Link>
             <Link to="/tipo-estoque">Tipo de estoque</Link>
           </div>
         </div>

@@ -121,3 +121,87 @@
     grid-template-columns: 1fr;
   }
 }
+
+.item-auxilio {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.topo-auxilio {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.info-resumida {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 14px;
+}
+
+.descricao-auxilio {
+    width: 100%;
+
+    background: #f5f5f5;
+
+    padding: 14px;
+
+    border-radius: 8px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+
+    white-space: pre-wrap;
+
+    font-size: 14px;
+}
+
+.botoes-item {
+    display: flex;
+    gap: 10px;
+}
+
+/* AUXÍLIO APROVADO */
+.auxilio-aprovado {
+    background-color: #d4edda;
+    border: 1px solid #81c784;
+}
+
+/* AUXÍLIO REJEITADO */
+.auxilio-rejeitado {
+    background-color: #f8d7da;
+    border: 1px solid #e57373;
+}
+
+/* descrição acompanha a cor */
+
+.auxilio-aprovado .descricao-auxilio {
+    background-color: #c8e6c9;
+}
+
+.auxilio-rejeitado .descricao-auxilio {
+    background-color: #ffcdd2;
+}
+
+.botao-aprovar {
+    background-color: #4caf50 !important;
+    color: white;
+    border: none;
+}
+
+.botao-rejeitar {
+    background-color: #f44336 !important;
+    color: white;
+    border: none;
+}

@@ -15,12 +15,11 @@ import java.util.List;
         public AuxilioControl() {}
 
         private boolean campoVazio(Auxilio a) {
-            if (a.getDescricao() != null && !a.getDescricao().isEmpty()
-                    && a.getBeneficiario() != null && a.getBeneficiario().getId() != null
-                    && a.getCategoria() != null && a.getCategoria().getId() != null) {
-                return false;
-            }
-            return true;
+            return a.getDescricao() == null || a.getDescricao().isEmpty()
+                    || a.getBeneficiario() == null
+                    || a.getBeneficiario().getId() == null
+                    || a.getCategoria() == null
+                    || a.getCategoria().getId() == null;
         }
 
         public ResponseEntity<?> incluir(Auxilio auxilio) {
