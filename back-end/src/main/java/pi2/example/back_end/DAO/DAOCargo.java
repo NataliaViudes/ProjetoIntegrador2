@@ -1,14 +1,13 @@
 package pi2.example.back_end.DAO;
 
 import pi2.example.back_end.Modelo.Cargo;
-import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DAOCargo {
     private final Conexao bd;

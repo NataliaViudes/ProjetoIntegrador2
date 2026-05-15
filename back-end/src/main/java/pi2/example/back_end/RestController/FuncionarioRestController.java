@@ -2,19 +2,14 @@ package pi2.example.back_end.RestController;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import pi2.example.back_end.Control.CargoControl;
 import pi2.example.back_end.Control.FuncionarioControl;
-import pi2.example.back_end.DAO.DAOFuncionario;
 import pi2.example.back_end.Modelo.Funcionario;
-import pi2.example.back_end.db.Banco;
 
-import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/funcionarios")
 public class FuncionarioRestController {
+
     private final FuncionarioControl control = new FuncionarioControl();
 
     @GetMapping("{id}")
@@ -23,7 +18,7 @@ public class FuncionarioRestController {
     }
 
     @GetMapping("nome")
-    public ResponseEntity<?> getNome(@RequestParam (required = false) String nome) {
+    public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
         return control.buscaPorNome(nome);
     }
 

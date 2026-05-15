@@ -1,4 +1,5 @@
 package pi2.example.back_end.RestController;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.CargoControl;
@@ -39,5 +40,4 @@ public class CargoRestController {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         return control.delete(id);
     }
-
 }

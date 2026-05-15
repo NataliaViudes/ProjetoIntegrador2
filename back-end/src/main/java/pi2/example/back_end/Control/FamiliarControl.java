@@ -3,7 +3,6 @@ package pi2.example.back_end.Control;
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.Modelo.Familiar;
-import pi2.example.back_end.Modelo.Funcionario;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
