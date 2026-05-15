@@ -180,23 +180,63 @@ VALUES
 ('Ana Santos', '1995-12-01', 29, '5566778', '78912345600', '44444444444', 1200.00, 'Rua D, 321', 'Centro', 'Própria', '18999993333', '18988883333', '18977773333'),
 
 ('Pedro Lima', '1978-03-25', 46, '9988776', '32165498700', '55555555555', 3000.00, 'Rua E, 654', 'Industrial', 'Alugada', '18999994444', '18988884444', '18977774444');
-
-
 CREATE TABLE IF NOT EXISTS CAT_EVENTO(
-	id SERIAL,
-	categoria varchar(50),
-	descricao varchar(200),
-	CONSTRAINT PK_CAT_EVENTO PRIMARY KEY (id)
-	-- CONSTRAINT UNCAT_EVENTO UNIQUE (categoria)
-);
 
+    id_cat_evento INT GENERATED ALWAYS AS IDENTITY,
+
+    categoria VARCHAR(50) NOT NULL,
+    descricao VARCHAR(200),
+
+    CONSTRAINT PK_CAT_EVENTO
+        PRIMARY KEY (id_cat_evento),
+
+    CONSTRAINT UN_CAT_EVENTO
+        UNIQUE (categoria)
+
+);
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião','Todos os funcionarios presentes');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião PAIF','Todos os funcionarios presentes menos o Savoldi');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião Socioeducativa','Venham todos');
-INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa de Carnaval');
-INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa Junina');
+INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa','Festa no CRAS');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Palestra','Palestra sobre o meio ambiente');
-INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Festa de Carnaval','Venha curtir o Carnaval ak no Cras');
+
+CREATE TABLE IF NOT EXISTS EVENTO(
+
+    id_evento INT GENERATED ALWAYS AS IDENTITY,
+
+    nome VARCHAR(50) NOT NULL,
+    qtd INT NOT NULL,
+    local VARCHAR(200) NOT NULL,
+
+    inicio TIMESTAMP NOT NULL,
+    fim TIMESTAMP NOT NULL,
+
+    id_cat_evento INT NOT NULL,
+    id_funcionario INT,
+
+    CONSTRAINT PK_EVENTO
+        PRIMARY KEY (id_evento),
+
+    CONSTRAINT FK_EVENTO_CAT_EVENTO
+        FOREIGN KEY (id_cat_evento)
+        REFERENCES CAT_EVENTO(id_cat_evento),
+
+    CONSTRAINT FK_EVENTO_FUNCIONARIO
+        FOREIGN KEY (id_funcionario)
+        REFERENCES FUNCIONARIO(id_funcionario),
+
+    CONSTRAINT CK_EVENTO_QTD
+        CHECK (qtd > 0),
+
+    CONSTRAINT CK_EVENTO_DATA
+        CHECK (fim > inicio)
+
+);
+
+INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
+VALUES('Reunião Pedagógica',20,'Sala 1','2026-05-10 08:00:00','2026-05-10 10:00:00',1,1);
+
+
 
 
 CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE(
@@ -225,47 +265,6 @@ INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Grampeador',2,1);
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar reto',2,2);
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar um pouco torto',2,2);
 
-
-
-CREATE TABLE IF NOT EXISTS EVENTO(
-    id SERIAL,
-    nome varchar(50) not null,
-    qtd int not null,
-    local varchar(200),
-    id_cat_evento int not null,
-    data_inicio DATE,
-     data_fim DATE,
-    hora_inicio TIME,
-    hora_fim TIME,
-    id_funcionario INT,
-
-    CONSTRAINT PK_Evento PRIMARY KEY (id),
-    CONSTRAINT FK_Evento_Cat_evento FOREIGN KEY (id_cat_evento) REFERENCES CAT_EVENTO(id),
-    CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
-);
-
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('TESTE BANCO AGORA', 10, 'Sala Teste', 1, '2026-04-29', '09:00:00', '10:00:00', 1);
-
--- Evento 1
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('Reunião Pedagógica', 20, 'Sala 1', 1, '2026-05-10', '08:00:00', '10:00:00', 1);
-
--- Evento 2
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('Aula de Música', 15, 'Sala de Música', 2, '2026-05-10', '10:30:00', '12:00:00', 2);
-
--- Evento 3
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('Treino Esportivo', 25, 'Quadra', 3, '2026-05-11', '14:00:00', '16:00:00', 3);
-
--- Evento 4
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('Oficina de Artes', 10, 'Sala de Artes', 2, '2026-05-12', '09:00:00', '11:30:00', 1);
-
--- Evento 5
-INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
-VALUES ('Palestra Educativa', 50, 'Auditório', 1, '2026-05-13', '19:00:00', '21:00:00', 2);
 
 
 CREATE TABLE Itens_Evento(

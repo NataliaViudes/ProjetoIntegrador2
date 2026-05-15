@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Evento {
 
-    private Integer id;
+    private Integer idEvento;
     private LocalDateTime inicio;
     private LocalDateTime fim;
     private String nome;
@@ -21,7 +21,7 @@ public class Evento {
     }
 
     public Evento(Integer id, LocalDateTime inicio, LocalDateTime fim, String nome, String local, Integer qtd, Cat_Evento categoria, Funcionario funcionario) {
-        this.id = id;
+        this.idEvento = id;
         this.inicio = inicio;
         this.fim = fim;
         this.nome = nome;
@@ -45,12 +45,13 @@ public class Evento {
     // GETTERS E SETTERS
     // =====================================================
 
-    public Integer getId() {
-        return id;
+
+    public Integer getIdEvento() {
+        return idEvento;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdEvento(Integer idEvento) {
+        this.idEvento = idEvento;
     }
 
     public LocalDateTime getInicio() {
@@ -113,33 +114,38 @@ public class Evento {
     // Validaçao
     // =====================================================
 
-    public String validar() {
+    public List<String> validar() {
+
+        List<String> erros = new ArrayList<>();
 
         if (categoria == null || categoria.getId() == null || categoria.getId() <= 0)
-            return "Categoria inválida";
+            erros.add("Categoria inválida");
 
         if (qtd == null || qtd <= 0)
-            return "Quantidade inválida";
+            erros.add("Quantidade inválida");
 
         if (nome == null || nome.trim().isEmpty())
-            return "Nome inválido";
+            erros.add("Nome inválido");
 
         if (local == null || local.trim().isEmpty())
-            return "Local inválido";
+            erros.add("Local inválido");
 
         if (inicio == null)
-            return "Data/hora inicial obrigatória";
+            erros.add("Data/hora inicial obrigatória");
 
         if (fim == null)
-            return "Data/hora final obrigatória";
+            erros.add("Data/hora final obrigatória");
 
-        if (!fim.isAfter(inicio))
-            return "Data final deve ser após a inicial";
+        if (inicio != null && fim != null) {
 
-        if (inicio.isBefore(LocalDateTime.now()))
-            return "Não é permitido criar eventos no passado";
+            if (!fim.isAfter(inicio))
+                erros.add("Data final deve ser após a inicial");
 
-        return null;
+            if (inicio.isBefore(LocalDateTime.now()))
+                erros.add("Não é permitido criar eventos no passado");
+        }
+
+        return erros;
     }
 
 
@@ -183,9 +189,16 @@ public class Evento {
         return dao.apagar(this);
     }
 
+    public List<Evento> buscarPorPeriodo(Conexao con, LocalDateTime inicio, LocalDateTime fim) {
+        DAOEvento dao = new DAOEvento(con);
+        return dao.buscarPorPeriodo(inicio, fim);
+    }
+
     // =====================================================
     // AUXILIARES
     // =====================================================
+
+
 
     public Integer getIdCatEvento() {
 
@@ -193,5 +206,17 @@ public class Evento {
             return null;
 
         return categoria.getId();
+    }
+
+    public boolean possuiFuncionario() {
+        return getIdFuncionario() != null;
+    }
+
+    public Integer getIdFuncionario() {
+
+        if (funcionario == null)
+            return null;
+
+        return funcionario.getId();
     }
 }

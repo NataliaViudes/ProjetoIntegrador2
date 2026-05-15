@@ -1,38 +1,28 @@
-package pi2.example.back_end.Controller;
+package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
+import pi2.example.back_end.Modelo.Cargo;
 import pi2.example.back_end.Modelo.Erro;
-import pi2.example.back_end.Modelo.Funcionario;
+
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class FuncionarioControl {
-    public FuncionarioControl() {}
+public class CargoControl {
+    public CargoControl() {}
 
-    private boolean campoVazio(Funcionario f){
-        if(f.getNome()!=null && !f.getNome().isEmpty()
-                && f.getCpf()!=null && !f.getCpf().isEmpty()
-                && f.getTelefone()!=null && !f.getTelefone().isEmpty()
-                && f.getSexo()!=null && !f.getSexo().isEmpty()
-                && f.getEndereco()!=null && !f.getEndereco().isEmpty()
-                && f.getCargo()!=null && f.getCargo().getId()!=null && f.getNascimento()!=null)
-            return false;
-        return true;
-    }
-
-    public ResponseEntity<?> incluir(Funcionario funcionario)
+    public ResponseEntity<?> incluir(Cargo cargo)
     {
-        if (!campoVazio(funcionario)) {
-            Funcionario resultado=null;
+        if (cargo.getNome() != null && !cargo.getNome().isEmpty()) {
+            Cargo resultado=null;
             Conexao db = Banco.getConexao(); //Abre a conexao
             try {
                 if (!db.conectar()) {
                     throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                 }
-                resultado = funcionario.incluir(db);
+                resultado = cargo.incluir(db);
                 return ResponseEntity.ok(resultado);
 
             } catch (SQLException e) {
@@ -49,30 +39,30 @@ public class FuncionarioControl {
         }
         else
         {
-            return ResponseEntity.badRequest().body(new Erro("Todos os campos são obrigatórios!"));
+            return ResponseEntity.badRequest().body(new Erro("Nome(nome) é obrigatorio"));
         }
     }
 
     public ResponseEntity<?> getById(int id)
     {
         if (id < 0) {
-            return ResponseEntity.badRequest().body(new Erro("Id(id_funcionario) invalido"));
+            return ResponseEntity.badRequest().body(new Erro("Id(id_cargo) invalido"));
         }
         else
         {
-            Funcionario funcionario= new Funcionario();
+            Cargo cargo= new Cargo();
             Conexao db = Banco.getConexao(); // Abre conexao
             try {
                 if (!db.conectar()) {
                     throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                 }
 
-                Funcionario resultado = funcionario.buscarporId(id,db);
+                Cargo resultado = cargo.buscarporId(id,db);
                 if(resultado!=null) { // se encontrar algum Cat_evento
                     return ResponseEntity.ok(resultado);
                 }
                 else {
-                    return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Funcionario id: "+id));
+                    return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Cargo id: "+id));
                 }
             } catch (SQLException e) {
                 System.out.println("Erro SQL: " + e.getMessage());
@@ -90,51 +80,24 @@ public class FuncionarioControl {
 
     public ResponseEntity<?> buscaPorNome(String nome)
     {
-        List<Funcionario> funcionarios;
-        Funcionario funcionario= new Funcionario();
+        List<Cargo> cargos;
+        Cargo cargo = new Cargo();
 
-        if(nome != null && !nome.isEmpty())
-        {
-            Conexao db = Banco.getConexao(); // Abre conexao
-            try {
-                if (!db.conectar()) {
-                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                }
-                funcionarios = funcionario.buscarPorNome(nome,db);
-                if(funcionarios!=null && !funcionarios.isEmpty()) { // se encontrar algum Cat_evento
-                    return ResponseEntity.ok(funcionarios);
-                }
-                else {
-                    return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Funcionario: "+nome));
-                }
-            } catch (SQLException e) {
-                System.out.println("Erro SQL: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+        Conexao db = Banco.getConexao();
 
-            } catch (Exception e) {
-                System.out.println("Erro geral: " + e.getMessage());
-                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-            } finally {
-                db.desconectar(); // não esquece de fechar a conexao com o banco!!
-            }
-
-        }
-
-        Conexao db = Banco.getConexao(); // Abre conexao
         try {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            funcionarios = funcionario.buscarPorNome("",db);
-            if(funcionarios!=null && !funcionarios.isEmpty())
-            {
-                return ResponseEntity.ok(funcionarios);
+
+            cargos = cargo.buscarPorNome(nome, db);
+
+            if (cargos != null && !cargos.isEmpty()) {
+                return ResponseEntity.ok(cargos);
+            } else {
+                return ResponseEntity.badRequest().body(new Erro("Nenhum cargo com esse nome:: "+nome));
             }
-            else
-            {
-                return ResponseEntity.badRequest().body(new Erro("Nenhum funcionario com esse nome:: ")+nome);
-            }
+
         } catch (SQLException e) {
             System.out.println("Erro SQL: " + e.getMessage());
             return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
@@ -144,28 +107,27 @@ public class FuncionarioControl {
             return ResponseEntity.badRequest().body(new Erro("Erro geral"));
 
         } finally {
-            db.desconectar(); // não esquece de fechar a conexao com o banco!!
+            db.desconectar();
         }
     }
 
 
-    public ResponseEntity<?> update(Funcionario funcionario)
+    public ResponseEntity<?> update(Cargo cargo)
     {
-        Integer id = funcionario.getId();
         //id invalido
-        if (id != null && id > 0) {
+        if (cargo.getId() != null && cargo.getId()>0) {
             // nome obrigatória
-            if (!campoVazio(funcionario)) {
+            if (cargo.getNome() != null && !cargo.getNome().isEmpty()) {
                 Conexao db = Banco.getConexao(); // Abre conexao
                 try {
                     if (!db.conectar()) {
                         throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                     }
-                    Funcionario existente = funcionario.buscarporId(funcionario.getId(),db); // verificar se existe no banco
+                    Cargo existente = cargo.buscarporId(cargo.getId(),db); // verificar se existe no banco
                     if (existente != null) {
-                        Funcionario f = funcionario.alterar(db);
-                        if(f!=null)
-                            return ResponseEntity.ok(funcionario);
+                        Cargo car = cargo.alterar(db);
+                        if(car!=null)
+                            return ResponseEntity.ok(cargo);
                         else
                             return ResponseEntity.badRequest().body(new Erro("Erro ao alterar Cargo"));
                     }
@@ -183,7 +145,7 @@ public class FuncionarioControl {
                     db.desconectar(); // não esquece de fechar a conexao com o banco!!
                 }
             }
-            return ResponseEntity.badRequest().body(new Erro("Todos os campos são obrigatórios para alteração"));
+            return ResponseEntity.badRequest().body(new Erro("Nome é obrigatória para alteração"));
         }
         else
             return ResponseEntity.badRequest().body(new Erro("ID é obrigatório para alteração"));
@@ -198,16 +160,16 @@ public class FuncionarioControl {
                 if (!db.conectar()) {
                     throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                 }
-                Funcionario funcionario = new Funcionario(id);
-                Funcionario existente = funcionario.buscarporId(funcionario.getId(),db); // verificar se existe no banco
+                Cargo cargo = new Cargo(id);
+                Cargo existente = cargo.buscarporId(cargo.getId(),db); // verificar se existe no banco
                 if (existente != null) {
-                    if(funcionario.apagar(db))
+                    if(cargo.apagar(db))
                         return ResponseEntity.ok(true);
                     else
-                        return ResponseEntity.badRequest().body(new Erro("Erro ao excluir funionario"));
+                        return ResponseEntity.badRequest().body(new Erro("Erro ao excluir Cargo"));
                 }
                 else
-                    return ResponseEntity.badRequest().body(new Erro("Funcionario não encontrado"));
+                    return ResponseEntity.badRequest().body(new Erro("Cargo não encontrado"));
             } catch (SQLException e) {
                 System.out.println("Erro SQL: " + e.getMessage());
                 return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
@@ -226,19 +188,19 @@ public class FuncionarioControl {
 
     public ResponseEntity<?> getAllOrFilter(String filtro) {
         Conexao db = Banco.getConexao();
-        Funcionario funcionario = new Funcionario();
+        Cargo cargo = new Cargo();
 
         try {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
 
-            List<Funcionario> lista;
+            List<Cargo> lista;
 
             if (filtro == null || filtro.isEmpty()) {
-                lista = funcionario.buscarTodos(db);
+                lista = cargo.buscarTodos(db);
             } else {
-                lista = funcionario.buscarComFiltro(filtro, db);
+                lista = cargo.buscarComFiltro(filtro, db);
             }
 
             if (lista == null || lista.isEmpty()) {
@@ -248,7 +210,7 @@ public class FuncionarioControl {
             return ResponseEntity.ok(lista);
 
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erro ao buscar funcionários: "+e.getMessage());
+            return ResponseEntity.internalServerError().body("Erro ao buscar cargos: "+e.getMessage());
         } finally {
             db.desconectar();
         }

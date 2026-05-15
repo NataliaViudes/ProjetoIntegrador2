@@ -3,7 +3,7 @@ package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import pi2.example.back_end.Controller.FuncionarioControl;
+import pi2.example.back_end.Control.FuncionarioControl;
 import pi2.example.back_end.Modelo.Funcionario;
 
 @CrossOrigin()

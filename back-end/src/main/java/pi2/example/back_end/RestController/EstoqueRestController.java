@@ -1,7 +1,7 @@
 package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Controller.EstoqueControl;
+import pi2.example.back_end.Control.EstoqueControl;
 import pi2.example.back_end.Modelo.Estoque;
 
 @CrossOrigin

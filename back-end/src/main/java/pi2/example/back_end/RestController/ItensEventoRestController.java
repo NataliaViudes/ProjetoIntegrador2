@@ -2,7 +2,7 @@ package pi2.example.back_end.RestController;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Controller.ItensEventoControl;
+import pi2.example.back_end.Control.ItensEventoControl;
 import pi2.example.back_end.Modelo.ItensEvento;
 
 import java.util.List;

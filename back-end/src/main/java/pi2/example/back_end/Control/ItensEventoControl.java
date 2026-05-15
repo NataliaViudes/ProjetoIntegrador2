@@ -1,4 +1,4 @@
-package pi2.example.back_end.Controller;
+package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.DAO.DAOItensEvento;
