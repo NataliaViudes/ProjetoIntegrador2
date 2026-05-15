@@ -13,7 +13,7 @@ public class CardapioRestController {
     private final CardapioControl control = new CardapioControl();
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return control.getById(id);
     }
 
@@ -28,13 +28,13 @@ public class CardapioRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Cardapio cardapio) {
+    public ResponseEntity<?> update(@PathVariable(value = "id") int id, @RequestBody Cardapio cardapio) {
         cardapio.setId(id);
         return control.update(cardapio);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
     }
 

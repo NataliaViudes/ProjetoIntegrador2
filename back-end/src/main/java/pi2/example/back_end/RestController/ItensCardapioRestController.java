@@ -21,8 +21,8 @@ public class ItensCardapioRestController {
 
     @DeleteMapping("/{idCardapio}/{idAlimento}")
     public ResponseEntity<?> delete(
-            @PathVariable int idCardapio,
-            @PathVariable int idAlimento) {
+            @PathVariable(value = "idCardapio") int idCardapio,
+            @PathVariable(value = "idAlimento") int idAlimento) {
         ItensCardapio item = new ItensCardapio();
         item.setCardapio(new Cardapio());
         item.getCardapio().setId(idCardapio);
@@ -39,7 +39,7 @@ public class ItensCardapioRestController {
     }
 
     @GetMapping("/{idCardapio}")
-    public ResponseEntity<?> getByCardapio(@PathVariable int idCardapio) {
+    public ResponseEntity<?> getByCardapio(@PathVariable(value = "idCardapio") int idCardapio) {
         return control.getByCardapio(idCardapio);
     }
 }

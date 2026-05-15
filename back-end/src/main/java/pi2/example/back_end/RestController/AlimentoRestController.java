@@ -13,17 +13,17 @@ public class AlimentoRestController {
     private final AlimentoControl control = new AlimentoControl();
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return control.getById(id);
     }
 
     @GetMapping("tipo")
-    public ResponseEntity<?> getTipo(@RequestParam(required = false) String tipo) {
+    public ResponseEntity<?> getTipo(@RequestParam(value = "tipo", required = false) String tipo) {
         return control.buscaPorTipo(tipo);
     }
 
     @GetMapping("descricao")
-    public ResponseEntity<?> getDescricao(@RequestParam(required = false) String descricao) {
+    public ResponseEntity<?> getDescricao(@RequestParam(value = "descricao", required = false) String descricao) {
         return control.buscaPorDescricao(descricao);
     }
 
@@ -38,7 +38,7 @@ public class AlimentoRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
     }
 }

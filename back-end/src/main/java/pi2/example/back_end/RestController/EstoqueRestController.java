@@ -12,17 +12,17 @@ public class EstoqueRestController {
     private final EstoqueControl control = new EstoqueControl();
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return  control.getById(id);
     }
 
     @GetMapping("tipo")
-    public ResponseEntity<?> getCategoria(@RequestParam (required = false) String tipo) {
+    public ResponseEntity<?> getCategoria(@RequestParam (value = "tipo", required = false) String tipo) {
         return control.buscaPorTipo(tipo);
     }
 
     @GetMapping("descricao")
-    public ResponseEntity<?> getDescricao(@RequestParam (required = false) String descricao) {
+    public ResponseEntity<?> getDescricao(@RequestParam (value = "descricao", required = false) String descricao) {
         return control.buscaPorDescricao(descricao);
     }
 
@@ -37,7 +37,7 @@ public class EstoqueRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
     }
 }

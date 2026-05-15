@@ -12,17 +12,17 @@ public class CategoriaAtividadeRestController {
     private final CategoriaAtividadeControl control = new CategoriaAtividadeControl();
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return control.getById(id);
     }
 
     @GetMapping("nome")
-    public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
+    public ResponseEntity<?> getNome(@RequestParam(value = "nome", required = false) String nome) {
         return control.buscaPorNome(nome);
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(required = false) String filtro) {
+    public ResponseEntity<?> get(@RequestParam(value = "filtro", required = false) String filtro) {
         return control.getAllOrFilter(filtro);
     }
 
@@ -32,12 +32,12 @@ public class CategoriaAtividadeRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> apagar(@PathVariable int id) {
+    public ResponseEntity<?> apagar(@PathVariable(value = "id") int id) {
         return control.delete(id);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody CategoriaAtividade categoria) {
+    public ResponseEntity<?> alterar(@PathVariable(value = "id") int id, @RequestBody CategoriaAtividade categoria) {
         categoria.setId(id);
         return control.update(categoria);
     }

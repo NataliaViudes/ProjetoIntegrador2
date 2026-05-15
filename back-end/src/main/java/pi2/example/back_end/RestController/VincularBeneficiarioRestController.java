@@ -22,13 +22,13 @@ public class VincularBeneficiarioRestController {
     }
 
     @GetMapping("/{idAgendamento}")
-    public ResponseEntity<?> getPorAgenda(@PathVariable Integer idAgendamento) {
+    public ResponseEntity<?> getPorAgenda(@PathVariable(value = "idAgendamento") Integer idAgendamento) {
         return control.buscaPorIdAgendamento(idAgendamento);
     }
 
 
     @DeleteMapping("/{idAgendamento}")
-    public ResponseEntity<?> delete(@PathVariable Integer idAgendamento) {
+    public ResponseEntity<?> delete(@PathVariable(value = "idAgendamento") Integer idAgendamento) {
         return control.apagarPorAgendamento(idAgendamento);
     }
 

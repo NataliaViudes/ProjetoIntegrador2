@@ -12,17 +12,17 @@ public class CargoRestController {
     private final CargoControl control = new CargoControl();
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return  control.getById(id);
     }
 
     @GetMapping("nome")
-    public ResponseEntity<?> getNome(@RequestParam (required = false) String nome) {
+    public ResponseEntity<?> getNome(@RequestParam (value = "nome", required = false) String nome) {
         return control.buscaPorNome(nome);
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam (required = false) String filtro){
+    public ResponseEntity<?> get(@RequestParam (value = "filtro", required = false) String filtro){
         return control.getAllOrFilter(filtro);
     }
 
@@ -37,7 +37,7 @@ public class CargoRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
     }
 }

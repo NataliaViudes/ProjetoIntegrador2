@@ -13,12 +13,12 @@ public class AuxilioRestController {
     private final AuxilioControl control = new AuxilioControl();
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
         return control.getById(id);
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(required = false) String filtro) {
+    public ResponseEntity<?> get(@RequestParam(value = "filtro", required = false) String filtro) {
         return control.getAllOrFilter(filtro);
     }
 
@@ -28,12 +28,12 @@ public class AuxilioRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> apagar(@PathVariable int id) {
+    public ResponseEntity<?> apagar(@PathVariable(value = "id") int id) {
         return control.delete(id);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody Auxilio auxilio) {
+    public ResponseEntity<?> alterar(@PathVariable(value = "id") int id, @RequestBody Auxilio auxilio) {
         auxilio.setId(id);
         return control.update(auxilio);
     }

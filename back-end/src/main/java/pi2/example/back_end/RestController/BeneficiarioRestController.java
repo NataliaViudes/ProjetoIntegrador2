@@ -20,24 +20,24 @@ public class BeneficiarioRestController {
 
     // -------------------- GET POR ID --------------------
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable Integer id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") Integer id) {
         return controll.getById(id);
     }
 
     // -------------------- BUSCAS --------------------
 
     @GetMapping("/nome")
-    public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
+    public ResponseEntity<?> getNome(@RequestParam(value = "nome", required = false) String nome) {
         return controll.buscaPorNome(nome);
     }
 
     @GetMapping("/cpf")
-    public ResponseEntity<?> getCpf(@RequestParam(required = false) String cpf) {
+    public ResponseEntity<?> getCpf(@RequestParam(value = "cpf", required = false) String cpf) {
         return controll.buscaPorCpf(cpf);
     }
 
     @GetMapping("/nis")
-    public ResponseEntity<?> getNis(@RequestParam(required = false) String nis) {
+    public ResponseEntity<?> getNis(@RequestParam(value = "nis", required = false) String nis) {
         return controll.buscaPorNis(nis);
     }
 
@@ -55,7 +55,7 @@ public class BeneficiarioRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return controll.delete(id);
     }
 }

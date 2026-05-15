@@ -13,12 +13,12 @@ public class TipoEstoqueRestController {
     private final TipoEstoqueControl control = new TipoEstoqueControl();
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
+    public ResponseEntity<?> getId(@PathVariable(value = "id") int id) {
        return  control.getById(id);
     }
 
     @GetMapping("tipo")
-    public ResponseEntity<?> getTipo(@RequestParam (required = false) String tipo) {
+    public ResponseEntity<?> getTipo(@RequestParam (value = "tipo", required = false) String tipo) {
        return control.buscaPorTipo(tipo);
     }
 
@@ -33,7 +33,7 @@ public class TipoEstoqueRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Integer id) {
         return control.delete(id);
     }
 
