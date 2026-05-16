@@ -23,8 +23,8 @@ public class FuncionarioRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(value = "filtro", required = false) String filtro) {
-        return control.getAllOrFilter(filtro);
+    public ResponseEntity<?> get(@RequestParam(value = "tipo", required = false) String tipo,@RequestParam(value = "filtro", required = false) String filtro) {
+        return control.getAllOrFilter(tipo, filtro);
     }
 
     @PostMapping

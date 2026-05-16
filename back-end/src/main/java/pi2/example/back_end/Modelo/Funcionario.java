@@ -141,8 +141,9 @@ public class Funcionario {
         return dao.getAll();
     }
 
-    public List<Funcionario> buscarComFiltro(String filtro, Conexao con) {
+    public List<Funcionario> buscarComFiltro(String tipo, String filtro, Conexao con)
+    {
         DAOFuncionario dao = new DAOFuncionario(con);
-        return dao.get(filtro);
+        return dao.get(tipo, filtro);
     }
 }

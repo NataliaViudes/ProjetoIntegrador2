@@ -224,7 +224,7 @@ public class FuncionarioControl {
             return ResponseEntity.badRequest().body(new Erro("id invalido"));
     }
 
-    public ResponseEntity<?> getAllOrFilter(String filtro) {
+    public ResponseEntity<?> getAllOrFilter(String tipo, String filtro) {
         Conexao db = Banco.getConexao();
         Funcionario funcionario = new Funcionario();
 
@@ -238,7 +238,7 @@ public class FuncionarioControl {
             if (filtro == null || filtro.isEmpty()) {
                 lista = funcionario.buscarTodos(db);
             } else {
-                lista = funcionario.buscarComFiltro(filtro, db);
+                lista = funcionario.buscarComFiltro(tipo, filtro, db);
             }
 
             if (lista == null || lista.isEmpty()) {

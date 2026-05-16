@@ -136,13 +136,28 @@ public class DAOFuncionario {
         return funcionario;
     }
 
-    public List<Funcionario> get(String filtro) {
+    public List<Funcionario> get(String tipo, String filtro) {
+
         List<Funcionario> lista = new ArrayList<>();
 
         String sql = "SELECT f.*, c.nome AS nome_cargo " +
                 "FROM funcionario f " +
-                "JOIN cargo c ON f.id_cargo = c.id_cargo " +
-                "WHERE f.nome ILIKE ?";
+                "JOIN cargo c ON f.id_cargo = c.id_cargo ";
+
+        switch (tipo) {
+
+            case "cpf":
+                sql += "WHERE f.cpf LIKE ?";
+                break;
+
+            case "cargo":
+                sql += "WHERE c.nome ILIKE ?";
+                break;
+
+            default:
+                sql += "WHERE f.nome ILIKE ?";
+                break;
+        }
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -151,24 +166,7 @@ public class DAOFuncionario {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Funcionario f = new Funcionario();
-
-                f.setId(rs.getInt("id_funcionario"));
-                f.setNome(rs.getString("nome"));
-                f.setCpf(rs.getString("cpf"));
-                f.setTelefone(rs.getString("telefone"));
-                f.setNis(rs.getString("nis"));
-                f.setNascimento(rs.getDate("nascimento"));
-                f.setSexo(rs.getString("sexo"));
-                f.setEndereco(rs.getString("endereco"));
-
-                Cargo c = new Cargo();
-                c.setId(rs.getInt("id_cargo"));
-                c.setNome(rs.getString("nome_cargo"));
-
-                f.setCargo(c);
-
-                lista.add(f);
+                lista.add(mapFuncionario(rs));
             }
 
         } catch (SQLException e) {
