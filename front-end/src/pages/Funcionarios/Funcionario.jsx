@@ -7,6 +7,7 @@ function Funcionario() {
 
     const [funcionarios, setFuncionarios] = useState([]);
     const [busca, setBusca] = useState("");
+    const [tipoBusca, setTipoBusca] = useState("nome");
 
     const [tela, setTela] = useState("tabela"); // tabela | detalhes | cadastro
     const [editando, setEditando] = useState(false);
@@ -29,8 +30,7 @@ function Funcionario() {
 
     useEffect(() => {
         carregar();
-        carregarCargos();
-    }, []);
+    }, [busca, tipoBusca]);
 
     async function carregarCargos() {
         try {
@@ -43,8 +43,13 @@ function Funcionario() {
 
     async function carregar() {
         try {
-            const resp = await api.get("/funcionarios");
-            setFuncionarios(Array.isArray(resp.data) ? resp.data : []);
+            const resp = await api.get("/funcionarios", {
+                params: {
+                    tipo: tipoBusca,
+                    filtro: busca
+                }
+            });
+            setFuncionarios(resp.data || []);
         } catch (e) {
             console.error(e);
         }
@@ -211,10 +216,6 @@ function Funcionario() {
         carregar();
     }
 
-    const filtrados = funcionarios.filter(f =>
-        f.nome.toLowerCase().includes(busca.toLowerCase())
-    );
-
     // tela === "tabela" -> tabela de funcionários
     if (tela === "tabela") {
         return (
@@ -222,10 +223,26 @@ function Funcionario() {
                 <Menu />
 
                 <div className="topo">
-                    <input
-                        placeholder="Buscar funcionário..."
-                        onChange={(e) => setBusca(e.target.value)}
-                    />
+
+                    <div className="filtro-busca">
+
+                        <select
+                            value={tipoBusca}
+                            onChange={(e) => setTipoBusca(e.target.value)}
+                        >
+                            <option value="nome">Nome</option>
+                            <option value="cpf">CPF</option>
+                            <option value="cargo">Cargo</option>
+                        </select>
+
+                        <input
+                            placeholder={`Buscar por ${tipoBusca}...`}
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                        />
+
+                    </div>
+
                 </div>
 
                 <div className="tabela">
@@ -239,7 +256,7 @@ function Funcionario() {
                         </thead>
 
                         <tbody>
-                            {filtrados.map(f => (
+                            {funcionarios.map(f => (
                                 <tr key={f.id}>
                                     <td>{f.nome}</td>
                                     <td>{f.cargo?.nome}</td>
