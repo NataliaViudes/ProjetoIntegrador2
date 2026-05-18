@@ -1,4 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Menu from "./components/Menu";
+import Atividades from "./pages/Alimentos/Alimentos";
+import Auxilios from "./pages/Auxilios/Auxilios";
+import Alimentos from "./pages/Alimentos/Alimentos";
+import Beneficiarios from "./pages/Beneficiarios/Beneficiarios";
+import PageAtiv from "./pages/PaginaAtividade/PageAtiv";
+
+function App() {
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Menu from "./Components/Menu/Menu";
 import Eventos from "./Pages/Eventos";
 import Agendar from "./Pages/AgendarEventos/agendarEventos"
@@ -12,6 +21,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/menu" />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/atividades" element={<Atividades />} />
+        <Route path="/auxilios" element={<Auxilios />} />
+        <Route path="/alimentos" element={<Alimentos />} />
+        <Route path="/beneficiarios" element={<Beneficiarios />} />
+        <Route path="/AgendarAtividade" element={<PageAtiv />} />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/menu" />} />
+        <Route path="/menu" element={<Menu />} />
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/agendarEventos" element={<Agendar />} />
         <Route path="/funcionarios" element={<Funcionarios />} />
@@ -19,6 +37,11 @@ export default function App() {
         <Route path="/familiares" element={<Familiares />} />
       </Routes>
 
+      </Routes>
+    </BrowserRouter>
+  );
+}
+export default App;
       <Toaster
         position="top-center"
         toastOptions={{
