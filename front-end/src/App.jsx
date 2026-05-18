@@ -4,7 +4,7 @@ import Eventos from "./Pages/Eventos";
 import Agendar from "./Pages/AgendarEventos/agendarEventos"
 import Cargos from "./Pages/Cargos";
 import Funcionarios from "./Pages/Funcionarios";
-import Familiares from "./Pages/Familiares";
+
 
 
 
@@ -19,7 +19,6 @@ export default function App() {
         <Route path="/agendarEventos" element={<Agendar />} />
         <Route path="/funcionarios" element={<Funcionarios />} />
         <Route path="/cargos" element={<Cargos />} />
-        <Route path="/familiares" element={<Familiares />} />
         
 
       </Routes>
