@@ -1,17 +1,17 @@
 package pi2.example.back_end.Modelo;
 
 public class Erro {
-    private  String  mensage;
+    private  String  message;
 
     public Erro(String mensage) {
-        this.mensage = mensage;
+        this.message = mensage;
     }
 
-    public String getMensage() {
-        return mensage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMensage(String mensage) {
-        this.mensage = mensage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

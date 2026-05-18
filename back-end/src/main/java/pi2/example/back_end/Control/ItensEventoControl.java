@@ -1,10 +1,7 @@
 package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
-import pi2.example.back_end.DAO.DAOItensEvento;
 import pi2.example.back_end.Modelo.Erro;
-import pi2.example.back_end.Modelo.Estoque;
-import pi2.example.back_end.Modelo.Evento;
 import pi2.example.back_end.Modelo.ItensEvento;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
@@ -17,179 +14,410 @@ public class ItensEventoControl {
 
     public ItensEventoControl() {}
 
-    // 🔹 INSERT
-    public ResponseEntity<?> incluir(ItensEvento item) {
+    // =====================================================
+    // TRATAR ERROS SQL
+    // =====================================================
+
+    private ResponseEntity<?> tratarErroSQL(
+            SQLException e,
+            Conexao db
+    ) {
+
+        db.desfazerTransacao();
+
+        String msg = e.getMessage();
+
+        System.out.println(msg);
+
+        // =============================================
+        // ERRO TRIGGER ESTOQUE
+        // =============================================
+
+        if (
+                msg != null &&
+                        msg.contains(
+                                "Quantidade insuficiente no estoque"
+                        )
+        ) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Quantidade insuficiente no estoque"
+                            )
+                    );
+        }
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        new Erro("Erro no banco")
+                );
+    }
+
+    // =====================================================
+    // INSERT
+    // =====================================================
+
+    public ResponseEntity<?> incluir(
+            ItensEvento item
+    ) {
 
         if (item == null)
-            return ResponseEntity.badRequest().body(new Erro("Item nulo"));
-
-        if (item.getEventoId() == null || item.getEventoId() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
-
-        if (item.getEstoqueId() == null || item.getEstoqueId() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Estoque inválido"));
-
-        if (item.getQtd() <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Quantidade inválida"));
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Erro("Item nulo"));
 
         Conexao db = Banco.getConexao();
 
         try {
+
             if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+                throw new Exception("Erro conexão");
 
-            DAOItensEvento dao = new DAOItensEvento(db);
-            ItensEvento resultado = dao.gravar(item);
+            db.iniciarTransacao();
 
-            return ResponseEntity.ok(resultado);
+            ItensEvento resultado =
+                    item.incluir(db);
+
+            if (resultado == null)
+                throw new Exception(
+                        "Erro ao inserir item"
+                );
+
+            db.confirmarTransacao();
+
+            return ResponseEntity.ok(
+                    resultado
+            );
 
         } catch (SQLException e) {
-            System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+            return tratarErroSQL(e, db);
 
         } catch (Exception e) {
-            System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            db.desfazerTransacao();
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    e.getMessage()
+                            )
+                    );
 
         } finally {
+
             db.desconectar();
         }
     }
 
+    // =====================================================
+    // LIMPAR TODOS ITENS
+    // =====================================================
 
-    public ResponseEntity<?> limparTudo(Integer eventoId) {
+    public ResponseEntity<?> limparTudo(
+            Integer eventoId
+    ) {
 
-        if (eventoId == null || eventoId <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
-        Conexao db = Banco.getConexao();
-        try {
-            if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-
-            ItensEvento itensEvento = new ItensEvento();
-            itensEvento.limparItens(db,eventoId);
-
-            return ResponseEntity.ok("Itens atualizados com sucesso");
-
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro ao atualizar itens"));
-
-        } finally {
-            db.desconectar();
-        }
-    }
-
-
-
-    // 🔹 UPDATE
-    public ResponseEntity<?> alterar(List<ItensEvento> itens) {
-
-        if (itens == null || itens.isEmpty())
-            return ResponseEntity.badRequest().body(new Erro("Lista vazia"));
-
-        Integer eventoId = itens.get(0).getEventoId();
-
-        if (eventoId == null || eventoId <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
+        if (eventoId == null
+                || eventoId <= 0)
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Evento inválido"
+                            )
+                    );
 
         Conexao db = Banco.getConexao();
 
         try {
+
             if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+                throw new Exception(
+                        "Erro conexão"
+                );
 
-            DAOItensEvento dao = new DAOItensEvento(db);
+            db.iniciarTransacao();
 
-            dao.syncItensEvento(eventoId, itens);
+            ItensEvento model =
+                    new ItensEvento();
 
-            return ResponseEntity.ok("Itens atualizados com sucesso");
+            boolean ok =
+                    model.limparItens(
+                            db,
+                            eventoId
+                    );
 
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro ao atualizar itens"));
+            if (!ok)
+                throw new Exception(
+                        "Erro ao limpar itens"
+                );
 
-        } finally {
-            db.desconectar();
-        }
-    }
+            db.confirmarTransacao();
 
-    // 🔹 DELETE (chave composta)
-    public ResponseEntity<?> delete(Integer idEvento, Integer idEstoque) {
-
-        if (idEvento == null || idEvento <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
-
-        if (idEstoque == null || idEstoque <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Estoque inválido"));
-
-        Conexao db = Banco.getConexao();
-
-        try {
-            if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-
-            DAOItensEvento dao = new DAOItensEvento(db);
-
-            ItensEvento item = new ItensEvento();
-            Evento e = new Evento();
-            e.setId(idEvento);
-
-            Estoque est = new Estoque();
-            est.setId(idEstoque);
-
-            item.setEvento(e);
-            item.setEstoque(est);
-
-            boolean ok = dao.apagar(item);
-
-            if (ok)
-                return ResponseEntity.ok(true);
-            else
-                return ResponseEntity.badRequest().body(new Erro("Não foi possível excluir"));
+            return ResponseEntity.ok(
+                    "Itens removidos"
+            );
 
         } catch (SQLException e) {
-            System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+            return tratarErroSQL(e, db);
 
         } catch (Exception e) {
-            System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            db.desfazerTransacao();
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    e.getMessage()
+                            )
+                    );
 
         } finally {
+
             db.desconectar();
         }
     }
 
-    // 🔹 GET POR EVENTO (principal)
-    public ResponseEntity<?> getPorEvento(Integer idEvento) {
+    // =====================================================
+    // UPDATE
+    // =====================================================
 
-        if (idEvento == null || idEvento <= 0)
-            return ResponseEntity.badRequest().body(new Erro("Evento inválido"));
+    public ResponseEntity<?> alterar(
+            List<ItensEvento> itens
+    ) {
+
+        if (itens == null
+                || itens.isEmpty())
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Lista vazia"
+                            )
+                    );
+
+        Integer eventoId =
+                itens.getFirst().getEventoId();
+
+        if (eventoId == null
+                || eventoId <= 0)
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Evento inválido"
+                            )
+                    );
 
         Conexao db = Banco.getConexao();
 
         try {
-            if (!db.conectar())
-                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
 
-            ItensEvento it = new ItensEvento();
-            List<ItensEvento> lista = new ArrayList<ItensEvento>();
-            lista = it.buscarItensDoEvento(db,idEvento);
-            if (lista != null && !lista.isEmpty())
-                return ResponseEntity.ok(lista);
-            else
-                return ResponseEntity.ok("");
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro conexão"
+                );
+
+            db.iniciarTransacao();
+
+            ItensEvento model =
+                    new ItensEvento();
+
+            boolean ok =
+                    model.syncItensEvento(
+                            db,
+                            eventoId,
+                            itens
+                    );
+
+            if (!ok)
+                throw new Exception(
+                        "Erro ao atualizar itens"
+                );
+
+            db.confirmarTransacao();
+
+            return ResponseEntity.ok(
+                    "Itens atualizados com sucesso"
+            );
 
         } catch (SQLException e) {
-            System.out.println("Erro SQL: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro no banco"));
+
+            return tratarErroSQL(e, db);
 
         } catch (Exception e) {
-            System.out.println("Erro geral: " + e.getMessage());
-            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            db.desfazerTransacao();
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    e.getMessage()
+                            )
+                    );
 
         } finally {
+
+            db.desconectar();
+        }
+    }
+
+    // =====================================================
+    // DELETE
+    // =====================================================
+
+    public ResponseEntity<?> delete(
+            Integer idEvento,
+            Integer idEstoque
+    ) {
+
+        if (idEvento == null
+                || idEvento <= 0)
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Evento inválido"
+                            )
+                    );
+
+        if (idEstoque == null
+                || idEstoque <= 0)
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Estoque inválido"
+                            )
+                    );
+
+        Conexao db = Banco.getConexao();
+
+        try {
+
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro conexão"
+                );
+
+            db.iniciarTransacao();
+
+            ItensEvento model =
+                    new ItensEvento();
+
+            ItensEvento itemBanco =
+                    model.buscarPorChave(
+                            db,
+                            idEvento,
+                            idEstoque
+                    );
+
+            if (itemBanco == null)
+                throw new Exception(
+                        "Item não encontrado"
+                );
+
+            boolean ok =
+                    itemBanco.apagar(db);
+
+            if (!ok)
+                throw new Exception(
+                        "Erro ao apagar item"
+                );
+
+            db.confirmarTransacao();
+
+            return ResponseEntity.ok(true);
+
+        } catch (SQLException e) {
+
+            return tratarErroSQL(e, db);
+
+        } catch (Exception e) {
+
+            db.desfazerTransacao();
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    e.getMessage()
+                            )
+                    );
+
+        } finally {
+
+            db.desconectar();
+        }
+    }
+
+    // =====================================================
+    // GET POR EVENTO
+    // =====================================================
+
+    public ResponseEntity<?> getPorEvento(
+            Integer idEvento
+    ) {
+
+        if (idEvento == null
+                || idEvento <= 0)
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    "Evento inválido"
+                            )
+                    );
+
+        Conexao db = Banco.getConexao();
+
+        try {
+
+            if (!db.conectar())
+                throw new Exception(
+                        "Erro conexão"
+                );
+
+            ItensEvento model =
+                    new ItensEvento();
+
+            List<ItensEvento> lista =
+                    model.buscarItensDoEvento(
+                            db,
+                            idEvento
+                    );
+
+            if (lista == null)
+                lista = new ArrayList<>();
+
+            return ResponseEntity.ok(
+                    lista
+            );
+
+        } catch (SQLException e) {
+
+            return tratarErroSQL(e, db);
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new Erro(
+                                    e.getMessage()
+                            )
+                    );
+
+        } finally {
+
             db.desconectar();
         }
     }

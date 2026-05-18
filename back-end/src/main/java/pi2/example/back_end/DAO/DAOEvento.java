@@ -1,5 +1,6 @@
 package pi2.example.back_end.DAO;
 
+import pi2.example.back_end.Modelo.Cargo;
 import pi2.example.back_end.Modelo.Cat_Evento;
 import pi2.example.back_end.Modelo.Evento;
 import pi2.example.back_end.Modelo.Funcionario;
@@ -23,23 +24,70 @@ public class DAOEvento {
     // =====================================================
 
     private static final String SQL_SELECT_BASE =
+
             "SELECT " +
+
+                    // =================================================
+                    // EVENTO
+                    // =================================================
+
                     "e.id_evento, " +
                     "e.nome, " +
                     "e.qtd, " +
                     "e.local, " +
                     "e.inicio, " +
                     "e.fim, " +
-                    "e.id_funcionario, " +
+
+                    // =================================================
+                    // CATEGORIA
+                    // =================================================
 
                     "c.id_cat_evento, " +
                     "c.categoria, " +
-                    "c.descricao " +
+                    "c.descricao, " +
 
-                    "FROM EVENTO e " +
+                    // =================================================
+                    // FUNCIONARIO
+                    // =================================================
 
-                    "JOIN CAT_EVENTO c " +
-                    "ON c.id_cat_evento = e.id_cat_evento ";
+                    "f.id_funcionario, " +
+                    "f.nome AS funcionario_nome, " +
+                    "f.cpf, " +
+                    "f.telefone, " +
+                    "f.nis, " +
+                    "f.nascimento, " +
+                    "f.sexo, " +
+                    "f.endereco, " +
+
+                    // =================================================
+                    // CARGO
+                    // =================================================
+
+                    "cg.id_cargo, " +
+                    "cg.nome AS cargo_nome " +
+
+                    "FROM evento e " +
+
+                    // =================================================
+                    // CATEGORIA
+                    // =================================================
+
+                    "INNER JOIN cat_evento c " +
+                    "ON c.id_cat_evento = e.id_cat_evento " +
+
+                    // =================================================
+                    // FUNCIONARIO
+                    // =================================================
+
+                    "LEFT JOIN funcionario f " +
+                    "ON f.id_funcionario = e.id_funcionario " +
+
+                    // =================================================
+                    // CARGO
+                    // =================================================
+
+                    "LEFT JOIN cargo cg " +
+                    "ON cg.id_cargo = f.id_cargo ";
 
     // =====================================================
     // INSERT
@@ -48,11 +96,12 @@ public class DAOEvento {
     public Evento gravar(Evento entidade) {
 
         String sql =
-                "INSERT INTO EVENTO " +
+                "INSERT INTO evento " +
                         "(nome, qtd, local, inicio, fim, id_cat_evento, id_funcionario) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
+        try (PreparedStatement stmt =
+                     bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, entidade.getNome());
             stmt.setInt(2, entidade.getQtd());
@@ -76,7 +125,10 @@ public class DAOEvento {
 
             if (entidade.possuiFuncionario()) {
 
-                stmt.setInt(7, entidade.getIdFuncionario());
+                stmt.setInt(
+                        7,
+                        entidade.getIdFuncionario()
+                );
 
             } else {
 
@@ -85,10 +137,13 @@ public class DAOEvento {
 
             stmt.executeUpdate();
 
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
+            try (ResultSet rs =
+                         stmt.getGeneratedKeys()) {
 
                 if (rs.next()) {
-                    entidade.setIdEvento(rs.getInt(1));
+                    entidade.setIdEvento(
+                            rs.getInt(1)
+                    );
                 }
             }
 
@@ -96,7 +151,10 @@ public class DAOEvento {
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao gravar evento:");
+            System.out.println(
+                    "Erro ao gravar evento:"
+            );
+
             e.printStackTrace();
 
             return null;
@@ -110,7 +168,7 @@ public class DAOEvento {
     public Evento alterar(Evento entidade) {
 
         String sql =
-                "UPDATE EVENTO SET " +
+                "UPDATE evento SET " +
                         "nome=?, " +
                         "qtd=?, " +
                         "local=?, " +
@@ -120,10 +178,13 @@ public class DAOEvento {
                         "id_funcionario=? " +
                         "WHERE id_evento=?";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
 
             stmt.setString(1, entidade.getNome());
+
             stmt.setInt(2, entidade.getQtd());
+
             stmt.setString(3, entidade.getLocal());
 
             stmt.setTimestamp(
@@ -140,18 +201,27 @@ public class DAOEvento {
                             : null
             );
 
-            stmt.setInt(6, entidade.getIdCatEvento());
+            stmt.setInt(
+                    6,
+                    entidade.getIdCatEvento()
+            );
 
             if (entidade.possuiFuncionario()) {
 
-                stmt.setInt(7, entidade.getIdFuncionario());
+                stmt.setInt(
+                        7,
+                        entidade.getIdFuncionario()
+                );
 
             } else {
 
                 stmt.setNull(7, Types.INTEGER);
             }
 
-            stmt.setInt(8, entidade.getIdEvento());
+            stmt.setInt(
+                    8,
+                    entidade.getIdEvento()
+            );
 
             stmt.executeUpdate();
 
@@ -159,7 +229,10 @@ public class DAOEvento {
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao alterar evento:");
+            System.out.println(
+                    "Erro ao alterar evento:"
+            );
+
             e.printStackTrace();
 
             return null;
@@ -173,18 +246,25 @@ public class DAOEvento {
     public boolean apagar(Evento entidade) {
 
         String sql =
-                "DELETE FROM EVENTO " +
-                        "WHERE id_evento = ?";
+                "DELETE FROM evento " +
+                        "WHERE id_evento=?";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
 
-            stmt.setInt(1, entidade.getIdEvento());
+            stmt.setInt(
+                    1,
+                    entidade.getIdEvento()
+            );
 
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao apagar evento:");
+            System.out.println(
+                    "Erro ao apagar evento:"
+            );
+
             e.printStackTrace();
 
             return false;
@@ -197,22 +277,32 @@ public class DAOEvento {
 
     public List<Evento> listar() {
 
-        List<Evento> lista = new ArrayList<>();
+        List<Evento> lista =
+                new ArrayList<>();
 
         String sql =
                 SQL_SELECT_BASE +
                         "ORDER BY e.id_evento";
 
-        try (PreparedStatement stmt = bd.preparar(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql);
+
+             ResultSet rs =
+                     stmt.executeQuery()) {
 
             while (rs.next()) {
-                lista.add(mapear(rs));
+
+                lista.add(
+                        mapearEvento(rs)
+                );
             }
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao listar eventos:");
+            System.out.println(
+                    "Erro ao listar eventos:"
+            );
+
             e.printStackTrace();
         }
 
@@ -223,26 +313,32 @@ public class DAOEvento {
     // BUSCAR POR ID
     // =====================================================
 
-    public Evento buscarPorId(int id) {
+    public Evento buscarPorId(Integer id) {
 
         String sql =
                 SQL_SELECT_BASE +
-                        "WHERE e.id_evento = ?";
+                        "WHERE e.id_evento=?";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
 
             stmt.setInt(1, id);
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs =
+                         stmt.executeQuery()) {
 
                 if (rs.next()) {
-                    return mapear(rs);
+
+                    return mapearEvento(rs);
                 }
             }
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao buscar evento por ID:");
+            System.out.println(
+                    "Erro ao buscar evento por ID:"
+            );
+
             e.printStackTrace();
         }
 
@@ -255,27 +351,39 @@ public class DAOEvento {
 
     public List<Evento> buscarPorNome(String nome) {
 
-        List<Evento> lista = new ArrayList<>();
+        List<Evento> lista =
+                new ArrayList<>();
 
         String sql =
                 SQL_SELECT_BASE +
-                        "WHERE e.nome ILIKE ? " +
+                        "WHERE UPPER(e.nome) LIKE UPPER(?) " +
                         "ORDER BY e.nome";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
 
-            stmt.setString(1, "%" + nome + "%");
+            stmt.setString(
+                    1,
+                    "%" + nome + "%"
+            );
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs =
+                         stmt.executeQuery()) {
 
                 while (rs.next()) {
-                    lista.add(mapear(rs));
+
+                    lista.add(
+                            mapearEvento(rs)
+                    );
                 }
             }
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao buscar evento por nome:");
+            System.out.println(
+                    "Erro ao buscar evento por nome:"
+            );
+
             e.printStackTrace();
         }
 
@@ -288,27 +396,95 @@ public class DAOEvento {
 
     public List<Evento> buscarPorLocal(String local) {
 
-        List<Evento> lista = new ArrayList<>();
+        List<Evento> lista =
+                new ArrayList<>();
 
         String sql =
                 SQL_SELECT_BASE +
-                        "WHERE e.local ILIKE ? " +
+                        "WHERE UPPER(e.local) LIKE UPPER(?) " +
                         "ORDER BY e.local";
 
-        try (PreparedStatement stmt = bd.preparar(sql)) {
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
 
-            stmt.setString(1, "%" + local + "%");
+            stmt.setString(
+                    1,
+                    "%" + local + "%"
+            );
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs =
+                         stmt.executeQuery()) {
 
                 while (rs.next()) {
-                    lista.add(mapear(rs));
+
+                    lista.add(
+                            mapearEvento(rs)
+                    );
                 }
             }
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao buscar evento por local:");
+            System.out.println(
+                    "Erro ao buscar evento por local:"
+            );
+
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    // =====================================================
+    // BUSCAR POR PERIODO
+    // =====================================================
+
+    public List<Evento> buscarPorPeriodo(
+            LocalDateTime inicioBusca,
+            LocalDateTime fimBusca
+    ) {
+
+        List<Evento> lista =
+                new ArrayList<>();
+
+        String sql =
+                SQL_SELECT_BASE +
+
+                        "WHERE e.inicio <= ? " +
+                        "AND e.fim >= ? " +
+
+                        "ORDER BY e.inicio";
+
+        try (PreparedStatement stmt =
+                     bd.preparar(sql)) {
+
+            stmt.setTimestamp(
+                    1,
+                    Timestamp.valueOf(fimBusca)
+            );
+
+            stmt.setTimestamp(
+                    2,
+                    Timestamp.valueOf(inicioBusca)
+            );
+
+            try (ResultSet rs =
+                         stmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    lista.add(
+                            mapearEvento(rs)
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Erro ao buscar eventos por período:"
+            );
+
             e.printStackTrace();
         }
 
@@ -319,84 +495,127 @@ public class DAOEvento {
     // MAPEAMENTO
     // =====================================================
 
-    private Evento mapear(ResultSet rs) throws SQLException {
+    private Evento mapearEvento(ResultSet rs)
+            throws SQLException {
 
-        Cat_Evento categoria = new Cat_Evento(
-                rs.getInt("id_cat_evento"),
-                rs.getString("categoria"),
-                rs.getString("descricao")
-        );
+        // =====================================================
+        // CATEGORIA
+        // =====================================================
 
-        Funcionario funcionario = null;
+        Cat_Evento categoria =
+                new Cat_Evento(
 
-        if (rs.getObject("id_funcionario") != null) {
+                        rs.getInt(
+                                "id_cat_evento"
+                        ),
 
-            funcionario = new Funcionario();
-            funcionario.setId(
-                    rs.getInt("id_funcionario")
+                        rs.getString(
+                                "categoria"
+                        ),
+
+                        rs.getString(
+                                "descricao"
+                        )
+                );
+
+        // =====================================================
+        // CARGO
+        // =====================================================
+
+        Cargo cargo = null;
+
+        if (rs.getObject("id_cargo")
+                != null) {
+
+            cargo = new Cargo();
+
+            cargo.setId(
+                    rs.getInt("id_cargo")
+            );
+
+            cargo.setNome(
+                    rs.getString("cargo_nome")
             );
         }
 
+        // =====================================================
+        // FUNCIONARIO
+        // =====================================================
+
+        Funcionario funcionario = null;
+
+        if (rs.getObject("id_funcionario")
+                != null) {
+
+            funcionario =
+                    new Funcionario();
+
+            funcionario.setId(
+                    rs.getInt(
+                            "id_funcionario"
+                    )
+            );
+
+            funcionario.setNome(
+                    rs.getString(
+                            "funcionario_nome"
+                    )
+            );
+
+            funcionario.setCpf(
+                    rs.getString("cpf")
+            );
+
+            funcionario.setTelefone(
+                    rs.getString("telefone")
+            );
+
+            funcionario.setNis(
+                    rs.getString("nis")
+            );
+
+            funcionario.setNascimento(
+                    rs.getDate("nascimento")
+            );
+
+            funcionario.setSexo(
+                    rs.getString("sexo")
+            );
+
+            funcionario.setEndereco(
+                    rs.getString("endereco")
+            );
+
+            funcionario.setCargo(cargo);
+        }
+
+        // =====================================================
+        // EVENTO
+        // =====================================================
+
         return new Evento(
+
                 rs.getInt("id_evento"),
 
                 rs.getTimestamp("inicio") != null
-                        ? rs.getTimestamp("inicio").toLocalDateTime()
+                        ? rs.getTimestamp("inicio")
+                        .toLocalDateTime()
                         : null,
 
                 rs.getTimestamp("fim") != null
-                        ? rs.getTimestamp("fim").toLocalDateTime()
+                        ? rs.getTimestamp("fim")
+                        .toLocalDateTime()
                         : null,
 
                 rs.getString("nome"),
+
                 rs.getString("local"),
+
                 rs.getInt("qtd"),
+
                 categoria,
+
                 funcionario
         );
     }
-
-
-
-// =====================================================
-// BUSCAR POR PERÍODO
-// =====================================================
-
-    public List<Evento> buscarPorPeriodo(
-            LocalDateTime inicioBusca,
-            LocalDateTime fimBusca
-    ) {
-
-        List<Evento> lista = new ArrayList<>();
-
-        String sql =
-                SQL_SELECT_BASE +
-
-                        "WHERE e.inicio <= ? " +
-                        "AND e.fim >= ? " +
-
-                        "ORDER BY e.inicio";
-
-        try (PreparedStatement stmt = bd.preparar(sql)) {
-
-            stmt.setTimestamp(1, Timestamp.valueOf(fimBusca));
-            stmt.setTimestamp(2, Timestamp.valueOf(inicioBusca));
-
-            try (ResultSet rs = stmt.executeQuery()) {
-
-                while (rs.next()) {
-                    lista.add(mapear(rs));
-                }
-            }
-
-        } catch (SQLException e) {
-
-            System.out.println("Erro ao buscar eventos por período:");
-            e.printStackTrace();
-        }
-
-        return lista;
-    }
-
-
 }

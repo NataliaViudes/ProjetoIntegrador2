@@ -1,10 +1,3 @@
-CREATE TABLE categoria (
-    id_categoria SERIAL,
-    nome VARCHAR(100) NOT NULL,
-
-    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
-    CONSTRAINT un_categoria_nome UNIQUE (nome)
-);
 
 CREATE TABLE Cargo (
     id_cargo SERIAL,
@@ -13,6 +6,11 @@ CREATE TABLE Cargo (
     CONSTRAINT pk_cargo PRIMARY KEY (id_cargo),
     CONSTRAINT un_cargo_nome UNIQUE (nome)
 );
+
+INSERT INTO Cargo (nome) VALUES ('Gerente');
+INSERT INTO Cargo (nome) VALUES ('Analista');
+INSERT INTO Cargo (nome) VALUES ('Supervisor');
+INSERT INTO Cargo (nome) VALUES ('Assistente');
 
 CREATE TABLE Funcionario (
     id_funcionario SERIAL,
@@ -47,13 +45,6 @@ CREATE TABLE Funcionario (
         FOREIGN KEY (id_cargo) REFERENCES Cargo(id_cargo)
 );
 
-INSERT INTO Cargo (nome) VALUES ('Gerente');
-INSERT INTO Cargo (nome) VALUES ('Analista');
-INSERT INTO Cargo (nome) VALUES ('Supervisor');
-INSERT INTO Cargo (nome) VALUES ('Assistente');
-
-
-
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, id_cargo)
 VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 1);
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, id_cargo)
@@ -63,123 +54,6 @@ VALUES ('Carlos Souza', '11122233344', '18977777777', '33333333333', '1992-12-01
 INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, id_cargo)
 VALUES ('Ana Costa', '55566677788', '18966666666', '44444444444', '1998-03-15', 'F', 'Rua D, 321', 4);
 
-CREATE TABLE atividade (
-    id_atividade SERIAL,
-    descricao VARCHAR(255) NOT NULL,
-    id_categoria INTEGER NOT NULL,
-    id_funcionario INTEGER NOT NULL,
-
-    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
-
-    CONSTRAINT fk_atividade_categoria
-        FOREIGN KEY (id_categoria)
-        REFERENCES categoria(id_categoria),
-
-    CONSTRAINT fk_atividade_funcionario
-        FOREIGN KEY (id_funcionario)
-        REFERENCES funcionario(id_funcionario)
-);
-
-
-INSERT INTO categoria (nome) VALUES
-('Educação'),
-('Saúde'),
-('Esporte'),
-('Cultura'),
-('Assistência Social');
-
-INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
-('Oficina de leitura para crianças', 1, 2),
-('Palestra sobre saúde preventiva', 2, 3),
-('Treinamento funcional em grupo', 3, 4),
-('Reforço escolar de matemática', 1, 2),
-('Roda de conversa sobre bem-estar', 2, 3),
-('Campeonato recreativo interno', 3, 4);
-
-
-
-CREATE TABLE beneficiario (
-    id SERIAL,
-    nome VARCHAR(100) NOT NULL,
-    nascimento DATE,
-    idade INTEGER,
-    rg VARCHAR(20),
-    cpf CHAR(11),
-    nis CHAR(11),
-    renda NUMERIC(10,2),
-    endereco VARCHAR(200),
-    bairro VARCHAR(100),
-    tipo_residencia VARCHAR(50),
-    telefone VARCHAR(15),
-    celular VARCHAR(15),
-    celular_recado VARCHAR(15),
-
-    CONSTRAINT pk_beneficiario PRIMARY KEY (id),
-    CONSTRAINT un_beneficiario_cpf UNIQUE (cpf),
-    CONSTRAINT un_beneficiario_nis UNIQUE (nis),
-
-    CONSTRAINT chk_beneficiario_cpf_format
-        CHECK (cpf IS NULL OR cpf ~ '^[0-9]{11}$'),
-
-    CONSTRAINT chk_beneficiario_nis_format
-        CHECK (nis IS NULL OR nis ~ '^[0-9]{11}$'),
-
-    CONSTRAINT chk_beneficiario_telefone_format
-        CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$'),
-
-    CONSTRAINT chk_beneficiario_celular_format
-        CHECK (celular IS NULL OR celular ~ '^[0-9]+$'),
-
-    CONSTRAINT chk_beneficiario_celular_recado_format
-        CHECK (celular_recado IS NULL OR celular_recado ~ '^[0-9]+$')
-);
-
-CREATE TABLE categoria_auxilio (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL UNIQUE
-);
-
-
-CREATE TABLE auxilio (
-    id SERIAL,
-    descricao TEXT NOT NULL,
-    id_beneficiario INTEGER NOT NULL,
-    id_categoria INTEGER NOT NULL,
-
-    CONSTRAINT pk_auxilio PRIMARY KEY (id),
-
-    CONSTRAINT fk_auxilio_beneficiario
-        FOREIGN KEY (id_beneficiario)
-        REFERENCES beneficiario(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_auxilio_categoria
-        FOREIGN KEY (id_categoria)
-        REFERENCES categoria_auxilio(id)
-);
-
-
-
-INSERT INTO categoria_auxilio (nome) VALUES
-('Ajuda Financeira'),
-('Doença'),
-('Moradia'),
-('Alimentação'),
-('Transporte'),
-('Educação');
-
-INSERT INTO beneficiario
-(nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia, telefone, celular, celular_recado)
-VALUES
-('João Silva', '1990-05-10', 34, '1234567', '12345678901', '11111111111', 1500.00, 'Rua A, 123', 'Centro', 'Própria', '18999990000', '18988880000', '18977770000'),
-
-('Maria Oliveira', '1985-08-20', 39, '7654321', '98765432100', '22222222222', 2000.00, 'Rua B, 456', 'Jardim', 'Alugada', '18999991111', '18988881111', '18977771111'),
-
-('Carlos Souza', '2000-01-15', 24, '1122334', '45678912300', '33333333333', 800.00, 'Rua C, 789', 'Vila Nova', 'Cedida', '18999992222', '18988882222', '18977772222'),
-
-('Ana Santos', '1995-12-01', 29, '5566778', '78912345600', '44444444444', 1200.00, 'Rua D, 321', 'Centro', 'Própria', '18999993333', '18988883333', '18977773333'),
-
-('Pedro Lima', '1978-03-25', 46, '9988776', '32165498700', '55555555555', 3000.00, 'Rua E, 654', 'Industrial', 'Alugada', '18999994444', '18988884444', '18977774444');
 CREATE TABLE IF NOT EXISTS CAT_EVENTO(
 
     id_cat_evento INT GENERATED ALWAYS AS IDENTITY,
@@ -236,7 +110,17 @@ CREATE TABLE IF NOT EXISTS EVENTO(
 INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
 VALUES('Reunião Pedagógica',20,'Sala 1','2026-05-10 08:00:00','2026-05-10 10:00:00',1,1);
 
+INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
+VALUES('Reunião PAIF',20,'Sala 1','2026-06-11 08:00:00','2026-06-11 10:00:00',1,1);
 
+INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
+VALUES('Festa Carnaval',20,'Sala 1','2026-06-12 08:00:00','2026-06-12 10:00:00',1,1);
+
+INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
+VALUES('Teste',20,'Sala 1','2026-05-13 08:00:00','2026-05-13 10:00:00',1,1);
+
+INSERT INTO EVENTO(nome,qtd,local,inicio,fim,id_cat_evento,id_funcionario)
+VALUES('Testeback',20,'Sala 1','2026-06-15 08:00:00','2026-06-15 10:00:00',1,1);
 
 
 CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE(
@@ -267,42 +151,157 @@ INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar um
 
 
 
-CREATE TABLE Itens_Evento(
-    id_evento int,
-    id_estoque int,
-    qtd int NOT NULL,  -- corrigido "not  null" para "NOT NULL"
-    CONSTRAINT PK_ITENS_EVENTO PRIMARY KEY (id_evento,id_estoque),
-    CONSTRAINT FK_ITENS_EVENTO_Estoque FOREIGN KEY (id_estoque) REFERENCES ESTOQUE(id),
-    CONSTRAINT FK_ITENS_EVENTO_Evento FOREIGN KEY (id_evento) REFERENCES Evento(id)
+CREATE TABLE itens_evento (
+
+    id_evento INT NOT NULL,
+    id_estoque INT NOT NULL,
+    qtd INT NOT NULL,
+
+    CONSTRAINT pk_itens_evento
+        PRIMARY KEY (id_evento, id_estoque),
+
+    CONSTRAINT fk_itens_evento_evento
+        FOREIGN KEY (id_evento)
+        REFERENCES evento(id_evento),
+
+    CONSTRAINT fk_itens_evento_estoque
+        FOREIGN KEY (id_estoque)
+        REFERENCES estoque(id),
+
+    CONSTRAINT chk_itens_evento_qtd
+        CHECK (qtd > 0)
 );
+CREATE OR REPLACE FUNCTION fn_controlar_estoque_itens_evento()
+RETURNS TRIGGER
+AS $$
+DECLARE
+    qtd_disponivel INT;
+    diferenca INT;
+BEGIN
+
+    -- =====================================================
+    -- INSERT
+    -- =====================================================
+
+    IF TG_OP = 'INSERT' THEN
+
+        SELECT qtd
+        INTO qtd_disponivel
+        FROM estoque
+        WHERE id = NEW.id_estoque;
+
+        IF qtd_disponivel < NEW.qtd THEN
+            RAISE EXCEPTION
+            'Quantidade insuficiente no estoque';
+        END IF;
+
+        UPDATE estoque
+        SET qtd = qtd - NEW.qtd
+        WHERE id = NEW.id_estoque;
+
+        RETURN NEW;
+    END IF;
+
+    -- =====================================================
+    -- DELETE
+    -- =====================================================
+
+    IF TG_OP = 'DELETE' THEN
+
+        UPDATE estoque
+        SET qtd = qtd + OLD.qtd
+        WHERE id = OLD.id_estoque;
+
+        RETURN OLD;
+    END IF;
+
+    -- =====================================================
+    -- UPDATE
+    -- =====================================================
+
+    IF TG_OP = 'UPDATE' THEN
+
+        -- =============================================
+        -- MESMO ESTOQUE
+        -- =============================================
+
+        IF NEW.id_estoque = OLD.id_estoque THEN
+
+            diferenca := NEW.qtd - OLD.qtd;
+
+            -- AUMENTOU
+            IF diferenca > 0 THEN
+
+                SELECT qtd
+                INTO qtd_disponivel
+                FROM estoque
+                WHERE id = NEW.id_estoque;
+
+                IF qtd_disponivel < diferenca THEN
+                    RAISE EXCEPTION
+                    'Quantidade insuficiente no estoque';
+                END IF;
+
+                UPDATE estoque
+                SET qtd = qtd - diferenca
+                WHERE id = NEW.id_estoque;
+
+            END IF;
+
+            -- DIMINUIU
+            IF diferenca < 0 THEN
+
+                UPDATE estoque
+                SET qtd = qtd + ABS(diferenca)
+                WHERE id = NEW.id_estoque;
+
+            END IF;
+
+        END IF;
+
+        RETURN NEW;
+
+    END IF;
+
+    RETURN NULL;
+
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_controlar_estoque_itens_evento
+BEFORE INSERT OR UPDATE OR DELETE
+ON itens_evento
+FOR EACH ROW
+EXECUTE FUNCTION fn_controlar_estoque_itens_evento();
 
 
-CREATE TABLE Familiar (
-    id_familiar SERIAL,
-    nome VARCHAR(100),
-    parentesco VARCHAR(50),
-    profissao VARCHAR(100),
-    renda NUMERIC(10,2),
-    telefone VARCHAR(15),
 
-    CONSTRAINT pk_familiar PRIMARY KEY (id_familiar),
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (1, 1, 2);
 
-    CONSTRAINT fam_nome_nn CHECK (nome IS NOT NULL),
-    CONSTRAINT fam_parentesco_nn CHECK (parentesco IS NOT NULL),
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (1, 2, 1);
 
-    CONSTRAINT chk_renda_valida CHECK (renda >= 0),
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (2, 1, 3);
 
-    CONSTRAINT chk_telefone_format CHECK (telefone ~ '^[0-9]+$')
-);
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (2, 3, 1);
 
-INSERT INTO familiar (nome, parentesco, profissao, renda, telefone)
-VALUES ('Carlos Souza', 'Pai', 'Pedreiro', 2500.00, '18999999999');
-INSERT INTO familiar (nome, parentesco, profissao, renda, telefone)
-VALUES ('Maria Souza', 'Mãe', 'Costureira', 1800.00, '18988888888');
-INSERT INTO familiar (nome, parentesco, profissao, renda, telefone)
-VALUES ('João Souza', 'Irmão', 'Estudante', 0.00, '18977777777');
-INSERT INTO familiar (nome, parentesco, profissao, renda, telefone)
-VALUES ('Ana Souza', 'Avó', 'Aposentada', 1300.00, '18966666666');
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (3, 4, 1);
 
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (4, 2, 1);
+
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (4, 3, 1);
+
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (5, 1, 2);
+
+INSERT INTO itens_evento (id_evento, id_estoque, qtd)
+VALUES (5, 4, 1);
 
 

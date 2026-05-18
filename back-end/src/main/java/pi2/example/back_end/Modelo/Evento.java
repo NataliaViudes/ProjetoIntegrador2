@@ -4,6 +4,7 @@ import pi2.example.back_end.DAO.DAOEvento;
 import pi2.example.back_end.db.Conexao;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Evento {
@@ -114,35 +115,35 @@ public class Evento {
     // Validaçao
     // =====================================================
 
-    public List<String> validar() {
+    public String validar() {
 
-        List<String> erros = new ArrayList<>();
-
+        //List<String> erros = new ArrayList<>();
+        String erros="";
         if (categoria == null || categoria.getId() == null || categoria.getId() <= 0)
-            erros.add("Categoria inválida");
+            erros += "Categoria inválida\n";
 
         if (qtd == null || qtd <= 0)
-            erros.add("Quantidade inválida");
+            erros += "Quantidade inválida";
 
         if (nome == null || nome.trim().isEmpty())
-            erros.add("Nome inválido");
+            erros += "Nome inválido";
 
         if (local == null || local.trim().isEmpty())
-            erros.add("Local inválido");
+            erros += "Local inválido";
 
         if (inicio == null)
-            erros.add("Data/hora inicial obrigatória");
+            erros += "Data/hora inicial obrigatória";
 
         if (fim == null)
-            erros.add("Data/hora final obrigatória");
+            erros += "Data/hora final obrigatória";
 
         if (inicio != null && fim != null) {
 
             if (!fim.isAfter(inicio))
-                erros.add("Data final deve ser após a inicial");
+                erros += "Data final deve ser após a inicial";
 
             if (inicio.isBefore(LocalDateTime.now()))
-                erros.add("Não é permitido criar eventos no passado");
+                erros += "Não é permitido criar eventos no passado";
         }
 
         return erros;

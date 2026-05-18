@@ -4,6 +4,7 @@ package pi2.example.back_end.Control;
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.Modelo.Evento;
+import pi2.example.back_end.Modelo.ItensEvento;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
@@ -88,12 +89,12 @@ public class EventoControl {
                     .body(new Erro("Evento nulo"));
         }
 
-        List<String> erros = evento.validar();
+        String erros = evento.validar();
 
         if (!erros.isEmpty()) {
 
             return ResponseEntity.badRequest()
-                    .body(erros);
+                    .body(new Erro(erros));
         }
 
         Conexao db = Banco.getConexao();
@@ -350,12 +351,12 @@ public class EventoControl {
                     .body(new Erro("Id inválido"));
         }
 
-        List<String> erros = evento.validar();
+        String erros = evento.validar();
 
         if (!erros.isEmpty()) {
 
             return ResponseEntity.badRequest()
-                    .body(erros);
+                    .body(new Erro (erros));
         }
 
         Conexao db = Banco.getConexao();
@@ -472,49 +473,34 @@ public class EventoControl {
         try {
 
             if (!db.conectar()) {
-
-                throw new Exception(
-                        "Erro ao conectar: "
-                                + db.getMensagemErro()
-                );
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
 
             Evento ev = new Evento();
 
-            Evento existente =
-                    ev.buscarPorId(db, id);
+            Evento existente = ev.buscarPorId(db, id);
 
             if (existente == null) {
-
-                return ResponseEntity.badRequest()
-                        .body(
-                                new Erro(
-                                        "Evento não encontrado"
-                                )
-                        );
+                return ResponseEntity.badRequest().body(new Erro("Evento não encontrado"));
             }
 
             if (eventoEmAndamento(existente)) {
-
-                return ResponseEntity.badRequest()
-                        .body(
-                                new Erro(
-                                        "Eventos em andamento não podem ser removidos"
-                                )
-                        );
+                return ResponseEntity.badRequest().body(new Erro("Eventos em andamento não podem ser removidos"));
             }
 
             if (eventoFinalizado(existente)) {
-
-                return ResponseEntity.badRequest()
-                        .body(
-                                new Erro(
-                                        "Eventos finalizados não podem ser removidos"
-                                )
-                        );
+                return ResponseEntity.badRequest().body(new Erro("Eventos finalizados não podem ser removidos"));
             }
 
             existente.setIdEvento(id);
+
+            ItensEvento it = new ItensEvento();
+            List<ItensEvento> listaItens = it.buscarItensDoEvento(db,id);
+
+
+
+            if(listaItens!=null && !listaItens.isEmpty())
+                return ResponseEntity.badRequest().body(new Erro("Esse evento possui itens! Exclua eles antes de excluir o evento."));
 
             if (existente.apagar(db)) {
 

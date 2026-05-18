@@ -1,42 +1,45 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
+
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import Swal from "sweetalert2";
+
 import ItensEvento from "../ItensEvento";
 import api from "../../Services/api";
 import Menu from "../../Components/Menu/Menu";
+
 import "./agendarEventos.css";
 
-moment.updateLocale("pt-br", {
-  week: {
-    dow: 0,
-  },
-});
+import moment from "moment";
+import "moment/locale/pt-br";
+moment.locale("pt-br");
 
 const localizer = momentLocalizer(moment);
-
 function Eventos() {
   const [erros, setErros] = useState({});
   const [somenteLeitura, setSomenteLeitura] = useState(false);
+
   const [modo, setModo] = useState("calendario");
-  const [eventoSelecionado, setEventoSelecionado] = useState(null);
 
   const [eventosApi, setEventosApi] = useState([]);
 
-  const [nome, setNome] = useState("");
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
-  const [local, setLocal] = useState("");
-  const [qtd, setQtd] = useState("");
-  const [idCatEvento, setIdCatEvento] = useState("");
-  const [idFuncionario, setIdFuncionario] = useState("");
+  const [eventoSelecionado, setEventoSelecionado] = useState(null);
+  const [eventoEditando, setEventoEditando] = useState(null);
 
   const [categorias, setCategorias] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
 
-  const [eventoEditando, setEventoEditando] = useState(null);
+  const [nome, setNome] = useState("");
+  const [local, setLocal] = useState("");
+  const [qtd, setQtd] = useState("");
+
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+
+  const [idCatEvento, setIdCatEvento] = useState("");
+  const [idFuncionario, setIdFuncionario] = useState("");
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("week");
@@ -56,9 +59,11 @@ function Eventos() {
       );
 
       setEventosApi(Array.isArray(respEventos.data) ? respEventos.data : []);
+
       setCategorias(
         Array.isArray(respCategorias.data) ? respCategorias.data : [],
       );
+
       setFuncionarios(
         Array.isArray(respFuncionarios.data) ? respFuncionarios.data : [],
       );
@@ -67,166 +72,217 @@ function Eventos() {
     }
   }
 
-  function eventoJaPassou(dataEvento) {
-    const [ano, mes, dia] = dataEvento.split("-").map(Number);
+  function formatarDatetimeLocal(dataIso) {
+    if (!dataIso) return "";
+
+    return dataIso.substring(0, 16);
+  }
+
+  function eventoJaPassou(inicioEvento) {
+    if (!inicioEvento) return false;
 
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const data = new Date(ano, mes - 1, dia);
-    data.setHours(0, 0, 0, 0);
+    const dataEvento = new Date(inicioEvento);
+    dataEvento.setHours(0, 0, 0, 0);
 
-    return data < hoje;
+    return dataEvento < hoje;
   }
 
-  //  BACK → FRONT (calendar)
   const eventos = useMemo(() => {
     return eventosApi
       .map((ev) => {
-        if (!ev.data || !ev.horaInicio || !ev.horaFim) return null;
-
-        const [ano, mes, dia] = ev.data.split("-").map(Number);
-        const [hIni, mIni] = ev.horaInicio.split(":").map(Number);
-        const [hFim, mFim] = ev.horaFim.split(":").map(Number);
-
-        const inicio = new Date(ano, mes - 1, dia, hIni, mIni);
-        const fim = new Date(ano, mes - 1, dia, hFim, mFim);
+        if (!ev.inicio || !ev.fim) return null;
 
         return {
-          id: ev.id,
+          id: ev.idEvento,
           title: ev.nome,
-          start: inicio,
-          end: fim,
+          start: new Date(ev.inicio),
+          end: new Date(ev.fim),
           resource: ev,
         };
       })
-      .filter(Boolean); // remove null
+      .filter(Boolean);
   }, [eventosApi]);
 
-  //  FRONT → BACK
-  function separarDataHora(datetime) {
-    const d = new Date(datetime);
-
-    const data = d.toISOString().split("T")[0];
-    const hora = d.toTimeString().split(" ")[0];
-
-    return { data, hora };
-  }
-
-  function juntarDataHora(data, hora) {
-    if (!data || !hora) return "";
-    return `${data}T${hora.substring(0, 5)}`;
-  }
-
   function possuiConflitoHorario() {
-    const inicioNovo = new Date(dataInicio);
-    const fimNovo = new Date(dataFim);
+    if (!dataInicio || !dataFim) return false;
 
-    return eventosApi.some((ev) => {
-      // ignora o próprio evento quando estiver editando
-      if (eventoEditando && ev.id === eventoEditando.id) {
-        return false;
+    const inicioNovo = moment(dataInicio);
+    const fimNovo = moment(dataFim);
+
+    let possuiConflito = false;
+
+    eventosApi.forEach((ev) => {
+      // ignora o próprio evento no update
+      if (
+        eventoEditando &&
+        Number(ev.idEvento) === Number(eventoEditando.idEvento)
+      ) {
+        return;
       }
 
-      const inicioExistente = new Date(juntarDataHora(ev.data, ev.horaInicio));
+      const inicioExistente = moment(ev.inicio);
+      const fimExistente = moment(ev.fim);
 
-      const fimExistente = new Date(juntarDataHora(ev.data, ev.horaFim));
+      const conflito =
+        inicioNovo.isBefore(fimExistente) && fimNovo.isAfter(inicioExistente);
 
-      return inicioNovo < fimExistente && fimNovo > inicioExistente;
+      if (conflito) {
+        possuiConflito = true;
+      }
     });
+
+    return possuiConflito;
   }
 
   function limparFormulario() {
     setEventoSelecionado(null);
     setEventoEditando(null);
+
     setNome("");
-    setDataInicio("");
-    setDataFim("");
     setLocal("");
     setQtd("");
+
+    setDataInicio("");
+    setDataFim("");
+
     setIdCatEvento("");
     setIdFuncionario("");
+
     setErros({});
+
     setSomenteLeitura(false);
   }
 
   async function salvar() {
+    const novosErros = {};
+
+    if (!nome) novosErros.nome = true;
+    if (!local) novosErros.local = true;
+    if (!qtd) novosErros.qtd = true;
+
+    if (!dataInicio) novosErros.dataInicio = true;
+    if (!dataFim) novosErros.dataFim = true;
+
+    if (!idCatEvento) novosErros.idCatEvento = true;
+    if (!idFuncionario) novosErros.idFuncionario = true;
+
+    if (Object.keys(novosErros).length > 0) {
+      setErros(novosErros);
+
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obrigatórios",
+        text: "Preencha todos os campos",
+      });
+
+      return;
+    }
+
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+
+    if (fim <= inicio) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "A data final deve ser maior que a inicial",
+      });
+
+      return;
+    }
+
     if (possuiConflitoHorario()) {
-      Swal.fire("Erro", "Já existe um evento nesse horário", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Conflito",
+        text: "Já existe um evento nesse horário",
+      });
+
       return;
     }
 
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const dataEvento = new Date(dataInicio.split("T")[0] + "T00:00:00");
-
+    const dataEvento = new Date(inicio);
     dataEvento.setHours(0, 0, 0, 0);
 
     if (dataEvento < hoje) {
-      Swal.fire(
-        "Erro",
-        "Não é permitido criar eventos em datas passadas.",
-        "error",
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não é permitido cadastrar eventos em datas passadas",
+      });
+
       return;
     }
-
-    if (new Date(dataFim) <= new Date(dataInicio)) {
-      Swal.fire(
-        "Erro",
-        "A data/hora final deve ser maior que a inicial.",
-        "error",
-      );
-      return;
-    }
-    const novosErros = {};
-
-    if (!idFuncionario) novosErros.idFuncionario = true;
-    if (!nome) novosErros.nome = true;
-    if (!dataInicio) novosErros.dataInicio = true;
-    if (!dataFim) novosErros.dataFim = true;
-    if (!local) novosErros.local = true;
-    if (!qtd) novosErros.qtd = true;
-    if (!idCatEvento) novosErros.idCatEvento = true;
-
-    if (Object.keys(novosErros).length > 0) {
-      setErros(novosErros);
-      return;
-    }
-
-    const inicio = separarDataHora(dataInicio);
-    const fim = separarDataHora(dataFim);
 
     const payload = {
-      id: eventoEditando?.id || null,
-      nome,
-      local,
+      idEvento: eventoEditando?.idEvento || null,
+
+      nome: nome,
+      local: local,
+
       qtd: Number(qtd),
-      data: inicio.data,
-      horaInicio: inicio.hora,
-      horaFim: fim.hora,
-      categoria: { id: Number(idCatEvento) },
-      idFuncionario: idFuncionario ? Number(idFuncionario) : null,
+
+      inicio: moment(dataInicio).format("YYYY-MM-DDTHH:mm:ss"),
+      fim: moment(dataFim).format("YYYY-MM-DDTHH:mm:ss"),
+
+      categoria: {
+        id: Number(idCatEvento),
+      },
+
+      funcionario: {
+        id: Number(idFuncionario),
+      },
     };
 
     try {
+      console.log("PAYLOAD ENVIADO:");
+      console.log(payload);
+
       if (eventoEditando) {
         await api.put("/evento", payload);
       } else {
         await api.post("/evento", payload);
       }
 
+      await carregarTudo();
+
       limparFormulario();
-      carregarTudo();
+
+      Swal.fire({
+        icon: "success",
+        title: "Sucesso",
+        text: eventoEditando ? "Evento atualizado" : "Evento criado",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (e) {
-      console.error("Erro ao salvar evento:", e);
-      alert("Erro ao salvar evento.");
+      console.error("ERRO COMPLETO:", e);
+
+      console.log("RESPOSTA BACK:");
+      console.log(e?.response?.data);
+
+      const erroBack =
+        e?.response?.data?.message ||
+        e?.response?.data?.erro ||
+        e?.message ||
+        "Erro ao salvar evento";
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao salvar",
+        text: erroBack,
+      });
     }
   }
 
   function editar(ev) {
-    const eventoAntigo = eventoJaPassou(ev.data);
+    const eventoAntigo = eventoJaPassou(ev.inicio);
 
     setSomenteLeitura(eventoAntigo);
 
@@ -234,64 +290,70 @@ function Eventos() {
     setEventoEditando(ev);
 
     setNome(ev.nome || "");
-    setDataInicio(juntarDataHora(ev.data, ev.horaInicio));
-    setDataFim(juntarDataHora(ev.data, ev.horaFim));
     setLocal(ev.local || "");
     setQtd(ev.qtd || "");
-    setIdCatEvento(ev.categoria?.id || "");
+
+    setDataInicio(formatarDatetimeLocal(ev.inicio));
+    setDataFim(formatarDatetimeLocal(ev.fim));
+
+    setIdCatEvento(ev.idCatEvento || "");
     setIdFuncionario(ev.idFuncionario || "");
   }
 
-  async function excluir(id) {
+  async function excluir(idEvento) {
     const result = await Swal.fire({
       title: "Deseja excluir esse evento?",
       text: "Essa ação não pode ser desfeita",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sim, remover",
+      confirmButtonText: "Sim",
       cancelButtonText: "Cancelar",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      await api.delete(`/evento/${id}`);
+      await api.delete(`/evento/${idEvento}`);
 
-      if (eventoEditando && eventoEditando.id === id) {
+      if (eventoEditando && eventoEditando.idEvento === idEvento) {
         limparFormulario();
       }
 
-      carregarTudo();
+      await carregarTudo();
+
+      Swal.fire({
+        icon: "success",
+        title: "Evento removido",
+        timer: 1200,
+        showConfirmButton: false,
+      });
     } catch (e) {
-      console.error("Erro ao excluir evento:", e);
-      alert("Erro ao excluir evento.");
+      console.error(e);
+
+      const erroBack =
+        e?.response?.data?.message ||
+        e?.response?.data?.erro ||
+        e?.message ||
+        "Erro ao excluir evento";
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: erroBack,
+      });
     }
   }
 
-  function selecionarEventoItens(evento) {
-    setEventoSelecionado(evento.resource);
-    setModo("itens");
-  }
-
-  function selecionarEvento(evento) {
-    editar(evento.resource);
-  }
-
   function selecionarSlot(slotInfo) {
-    setErros((prev) => ({ ...prev, dataFim: false }));
-    setErros((prev) => ({ ...prev, dataInicio: false }));
-    setDataInicio(
-      juntarDataHora(
-        slotInfo.start.toISOString().split("T")[0],
-        slotInfo.start.toTimeString().split(" ")[0],
-      ),
-    );
-    setDataFim(
-      juntarDataHora(
-        slotInfo.end.toISOString().split("T")[0],
-        slotInfo.end.toTimeString().split(" ")[0],
-      ),
-    );
+    setDataInicio(moment(slotInfo.start).format("YYYY-MM-DDTHH:mm"));
+
+    setDataFim(moment(slotInfo.end).format("YYYY-MM-DDTHH:mm"));
+
+    setErros((prev) => ({
+      ...prev,
+      dataInicio: false,
+      dataFim: false,
+    }));
   }
 
   return (
@@ -303,27 +365,38 @@ function Eventos() {
           <h2>Eventos</h2>
 
           <label>Nome do Evento</label>
+
           <input
             disabled={somenteLeitura}
             value={nome}
             onChange={(e) => {
               setNome(e.target.value);
-              setErros({ ...erros, nome: false });
+
+              setErros({
+                ...erros,
+                nome: false,
+              });
             }}
             className={erros.nome ? "input-erro" : ""}
           />
 
-          <label>Categoria do evento</label>
+          <label>Categoria</label>
+
           <select
             disabled={somenteLeitura}
             value={idCatEvento}
             onChange={(e) => {
               setIdCatEvento(e.target.value);
-              setErros({ ...erros, idCatEvento: false });
+
+              setErros({
+                ...erros,
+                idCatEvento: false,
+              });
             }}
             className={erros.idCatEvento ? "input-erro" : ""}
           >
             <option value="">Selecione a categoria</option>
+
             {categorias.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.categoria}
@@ -336,7 +409,14 @@ function Eventos() {
           <select
             disabled={somenteLeitura}
             value={idFuncionario}
-            onChange={(e) => setIdFuncionario(e.target.value)}
+            onChange={(e) => {
+              setIdFuncionario(e.target.value);
+
+              setErros({
+                ...erros,
+                idFuncionario: false,
+              });
+            }}
             className={erros.idFuncionario ? "input-erro" : ""}
           >
             <option value="">Selecione um funcionário</option>
@@ -348,52 +428,72 @@ function Eventos() {
             ))}
           </select>
 
-          <label>Data e hora inicial</label>
+          <label>Data Inicial</label>
+
           <input
             type="datetime-local"
+            disabled={somenteLeitura}
             value={dataInicio}
             onChange={(e) => {
               setDataInicio(e.target.value);
-              setErros({ ...erros, dataInicio: false });
+
+              setErros({
+                ...erros,
+                dataInicio: false,
+              });
             }}
             className={erros.dataInicio ? "input-erro" : ""}
-            disabled={somenteLeitura}
           />
 
-          <label>Data e hora final</label>
+          <label>Data Final</label>
+
           <input
-            disabled={somenteLeitura}
             type="datetime-local"
+            disabled={somenteLeitura}
             value={dataFim}
             onChange={(e) => {
               setDataFim(e.target.value);
-              setErros({ ...erros, dataFim: false });
+
+              setErros({
+                ...erros,
+                dataFim: false,
+              });
             }}
             className={erros.dataFim ? "input-erro" : ""}
           />
 
           <label>Local</label>
+
           <textarea
-            disabled={somenteLeitura}
             rows="2"
+            disabled={somenteLeitura}
             value={local}
             onChange={(e) => {
               setLocal(e.target.value);
-              setErros({ ...erros, local: false });
+
+              setErros({
+                ...erros,
+                local: false,
+              });
             }}
             className={erros.local ? "input-erro" : ""}
           />
 
           <label>Quantidade</label>
+
           <input
             type="number"
+            disabled={somenteLeitura}
             value={qtd}
             onChange={(e) => {
               setQtd(e.target.value);
-              setErros({ ...erros, qtd: false });
+
+              setErros({
+                ...erros,
+                qtd: false,
+              });
             }}
             className={erros.qtd ? "input-erro" : ""}
-            disabled={somenteLeitura}
           />
 
           <div className="acoes-formulario">
@@ -409,9 +509,14 @@ function Eventos() {
               type="button"
               onClick={() => {
                 if (!eventoSelecionado) {
-                  alert("Selecione um evento no calendário primeiro.");
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Selecione um evento",
+                  });
+
                   return;
                 }
+
                 setModo("itens");
               }}
             >
@@ -425,38 +530,46 @@ function Eventos() {
             {eventosApi.length === 0 ? (
               <p>Nenhum evento cadastrado.</p>
             ) : (
-              eventosApi.map((ev) => {
-                return (
-                  <div key={ev.id} className="item-agendamento">
+              eventosApi.map((ev) => (
+                <div key={ev.idEvento} className="item-agendamento">
+                  <div>
+                    <strong>{ev.nome}</strong>
+
+                    <div>Categoria: {ev.categoria?.categoria}</div>
+
                     <div>
-                      <strong>{ev.nome}</strong>
-                      <div>Categoria: {ev.categoria?.descricao}</div>
-                      <div>
-                        Funcionário:{" "}
-                        {funcionarios.find((f) => f.id === ev.idFuncionario)
-                          ?.nome || "Não informado"}
-                      </div>
-                      <div>Local: {ev.local}</div>
-                      <div>Qtd: {ev.qtd}</div>
-                      <div>
-                        {ev.data} {ev.horaInicio} - {ev.horaFim}
-                      </div>
+                      Funcionário:{" "}
+                      {funcionarios.find((f) => f.id === ev.idFuncionario)
+                        ?.nome || "Não informado"}
                     </div>
 
-                    <div className="acoes-item">
-                      <button onClick={() => editar(ev)}>Editar</button>
-                      <button onClick={() => excluir(ev.id)}>Excluir</button>
+                    <div>Local: {ev.local}</div>
+
+                    <div>Qtd: {ev.qtd}</div>
+
+                    <div>
+                      {moment(ev.inicio).format("DD/MM/YYYY HH:mm")}
+                      {" - "}
+                      {moment(ev.fim).format("DD/MM/YYYY HH:mm")}
                     </div>
                   </div>
-                );
-              })
+
+                  <div className="acoes-item">
+                    <button onClick={() => editar(ev)}>Editar</button>
+
+                    <button onClick={() => excluir(ev.idEvento)}>
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
           </div>
         </section>
+
         {modo === "calendario" ? (
           <section className="painel-calendario">
             <Calendar
-              
               localizer={localizer}
               culture="pt-BR"
               events={eventos}
@@ -470,36 +583,52 @@ function Eventos() {
               onView={(novaView) => setViewAtual(novaView)}
               views={["month", "week", "day", "agenda"]}
               defaultView="week"
-              onSelectEvent={(evento) => {
-                setEventoSelecionado(evento.resource);
-                editar(evento.resource);
+              formats={{
+                weekdayFormat: (date) => moment(date).format("ddd"),
+
+                dayFormat: (date) => moment(date).format("DD ddd"),
+
+                monthHeaderFormat: (date) => moment(date).format("MMMM YYYY"),
+
+                dayHeaderFormat: (date) => moment(date).format("dddd DD/MM"),
+
+                dayRangeHeaderFormat: ({ start, end }) =>
+                  `${moment(start).format("DD MMM")} — ${moment(end).format("DD MMM")}`,
               }}
-              onSelectSlot={selecionarSlot}
               messages={{
-                next: "Próximo",
-                previous: "Anterior",
-                today: "Hoje",
-                month: "Mês",
-                week: "Semana",
-                day: "Dia",
-                agenda: "Agenda",
                 date: "Data",
                 time: "Hora",
                 event: "Evento",
-                noEventsInRange: "Nenhum evento neste período",
                 allDay: "Dia inteiro",
-                showMore: (total) => `+ Ver mais (${total})`,
+                week: "Semana",
+                work_week: "Semana de trabalho",
+                day: "Dia",
+                month: "Mês",
+                previous: "Anterior",
+                next: "Próximo",
+                yesterday: "Ontem",
+                tomorrow: "Amanhã",
+                today: "Hoje",
+                agenda: "Agenda",
+                noEventsInRange: "Nenhum evento neste período",
+                showMore: (total) => `+${total} mais`,
               }}
-              style={{ height: "80vh" }}
+              onSelectEvent={(evento) => {
+                editar(evento.resource);
+              }}
+              onSelectSlot={selecionarSlot}
+              style={{
+                height: "80vh",
+              }}
             />
           </section>
         ) : (
           <>
             {eventoSelecionado ? (
               <ItensEvento
-                somenteLeitura={somenteLeitura}
-                key={eventoSelecionado?.id}
+                key={eventoSelecionado.idEvento}
                 evento={eventoSelecionado}
+                somenteLeitura={somenteLeitura}
                 voltar={() => setModo("calendario")}
               />
             ) : (
@@ -507,6 +636,7 @@ function Eventos() {
                 <button onClick={() => setModo("calendario")}>⬅ Voltar</button>
 
                 <h2>Nenhum evento selecionado</h2>
+
                 <p>Selecione um evento antes de adicionar itens.</p>
               </div>
             )}
