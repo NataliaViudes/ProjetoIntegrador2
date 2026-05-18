@@ -49,6 +49,30 @@ public class Conexao {
         }
     }
 
+
+    // =========================================
+    // TRANSAÇÃO
+    // =========================================
+
+    public void iniciarTransacao() throws SQLException {
+        connect.setAutoCommit(false);
+    }
+
+    public void confirmarTransacao() throws SQLException {
+        connect.commit();
+        connect.setAutoCommit(true);
+    }
+
+    public void desfazerTransacao() {
+        try {
+            connect.rollback();
+            connect.setAutoCommit(true);
+        } catch (SQLException e) {
+            erro = "Erro rollback: " + e.getMessage();
+        }
+    }
+
+
     public String getMensagemErro() {
         return erro;
     }
@@ -93,8 +117,41 @@ public class Conexao {
             return null;
         }
     }
+    public void beginTransaction() throws SQLException {
 
+        if (connect != null) {
 
+            connect.setAutoCommit(false);
+        }
+    }
+
+//
+//    public void commit() throws SQLException {
+//
+//        if (connect != null) {
+//
+//            connect.commit();
+//
+//            connect.setAutoCommit(true);
+//        }
+//    }
+//
+//    public void rollback() {
+//
+//        try {
+//
+//            if (connect != null) {
+//
+//                connect.rollback();
+//
+//                connect.setAutoCommit(true);
+//            }
+//
+//        } catch (SQLException e) {
+//
+//            erro = "Erro rollback: " + e.getMessage();
+//        }
+//    }
 
     // MAX PK
     public int getMaxPK(String tabela, String chave) {
@@ -113,5 +170,7 @@ public class Conexao {
 
         return -1;
     }
+
+
 }
 

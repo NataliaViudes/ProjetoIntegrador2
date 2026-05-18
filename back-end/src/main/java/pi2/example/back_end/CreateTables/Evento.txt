@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS EVENTO(
+    id SERIAL,
+    nome varchar(50) not null,
+    qtd int not null,
+    local varchar(200),
+    id_cat_evento int not null,
+    dia DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    id_funcionario INT,
+
+    CONSTRAINT PK_Evento PRIMARY KEY (id),
+    CONSTRAINT FK_Evento_Cat_evento FOREIGN KEY (id_cat_evento) REFERENCES CAT_EVENTO(id),
+    CONSTRAINT FK_EVENTO_FUNCIONARIO FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario),
+
+    CONSTRAINT chk_horario CHECK (hora_fim > hora_inicio),
+    CONSTRAINT chk_qtd CHECK (qtd >= 0)
+);
+
+
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('TESTE BANCO AGORA', 10, 'Sala Teste', 1, '2026-04-29', '09:00:00', '10:00:00', 1);
+
+-- Evento 1
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Reunião Pedagógica', 20, 'Sala 1', 1, '2026-05-10', '08:00:00', '10:00:00', 1);
+
+-- Evento 2
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Aula de Música', 15, 'Sala de Música', 2, '2026-05-10', '10:30:00', '12:00:00', 2);
+
+-- Evento 3
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Treino Esportivo', 25, 'Quadra', 3, '2026-05-11', '14:00:00', '16:00:00', 3);
+
+-- Evento 4
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Oficina de Artes', 10, 'Sala de Artes', 2, '2026-05-12', '09:00:00', '11:30:00', 1);
+
+-- Evento 5
+INSERT INTO EVENTO (nome, qtd, local, id_cat_evento, dia, hora_inicio, hora_fim, id_funcionario)
+VALUES ('Palestra Educativa', 50, 'Auditório', 1, '2026-05-13', '19:00:00', '21:00:00', 2);
+

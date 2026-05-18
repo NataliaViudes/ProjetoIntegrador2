@@ -1,17 +1,16 @@
 package pi2.example.back_end.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pi2.example.back_end.Controller.TipoEstoqueControll;
-import pi2.example.back_end.Modelo.Cat_Evento;
+import pi2.example.back_end.Control.TipoEstoqueControl;
 import pi2.example.back_end.Modelo.TipoEstoque;
 
 
 @CrossOrigin
 @RestController
-@RequestMapping("/estoque")
+@RequestMapping("/tipo-estoque")
 public class TipoEstoqueRestController {
 
-    private final TipoEstoqueControll control = new TipoEstoqueControll();
+    private final TipoEstoqueControl control = new TipoEstoqueControl();
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getId(@PathVariable int id) {

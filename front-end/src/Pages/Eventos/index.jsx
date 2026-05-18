@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../Services/api.js";
-import Menu from "../../Components/Menu";
+import Menu from "../../Components/Menu/Menu.jsx";
 import "animate.css";
 import Swal from "sweetalert2";
 import style from "./styles.module.css";
@@ -20,7 +20,7 @@ export default function Eventos() {
 
   async function carregarTudo() {
     try {
-      const resp = await api.get("/eventos/categoria");
+      const resp = await api.get("cat-eventos/descricao");
       const dados = Array.isArray(resp.data) ? resp.data : [];
 
       setEventos(dados);
@@ -75,12 +75,12 @@ export default function Eventos() {
         if (result.isConfirmed) {
           try {
             if (eventoEditando) {
-              await api.put("/eventos", {
+              await api.put("/cat-eventos", {
                 id: eventoEditando.id,
                 ...dados,
               });
             } else {
-              await api.post("/eventos", dados);
+              await api.post("/cat-eventos", dados);
             }
 
             limparFormulario();
@@ -112,7 +112,7 @@ export default function Eventos() {
 
   async function excluirEvento(id) {
     try {
-      await api.delete(`/eventos/${id}`);
+      await api.delete(`/cat-eventos/${id}`);
 
       if (eventoEditando && eventoEditando.id === id) {
         limparFormulario();
@@ -121,7 +121,7 @@ export default function Eventos() {
       carregarTudo();
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      Swal.fire("Erro", "Erro ao excluir evento.", "error");
+      Swal.fire("Erro", "Erro ao excluir categoria.", "error");
     }
   }
 

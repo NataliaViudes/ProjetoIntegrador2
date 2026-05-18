@@ -43,7 +43,7 @@ public class DAOCat_Evento {
 
 
     public Cat_Evento alterar(Cat_Evento entidade) {
-        String sql = "UPDATE CAT_EVENTO SET categoria = ?, descricao = ? WHERE id = ?";
+        String sql = "UPDATE CAT_EVENTO SET categoria = ?, descricao = ? WHERE id_cat_evento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -61,9 +61,8 @@ public class DAOCat_Evento {
         }
     }
 
-
     public boolean apagar(Cat_Evento entidade) {
-        String sql = "DELETE FROM CAT_EVENTO WHERE id = ?";
+        String sql = "DELETE FROM CAT_EVENTO WHERE id_cat_evento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -77,10 +76,9 @@ public class DAOCat_Evento {
         }
     }
 
-
     public Cat_Evento get(Integer id) {
         Cat_Evento eve = null;
-        String sql = "SELECT * FROM CAT_EVENTO WHERE id = ?";
+        String sql = "SELECT * FROM CAT_EVENTO WHERE id_cat_evento = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -89,7 +87,7 @@ public class DAOCat_Evento {
 
             if (rs.next()) {
                 eve = new Cat_Evento(
-                        rs.getInt("id"),
+                        rs.getInt("id_cat_evento"),
                         rs.getString("categoria"),
                         rs.getString("descricao")
                 );
@@ -101,7 +99,6 @@ public class DAOCat_Evento {
 
         return eve;
     }
-
 
 
     public List<Cat_Evento> buscarPorNome(String categoria) {
@@ -118,7 +115,7 @@ public class DAOCat_Evento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("id"),
+                            rs.getInt("id_cat_evento"),
                             rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
@@ -138,7 +135,7 @@ public class DAOCat_Evento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("id"),
+                            rs.getInt("id_cat_evento"),
                             rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
@@ -166,7 +163,7 @@ public class DAOCat_Evento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("id"),
+                            rs.getInt("id_cat_evento"),
                             rs.getString("categoria"),
                             rs.getString("descricao")
                     ));
@@ -186,7 +183,7 @@ public class DAOCat_Evento {
 
                 while (rs.next()) {
                     lista.add(new Cat_Evento(
-                            rs.getInt("id"),
+                            rs.getInt("id_cat_evento"),
                             rs.getString("categoria"),
                             rs.getString("descricao")
                     ));

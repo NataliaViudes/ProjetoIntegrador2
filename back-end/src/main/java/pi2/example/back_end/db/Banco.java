@@ -2,22 +2,22 @@ package pi2.example.back_end.db;
 
 public class Banco  // classe Singleton
 {
-    private static Banco singleton;
+    private static Banco singletom;
 
 
     private static final String URL = "jdbc:postgresql://localhost:5432/SCFV";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "14042005";
+    private static final String PASSWORD = "postgres123";
 
     public static Conexao getConexao() {
         return new Conexao(URL, USER, PASSWORD);
     }
 
-    public static Banco getSingleton() {
-        if (singleton == null) {
-            singleton = new Banco();
+    public static Banco getSingletom() {
+        if (singletom == null) {
+            singletom = new Banco();
         }
-        return singleton;
+        return singletom;
     }
 
     private Banco() {}
