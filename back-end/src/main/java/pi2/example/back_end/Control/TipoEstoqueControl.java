@@ -1,4 +1,4 @@
-package pi2.example.back_end.Control;
+package pi2.example.back_end.Controler;
 
 import org.springframework.http.ResponseEntity;
 import pi2.example.back_end.Modelo.Erro;
@@ -18,27 +18,27 @@ public class TipoEstoqueControl {
     {
         if (tipoEstoque.getTipo() != null && !tipoEstoque.getTipo().isEmpty()) {
 
-                TipoEstoque resultado=null;
-                Conexao db = Banco.getConexao(); //Abre a conexao
-                try {
-                    if (!db.conectar()) {
-                        throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                    }
-
-                    resultado = tipoEstoque.incluir(db);
-                    return ResponseEntity.ok(resultado);
-
-                } catch (SQLException e) {
-                    System.out.println("Erro SQL: " + e.getMessage());
-                    return ResponseEntity.badRequest().body(new Erro("Erro ao conectar com o banco de dados"));
-
-                } catch (Exception e) {
-                    System.out.println("Erro geral: " + e.getMessage());
-                    return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-                } finally {
-                    db.desconectar(); // não esquece de fechar a conexao com o banco!!
+            TipoEstoque resultado=null;
+            Conexao db = Banco.getConexao(); //Abre a conexao
+            try {
+                if (!db.conectar()) {
+                    throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                 }
+
+                resultado = tipoEstoque.incluir(db);
+                return ResponseEntity.ok(resultado);
+
+            } catch (SQLException e) {
+                System.out.println("Erro SQL: " + e.getMessage());
+                return ResponseEntity.badRequest().body(new Erro("Erro ao conectar com o banco de dados"));
+
+            } catch (Exception e) {
+                System.out.println("Erro geral: " + e.getMessage());
+                return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+            } finally {
+                db.desconectar(); // não esquece de fechar a conexao com o banco!!
+            }
         }
         else
         {
@@ -152,32 +152,32 @@ public class TipoEstoqueControl {
         if (tipoEstoque.getId() != null && tipoEstoque.getId()>0) {
             // categoria obrigatória
             if (tipoEstoque.getTipo() != null && !tipoEstoque.getTipo().isEmpty()) {
-                    Conexao db = Banco.getConexao(); // Abre conexao
-                    try {
-                        if (!db.conectar()) {
-                            throw new Exception("Erro ao conectar: " + db.getMensagemErro());
-                        }
-                        TipoEstoque existente = tipoEstoque.buscarPorId(db,tipoEstoque.getId()); // verificar se existe no banco
-                        if (existente != null) {
-                            TipoEstoque eve = tipoEstoque.alterar(db);
-                            if(eve!=null)
-                                return ResponseEntity.ok(tipoEstoque);
-                            else
-                                return ResponseEntity.badRequest().body(new Erro("Erro ao alterar TipoEstoque"));
-                        }
-                        else
-                            return ResponseEntity.badRequest().body(new Erro("TipoEstoque não encontrado"));
-                    } catch (SQLException e) {
-                        System.out.println("Erro SQL: " + e.getMessage());
-                        return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
-
-                    } catch (Exception e) {
-                        System.out.println("Erro geral: " + e.getMessage());
-                        return ResponseEntity.badRequest().body(new Erro("Erro geral"));
-
-                    } finally {
-                        db.desconectar(); // não esquece de fechar a conexao com o banco!!
+                Conexao db = Banco.getConexao(); // Abre conexao
+                try {
+                    if (!db.conectar()) {
+                        throw new Exception("Erro ao conectar: " + db.getMensagemErro());
                     }
+                    TipoEstoque existente = tipoEstoque.buscarPorId(db,tipoEstoque.getId()); // verificar se existe no banco
+                    if (existente != null) {
+                        TipoEstoque eve = tipoEstoque.alterar(db);
+                        if(eve!=null)
+                            return ResponseEntity.ok(tipoEstoque);
+                        else
+                            return ResponseEntity.badRequest().body(new Erro("Erro ao alterar TipoEstoque"));
+                    }
+                    else
+                        return ResponseEntity.badRequest().body(new Erro("TipoEstoque não encontrado"));
+                } catch (SQLException e) {
+                    System.out.println("Erro SQL: " + e.getMessage());
+                    return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+
+                } catch (Exception e) {
+                    System.out.println("Erro geral: " + e.getMessage());
+                    return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+                } finally {
+                    db.desconectar(); // não esquece de fechar a conexao com o banco!!
+                }
 
             }
             else
@@ -223,8 +223,34 @@ public class TipoEstoqueControl {
             return ResponseEntity.badRequest().body(new Erro("id invalido"));
     }
 
+    public ResponseEntity<?> getAllOrFilter(String filtro) {
+        Conexao db = Banco.getConexao();
+        TipoEstoque tipoEstoque = new TipoEstoque();
+        List<TipoEstoque> resultado;
 
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+            }
 
+            if (filtro == null || filtro.isEmpty()) {
+                resultado = tipoEstoque.buscarPorTipo(db, "");
+            } else {
+                resultado = tipoEstoque.buscarPorTipo(db, filtro);
+            }
+
+            return ResponseEntity.ok(resultado);
+        } catch (SQLException e) {
+            System.out.println("Erro SQL: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+
+        } catch (Exception e) {
+            System.out.println("Erro geral: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+        } finally {
+            db.desconectar();
+        }
+    }
 }
-
 

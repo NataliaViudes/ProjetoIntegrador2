@@ -7,7 +7,6 @@ import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
 
-@JsonPropertyOrder({ "id", "qtd", "descricao","tipo" })
 public class Estoque {
     private Integer id;
     private String descricao;
@@ -119,8 +118,4 @@ public class Estoque {
         DAOEstoque dao = new DAOEstoque(con);
         return dao.apagar(this);
     }
-
-
-
-
 }

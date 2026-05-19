@@ -1,8 +1,10 @@
 package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
+import pi2.example.back_end.DAO.DAOEstoque;
 import pi2.example.back_end.Modelo.Estoque;
 import pi2.example.back_end.Modelo.Erro;
+import pi2.example.back_end.Modelo.MaterialAtividade;
 import pi2.example.back_end.db.Banco;
 import pi2.example.back_end.db.Conexao;
 
@@ -97,7 +99,7 @@ public class EstoqueControl {
 
     public ResponseEntity<?> buscaPorTipo(String tipo)
     {
-        List<Estoque> estoques = new ArrayList<>();
+        List<Estoque> eventos = new ArrayList<>();
         Estoque est= new Estoque();
         if(tipo==null) tipo="";
         Conexao db = Banco.getConexao(); // Abre conexao
@@ -105,9 +107,9 @@ public class EstoqueControl {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            estoques = est.buscarPorTipo(db,tipo);
-            if(estoques!=null && !estoques.isEmpty()) { // se encontrar algum
-                return ResponseEntity.ok(estoques);
+            eventos = est.buscarPorTipo(db,tipo);
+            if(eventos!=null && !eventos.isEmpty()) { // se encontrar algum
+                return ResponseEntity.ok(eventos);
             }
             else {
                 return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Estoque do tipo: "+ tipo));
@@ -127,7 +129,7 @@ public class EstoqueControl {
 
     public ResponseEntity<?> buscaPorDescricao(String descricao)
     {
-        List<Estoque> estoques;
+        List<Estoque> eventos;
         Estoque este= new Estoque();
         if(descricao==null) descricao="";
 
@@ -136,12 +138,12 @@ public class EstoqueControl {
             if (!db.conectar()) {
                 throw new Exception("Erro ao conectar: " + db.getMensagemErro());
             }
-            estoques = este.buscarPorDescricao(db,descricao);
-            if(estoques!=null && !estoques.isEmpty()) { // se encontrar
-                return ResponseEntity.ok(estoques);
+            eventos = este.buscarPorDescricao(db,descricao);
+            if(eventos!=null && !eventos.isEmpty()) { // se encontrar algum Cat_evento
+                return ResponseEntity.ok(eventos);
             }
             else {
-                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar estoque: "+descricao));
+                return ResponseEntity.badRequest().body(new Erro("Erro ao buscar Evento: "+descricao));
             }
         } catch (SQLException e) {
             System.out.println("Erro SQL: " + e.getMessage());
@@ -243,5 +245,145 @@ public class EstoqueControl {
             return ResponseEntity.badRequest().body(new Erro("id invalido"));
     }
 
+    public ResponseEntity<?> getAllOrFilter(String filtro) {
 
+        List<Estoque> resultado;
+        Estoque estoque = new Estoque();
+
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+            }
+
+            if (filtro != null && !filtro.isEmpty()) {
+                resultado = estoque.buscarPorDescricao(db, filtro);
+            } else {
+                resultado = estoque.buscarPorDescricao(db, "");
+            }
+
+            if (resultado != null && !resultado.isEmpty()) {
+                return ResponseEntity.ok(resultado);
+            } else {
+                return ResponseEntity.noContent().build(); // melhor que 400 aqui
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro SQL: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro com o banco"));
+
+        } catch (Exception e) {
+            System.out.println("Erro geral: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new Erro("Erro geral"));
+
+        } finally {
+            db.desconectar();
+        }
+    }
+
+    public ResponseEntity<?> salvarMateriaisEtapa(List<MaterialAtividade> materiais) {
+        System.out.println("CHEGOU NO BACK: " + materiais.size());
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar");
+            }
+
+            DAOEstoque dao = new DAOEstoque(db);
+
+            for (MaterialAtividade mat : materiais) {
+
+                Integer qtdAtual = dao.getQuantidadeAtual(mat.getIdAgendamento(), mat.getIdItem());
+
+                if (qtdAtual == null) {
+                    // NOVO MATERIAL
+                    boolean ok = dao.baixarEstoque(mat.getIdItem(), mat.getQuantidade());
+
+                    if (!ok) {
+                        return ResponseEntity
+                                .badRequest()
+                                .body(new Erro("Estoque insuficiente"));
+                    }
+
+                } else {
+                    int diferenca = mat.getQuantidade() - qtdAtual;
+
+                    if (diferenca > 0) {
+                        boolean ok = dao.baixarEstoque(mat.getIdItem(), diferenca);
+
+                        if (!ok) {
+                            return ResponseEntity
+                                    .badRequest()
+                                    .body(new Erro("Estoque insuficiente"));
+                        }
+
+                    } else if (diferenca < 0) {
+                        dao.devolverEstoque(mat.getIdItem(), Math.abs(diferenca));
+                    }
+                }
+
+                dao.salvarAgendamentoMaterial(
+                        mat.getIdAgendamento(),
+                        mat.getIdItem(),
+                        mat.getQuantidade()
+                );
+            }
+            return ResponseEntity.ok("Materiais vinculados à etapa com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Erro(e.getMessage()));
+        } finally {
+            db.desconectar();
+        }
+    }
+
+    public ResponseEntity<?> buscarMateriaisPorAgendamento(int idAgendamento) {
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar");
+            }
+
+            DAOEstoque dao = new DAOEstoque(db);
+            List<MaterialAtividade> lista = dao.buscarPorAgendamento(idAgendamento);
+
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Erro(e.getMessage()));
+        } finally {
+            db.desconectar();
+        }
+    }
+
+    public ResponseEntity<?> removerMaterial(MaterialAtividade mat) {
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar");
+            }
+
+            DAOEstoque dao = new DAOEstoque(db);
+
+            boolean ok = dao.deletarMaterial(
+                    mat.getIdAgendamento(),
+                    mat.getIdItem()
+            );
+
+            if (!ok) {
+                return ResponseEntity.badRequest()
+                        .body(new Erro("Erro ao deletar material"));
+            }
+
+            return ResponseEntity.ok(true);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Erro(e.getMessage()));
+        } finally {
+            db.desconectar();
+        }
+    }
 }
