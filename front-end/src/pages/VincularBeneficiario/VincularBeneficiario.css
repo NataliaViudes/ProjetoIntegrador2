@@ -1,0 +1,88 @@
+.pagina-agendamentos {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.conteudo-agendamentos {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-formulario,
+.painel-calendario {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+}
+
+.painel-formulario h2,
+.painel-formulario h3 {
+  margin-top: 0;
+}
+
+.painel-formulario label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.painel-formulario input,
+.painel-formulario select,
+.painel-formulario textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.acoes-formulario {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.acoes-formulario button,
+.acoes-item button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.lista-agendamentos {
+  margin-top: 24px;
+}
+
+.item-agendamento {
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acoes-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.painel-calendario .rbc-calendar {
+  background: white;
+  padding: 10px;
+}
+
+@media (max-width: 1100px) {
+  .conteudo-agendamentos {
+    grid-template-columns: 1fr;
+  }
+}
