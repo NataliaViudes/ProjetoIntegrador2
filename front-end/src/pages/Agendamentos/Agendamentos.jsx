@@ -8,6 +8,7 @@ import api from "../../services/api";
 import Menu from "../../components/Menu";
 import "./Agendamentos.css";
 
+
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
@@ -133,16 +134,18 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
     carregarTudo();
     alert(agendamentoEditando ? "Agendamento atualizado com sucesso!" : "Agendamento cadastrado com sucesso!");
   } catch (e) {
-    console.error("Erro ao salvar agendamento:", e);
+  console.error("Erro ao salvar agendamento:", e);
 
-    if (e.response?.data?.mensagem) {
-      alert(e.response.data.mensagem);
-    } else if (e.response?.data) {
-      alert(e.response.data);
-    } else {
-      alert("Erro ao salvar agendamento.");
-    }
+  if (e.response?.data?.mensagem) {
+    alert(e.response.data.mensagem);
+  } else if (e.response?.data?.mensage) {
+    alert(e.response.data.mensage);
+  } else if (e.response?.data) {
+    alert(JSON.stringify(e.response.data));
+  } else {
+    alert("Erro ao salvar agendamento.");
   }
+}
 }
 
   function editar(ag) {
@@ -236,7 +239,20 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
                 <button type="button">Planejar</button>
               </Link>
             )}
-          </div>
+
+            <Link
+              to="/vincular"
+              state={{
+                atividadeId,
+                dataInicio,
+                dataFim,
+                observacao,
+                idAgendamento: agendamentoEditando?.id || null
+              }}
+            >
+              <button type="button">Ir para Vinculação</button>
+            </Link>
+        </div>
 
 
         </section>

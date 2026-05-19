@@ -29,7 +29,23 @@ function Menu() {
           </div>
         </div>
 
-        <button type="button">Relatórios</button>
+        <Link to="/ocorrencias">
+           <button type="button">Ocorrências</button>
+        </Link>
+
+        <div className="menu-dropdown">
+          <button type="button">Relatórios</button>
+
+          <div className="dropdown-conteudo">
+            <Link to="/relatorioOcorrencias">
+              Relatório de Ocorrências
+            </Link>
+
+          </div>
+        </div>
+        
+
+
       </div>
 
       <div className="area-pesquisa-topo">

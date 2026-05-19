@@ -1,15 +1,16 @@
 package pi2.example.back_end.Modelo;
 
-import pi2.example.back_end.DAO.BeneficiarioDAOImpl;
+import pi2.example.back_end.DAO.DAOBeneficiario;
 import pi2.example.back_end.db.Conexao;
 
+import java.sql.Date;
 import java.util.List;
 
 public class Beneficiario {
 
     private Integer id;
     private String nome;
-    private String nascimento;
+    private Date nascimento;
     private Integer idade;
     private String rg;
     private String cpf;
@@ -21,18 +22,27 @@ public class Beneficiario {
     private String telefone;
     private String celular;
     private String celularRecado;
+    //private Familiares familiares;
+
+    //infos gerais - fazer
     private String alergias;
     private String tratamentos;
+    private List<Prescricao> medicamentos;
     private String participacao;
     private String situacao;
 
-    public Beneficiario() {
+
+
+    public Beneficiario(){
+
     }
 
-    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis,
-                        Double renda, String endereco, String bairro, String tipoResidencia, String telefone,
-                        String celular, String celularRecado, String alergias, String tratamentos,
-                        String participacao, String situacao) {
+    public Beneficiario(Integer id) {
+        this.id = id;
+    }
+
+
+    public Beneficiario(Integer id, String nome, Date nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, List<Prescricao> medicamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -49,29 +59,9 @@ public class Beneficiario {
         this.celularRecado = celularRecado;
         this.alergias = alergias;
         this.tratamentos = tratamentos;
+        this.medicamentos = medicamentos;
         this.participacao = participacao;
         this.situacao = situacao;
-    }
-
-    public Beneficiario(Integer id) {
-        this.id = id;
-        this.nome = "";
-        this.nascimento = "";
-        this.idade = null;
-        this.rg = "";
-        this.cpf = "";
-        this.nis = "";
-        this.renda = null;
-        this.endereco = "";
-        this.bairro = "";
-        this.tipoResidencia = "";
-        this.telefone = "";
-        this.celular = "";
-        this.celularRecado = "";
-        this.alergias = "";
-        this.tratamentos = "";
-        this.participacao = "";
-        this.situacao = "";
     }
 
     public Integer getId() {
@@ -90,12 +80,11 @@ public class Beneficiario {
         this.nome = nome;
     }
 
-
-    public String getNascimento() {
+    public Date getNascimento() {
         return nascimento;
     }
 
-    public void setNascimento(String nascimento) {
+    public void setNascimento(Date nascimento) {
         this.nascimento = nascimento;
     }
 
@@ -203,6 +192,14 @@ public class Beneficiario {
         this.tratamentos = tratamentos;
     }
 
+    public List<Prescricao> getMedicamentos() {
+        return medicamentos;
+    }
+
+    public void setMedicamentos(List<Prescricao> medicamentos) {
+        this.medicamentos = medicamentos;
+    }
+
     public String getParticipacao() {
         return participacao;
     }
@@ -219,38 +216,50 @@ public class Beneficiario {
         this.situacao = situacao;
     }
 
-    public Beneficiario incluir(Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
+    public Beneficiario incluir(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
         return dao.gravar(this);
     }
 
-    public Beneficiario alterar(Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
+    public Beneficiario alterar(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
         return dao.alterar(this);
     }
 
-    public boolean apagar(Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
+    public boolean apagar(Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
         return dao.apagar(this);
     }
 
-    public Beneficiario buscarPorId(Integer id, Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
+    public Beneficiario buscarPorId(Integer id, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
         return dao.get(id);
     }
 
-    public Beneficiario buscarPorCpf(String cpf, Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
-        return dao.getByCpf(cpf);
+    public List<Beneficiario> buscarPorNome(String nome, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorNome(nome);
     }
 
-    public List<Beneficiario> buscarTodos(Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
+    public List<Beneficiario> buscarPorCpf(String cpf, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorCpf(cpf);
+    }
+
+    public List<Beneficiario> buscarPorNis(String nis, Conexao con)
+    {
+        DAOBeneficiario dao = new DAOBeneficiario(con);
+        return dao.buscarPorNis(nis);
+    }
+
+    public List<Beneficiario> getAll(Conexao db) {
+        DAOBeneficiario dao = new DAOBeneficiario(db);
         return dao.getAll();
-    }
-
-    public List<Beneficiario> buscarComFiltro(String filtro, Conexao con) {
-        BeneficiarioDAOImpl dao = new BeneficiarioDAOImpl(con);
-        return dao.get(filtro);
     }
 }

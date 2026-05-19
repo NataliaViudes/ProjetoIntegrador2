@@ -5,41 +5,57 @@ import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.BeneficiarioControl;
 import pi2.example.back_end.Modelo.Beneficiario;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
 @RequestMapping("/beneficiarios")
 public class BeneficiarioRestController {
-    private final BeneficiarioControl control = new BeneficiarioControl();
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getId(@PathVariable int id) {
-        return control.getById(id);
-    }
+    private final BeneficiarioControl controll = new BeneficiarioControl();
 
-    @GetMapping("/buscar")
-    public ResponseEntity<?> buscarPorCpf(@RequestParam String cpf) {
-        return control.getByCpf(cpf);
-    }
-
+    // -------------------- GET ALL --------------------
     @GetMapping
-    public ResponseEntity<?> get(@RequestParam(required = false) String filtro) {
-        return control.getAllOrFilter(filtro);
+    public ResponseEntity<?> getAll() {
+        return controll.getAll();
     }
+
+    // -------------------- GET POR ID --------------------
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getId(@PathVariable Integer id) {
+        return controll.getById(id);
+    }
+
+    // -------------------- BUSCAS --------------------
+
+    @GetMapping("/nome")
+    public ResponseEntity<?> getNome(@RequestParam(required = false) String nome) {
+        return controll.buscaPorNome(nome);
+    }
+
+    @GetMapping("/cpf")
+    public ResponseEntity<?> getCpf(@RequestParam(required = false) String cpf) {
+        return controll.buscaPorCpf(cpf);
+    }
+
+    @GetMapping("/nis")
+    public ResponseEntity<?> getNis(@RequestParam(required = false) String nis) {
+        return controll.buscaPorNis(nis);
+    }
+
+
+    // -------------------- CRUD --------------------
 
     @PostMapping
-    public ResponseEntity<?> gravar(@RequestBody Beneficiario beneficiario) {
-        return control.incluir(beneficiario);
+    public ResponseEntity<?> salvar(@RequestBody Beneficiario b) {
+        return controll.incluir(b);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> apagar(@PathVariable int id) {
-        return control.delete(id);
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody Beneficiario b) {
+        return controll.update(b);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> alterar(@PathVariable int id, @RequestBody Beneficiario beneficiario) {
-        beneficiario.setId(id);
-        return control.update(beneficiario);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        return controll.delete(id);
     }
-
 }
