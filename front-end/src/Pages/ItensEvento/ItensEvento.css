@@ -1,0 +1,137 @@
+.itens-container {
+  padding: 20px;
+}
+
+.itens-header button {
+  margin-bottom: 10px;
+}
+
+.itens-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.itens-tabela th {
+  background: #ddd;
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.itens-tabela td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.input-busca {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.input-qtd {
+  width: 70px;
+  padding: 5px;
+}
+
+
+.sugestoes-box {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  width: 100%;
+  z-index: 10;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.sugestao-item {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.sugestao-item:hover {
+  background-color: #f0f0f0;
+}
+
+.sugestoes-box {
+  position: absolute;
+  top: 100%; /*  ESSENCIAL */
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  width: 100%;
+  z-index: 9999; /*  garante aparecer */
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.linha-selecionada {
+  border: 2px solid #4CAF50;
+  background-color: #eaffea;
+}
+
+.input-desabilitado {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.topo-itens {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.acoes-topo {
+  display: flex;
+  gap: 12px;
+}
+
+/* BOTÕES PADRÃO */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-width: 120px; /*  mesmo tamanho */
+  height: 38px;
+
+  padding: 0 12px;
+  border-radius: 8px; /*  borda arredondada */
+  border: 1px solid #8f8f8f;
+
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* VARIAÇÕES */
+.btn-voltar {
+  background-color: #e0e0e0;
+}
+
+.btn-voltar:hover {
+  background-color: #d5d5d5;
+}
+
+.btn-add {
+  background-color: #f0f0f0;
+}
+
+.btn-add:hover {
+  background-color: #e2e2e2;
+}
+
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+  border-color: #3e8e41;
+}
+
+.btn-save:hover {
+  background-color: #43a047;
+}

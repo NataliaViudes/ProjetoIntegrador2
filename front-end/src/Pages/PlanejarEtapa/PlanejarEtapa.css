@@ -1,0 +1,121 @@
+.pagina-planejamento {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.container-planejamento {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 20px;
+}
+
+/* LADO ESQUERDO */
+.painel-info {
+  background: #a6a6a6;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.box {
+  background: #dcdcdc;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #8f8f8f;
+}
+
+/* DIREITA */
+.painel-direito {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* MATERIAL */
+.painel-material {
+  background: #a6a6a6;
+  padding: 15px;
+}
+
+.titulo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.lista-material {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.linha-material {
+  display: flex;
+  gap: 8px;
+}
+
+.linha-material input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #8f8f8f;
+  background: #f5f5f5;
+}
+
+.linha-material button {
+  width: 40px;
+}
+
+/* CRONOGRAMA */
+.painel-cronograma {
+  background: #a6a6a6;
+  padding: 15px;
+}
+
+.lista-cronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.linha-cronograma {
+  display: flex;
+  gap: 8px;
+}
+
+.linha-cronograma input {
+  padding: 8px;
+  border: 1px solid #8f8f8f;
+  background: #f5f5f5;
+}
+
+.linha-cronograma input[type="time"] {
+  width: 100px;
+}
+
+.linha-cronograma input[type="text"] {
+  flex: 1;
+}
+
+/* BOTÕES */
+.btn-pequeno {
+  background: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-confirmar {
+  background: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 10px 20px;
+  cursor: pointer;
+}
