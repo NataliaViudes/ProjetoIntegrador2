@@ -136,6 +136,46 @@ public class DAOFuncionario {
         return funcionario;
     }
 
+    public List<Funcionario> get(String tipo, String filtro) {
+
+        List<Funcionario> lista = new ArrayList<>();
+
+        String sql = "SELECT f.*, c.nome AS nome_cargo " +
+                "FROM funcionario f " +
+                "JOIN cargo c ON f.id_cargo = c.id_cargo ";
+
+        switch (tipo) {
+
+            case "cpf":
+                sql += "WHERE f.cpf LIKE ?";
+                break;
+
+            case "cargo":
+                sql += "WHERE c.nome ILIKE ?";
+                break;
+
+            default:
+                sql += "WHERE f.nome ILIKE ?";
+                break;
+        }
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setString(1, "%" + filtro + "%");
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                lista.add(mapFuncionario(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
     public List<Funcionario> get(String filtro) {
         List<Funcionario> lista = new ArrayList<>();
 
@@ -235,6 +275,27 @@ public class DAOFuncionario {
             } catch (SQLException e) {
                 System.out.println("Erro: " + e);
             }
+        }
+        return lista;
+    }
+
+    public List<Funcionario> buscarPorCargo(Integer cargoId) {
+        List<Funcionario> lista = new ArrayList<>();
+        String sql =
+                "SELECT f.*, c.nome AS nome_cargo " +
+                        "FROM funcionario f " +
+                        "JOIN cargo c ON f.id_cargo = c.id_cargo " +
+                        "WHERE c.id_cargo = ? " +
+                        "ORDER BY f.nome ASC";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, cargoId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                lista.add(mapFuncionario(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return lista;
     }

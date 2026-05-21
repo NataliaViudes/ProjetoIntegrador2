@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import Menu from "../../Components/Menu/Menu";
 import "./Funcionario.css";
 
 function Funcionario() {
 
     const [funcionarios, setFuncionarios] = useState([]);
     const [busca, setBusca] = useState("");
+    const [tipoBusca, setTipoBusca] = useState("nome");
 
     const [tela, setTela] = useState("tabela"); // tabela | detalhes | cadastro
     const [editando, setEditando] = useState(false);
 
     const [cargos, setCargos] = useState([]);
+    const [cargoRelatorio, setCargoRelatorio] = useState("");
 
     const [erros, setErros] = useState({});
 
@@ -29,6 +31,9 @@ function Funcionario() {
 
     useEffect(() => {
         carregar();
+    }, [busca, tipoBusca]);
+
+    useEffect(() => {
         carregarCargos();
     }, []);
 
@@ -43,8 +48,13 @@ function Funcionario() {
 
     async function carregar() {
         try {
-            const resp = await api.get("/funcionarios");
-            setFuncionarios(Array.isArray(resp.data) ? resp.data : []);
+            const resp = await api.get("/funcionarios", {
+                params: {
+                    tipo: tipoBusca,
+                    filtro: busca
+                }
+            });
+            setFuncionarios(resp.data || []);
         } catch (e) {
             console.error(e);
         }
@@ -211,21 +221,101 @@ function Funcionario() {
         carregar();
     }
 
-    const filtrados = funcionarios.filter(f =>
-        f.nome.toLowerCase().includes(busca.toLowerCase())
-    );
+    async function baixarPdf(funcionario) {
+        try {
+            const response = await api.get(
+                `/funcionarios/${funcionario.id}/pdf`,
+                {
+                    responseType: "blob"
+                }
+            );
+
+            const url = window.URL.createObjectURL(
+                new Blob([response.data], {
+                    type: "application/pdf"
+                })
+            );
+            const link = document.createElement("a");
+            link.href = url;
+            const primeiroNome = funcionario.nome.split(" ")[0];
+            link.download = `Relatorio_${primeiroNome}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao gerar PDF");
+        }
+    }
+
+    async function gerarRelatorioCargo() {
+        if (!cargoRelatorio) {
+            alert("Selecione um cargo");
+            return;
+        }
+        try {
+            const cargoSelecionado = cargos.find(
+                c => c.id === Number(cargoRelatorio)
+            );
+            const response = await api.get(`/funcionarios/relatorio/cargo/${cargoRelatorio}`, { responseType: "blob" });
+            const url = window.URL.createObjectURL(
+                new Blob([response.data], {
+                    type: "application/pdf"
+                })
+            );
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute(
+                "download",
+                `Relatorio_${cargoSelecionado?.nome || "Cargo"}.pdf`
+            );
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao gerar relatório");
+        }
+    }
 
     // tela === "tabela" -> tabela de funcionários
     if (tela === "tabela") {
         return (
             <div className="pagina-funcionario" translate="no">
                 <Menu />
-
                 <div className="topo">
-                    <input
-                        placeholder="Buscar funcionário..."
-                        onChange={(e) => setBusca(e.target.value)}
-                    />
+                    <div className="filtro-busca">
+                        <select value={tipoBusca} onChange={(e) => setTipoBusca(e.target.value)}>
+                            <option value="nome">Nome</option>
+                            <option value="cpf">CPF</option>
+                            <option value="cargo">Cargo</option>
+                        </select>
+
+                        <input
+                            placeholder={`Buscar por ${tipoBusca}...`}
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                        />
+
+                    </div>
+
+                    <div className="relatorio-cargo">
+
+                        <select value={cargoRelatorio} onChange={(e) => setCargoRelatorio(e.target.value)}>
+                            <option value="">Selecione um cargo</option>
+                            {cargos.map(c => (
+                                <option key={c.id} value={c.id}>
+                                    {c.nome}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button onClick={gerarRelatorioCargo}>
+                            Gerar Relatório
+                        </button>
+                    </div>
+
                 </div>
 
                 <div className="tabela">
@@ -239,13 +329,14 @@ function Funcionario() {
                         </thead>
 
                         <tbody>
-                            {filtrados.map(f => (
+                            {funcionarios.map(f => (
                                 <tr key={f.id}>
                                     <td>{f.nome}</td>
                                     <td>{f.cargo?.nome}</td>
                                     <td>
                                         <button onClick={() => verDetalhes(f)}>Ver</button>
                                         <button onClick={() => deletar(f.id)}>Desligar</button>
+                                        <button onClick={() => baixarPdf(f)}>Relatório</button>
                                     </td>
                                 </tr>
                             ))}
