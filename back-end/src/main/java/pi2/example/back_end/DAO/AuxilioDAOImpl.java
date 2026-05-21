@@ -9,6 +9,8 @@ import pi2.example.back_end.db.Conexao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,34 +21,50 @@ public class AuxilioDAOImpl {
         this.bd = bd;
     }
 
+    private Timestamp converterTimestamp(String dataHora) {
+        if (dataHora == null || dataHora.isEmpty()) return null;
+
+        String valor = dataHora.replace("T", " ");
+        if (valor.length() == 16) valor += ":00";
+
+        return Timestamp.valueOf(valor);
+    }
+
     public Auxilio gravar(Auxilio entidade) {
-        String sql = "INSERT INTO auxilio (descricao, id_beneficiario, id_categoria) VALUES (?,?,?)";
+        String sql = "INSERT INTO auxilio (descricao, data, status, id_beneficiario, id_categoria) VALUES (?,?,?,?,?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
+
             stmt.setString(1, entidade.getDescricao());
-            stmt.setInt(2, entidade.getBeneficiario().getId());
-            stmt.setInt(3, entidade.getCategoria().getId());
+            stmt.setDate(2, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setString(3, "Processando");
+            stmt.setInt(4, entidade.getBeneficiario().getId());
+            stmt.setInt(5, entidade.getCategoria().getId());
+
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 entidade.setId(rs.getInt(1));
             }
-
+            entidade.setStatus("Processando");
+            entidade.setData(LocalDate.now().toString());
             return entidade;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir auxílio", e);
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao inserir auxílio", e);
         }
     }
 
     public Auxilio alterar(Auxilio entidade) {
-        String sql = "UPDATE auxilio SET descricao = ?, id_beneficiario = ?, id_categoria = ? WHERE id = ?";
+        String sql = "UPDATE auxilio SET descricao = ?, status = ?, id_beneficiario = ?, id_categoria = ? WHERE id = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
             stmt.setString(1, entidade.getDescricao());
-            stmt.setInt(2, entidade.getBeneficiario().getId());
-            stmt.setInt(3, entidade.getCategoria().getId());
-            stmt.setInt(4, entidade.getId());
+            stmt.setString(2, entidade.getStatus());
+            stmt.setInt(3, entidade.getBeneficiario().getId());
+            stmt.setInt(4, entidade.getCategoria().getId());
+            stmt.setInt(5, entidade.getId());
 
             stmt.executeUpdate();
             return entidade;
@@ -81,6 +99,8 @@ public class AuxilioDAOImpl {
         Auxilio auxilio = new Auxilio();
         auxilio.setId(rs.getInt("id"));
         auxilio.setDescricao(rs.getString("descricao"));
+        auxilio.setData(rs.getString("data"));
+        auxilio.setStatus(rs.getString("status"));
         auxilio.setBeneficiario(beneficiario);
         auxilio.setCategoria(categoria);
 
@@ -91,7 +111,7 @@ public class AuxilioDAOImpl {
         Auxilio auxilio = null;
 
         String sql = """
-            SELECT a.id, a.descricao,
+            SELECT a.id, a.descricao, a.data, a.status,
                    b.id AS id_beneficiario, b.nome AS nome_beneficiario, b.cpf,
                    c.id AS id_categoria, c.nome AS nome_categoria
             FROM auxilio a
@@ -118,7 +138,7 @@ public class AuxilioDAOImpl {
         List<Auxilio> lista = new ArrayList<>();
 
         String sql = """
-            SELECT a.id, a.descricao,
+            SELECT a.id, a.descricao, a.data, a.status,
                    b.id AS id_beneficiario, b.nome AS nome_beneficiario, b.cpf,
                    c.id AS id_categoria, c.nome AS nome_categoria
             FROM auxilio a
@@ -146,7 +166,7 @@ public class AuxilioDAOImpl {
         List<Auxilio> lista = new ArrayList<>();
 
         String sql = """
-            SELECT a.id, a.descricao,
+            SELECT a.id, a.descricao, a.data, a.status,
                    b.id AS id_beneficiario, b.nome AS nome_beneficiario, b.cpf,
                    c.id AS id_categoria, c.nome AS nome_categoria
             FROM auxilio a

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../Services/api";
 import "./PlanejarEtapa.css";
-import Menu from "../../Components/Menu/Menu.jsx";
+
 function PlanejarEtapa() {
     const { id } = useParams();
 

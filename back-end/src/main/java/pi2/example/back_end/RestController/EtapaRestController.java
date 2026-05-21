@@ -8,7 +8,7 @@ import pi2.example.back_end.Modelo.Etapa;
 
 @RestController
 @RequestMapping("/etapas")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EtapaRestController {
     private final EtapaControl control = new EtapaControl();
 
@@ -18,17 +18,17 @@ public class EtapaRestController {
     }
 
     @GetMapping("/{idAgendamento}")
-    public ResponseEntity<?> listar(@PathVariable("idAgendamento") int idAgendamento) {
+    public ResponseEntity<?> listar(@PathVariable(value = "idAgendamento") int idAgendamento) {
         return control.listarPorAgendamento(idAgendamento);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> excluir(@PathVariable("id") int id) {
+    public ResponseEntity<?> excluir(@PathVariable(value = "id") int id) {
         return control.excluir(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable("id") int id,@RequestBody Etapa etapa) {
+    public ResponseEntity<?> atualizar(@PathVariable(value = "id") int id,@RequestBody Etapa etapa) {
         etapa.setId(id);
         return control.atualizar(etapa);
     }

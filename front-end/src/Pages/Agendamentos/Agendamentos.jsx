@@ -27,7 +27,7 @@ function Agendamentos() {
   const [viewAtual, setViewAtual] = useState("week");
 
   const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
-const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
+  const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
 
   useEffect(() => {
     carregarTudo();
@@ -80,73 +80,73 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
     return new Date(data.replace(" ", "T"));
   }
 
- async function salvar() {
-  if (!atividadeId || !dataInicio || !dataFim) {
-    alert("Preencha atividade, data e hora inicial e data e hora final.");
-    return;
-  }
-
-  const inicio = new Date(dataInicio);
-  const fim = new Date(dataFim);
-  const agora = new Date();
-
-  if (inicio < agora) {
-    alert("Não é possível cadastrar agendamento em data ou horário que já passou.");
-    return;
-  }
-
-  if (fim <= inicio) {
-    alert("A data final deve ser maior que a data inicial.");
-    return;
-  }
-
-  const conflito = agendamentos.some((ag) => {
-    if (agendamentoEditando && ag.id === agendamentoEditando.id) {
-      return false;
+  async function salvar() {
+    if (!atividadeId || !dataInicio || !dataFim) {
+      alert("Preencha atividade, data e hora inicial e data e hora final.");
+      return;
     }
 
-    const inicioExistente = parseData(ag.dataInicio);
-    const fimExistente = parseData(ag.dataFim);
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const agora = new Date();
 
-    return inicio < fimExistente && fim > inicioExistente;
-  });
-
-  if (conflito) {
-    alert("Já existe um agendamento nesse intervalo de horário.");
-    return;
-  }
-
-  const payload = {
-    atividade: { id: Number(atividadeId) },
-    dataInicio: dataInicio + ":00",
-    dataFim: dataFim + ":00",
-    observacao: observacao
-  };
-
-  try {
-    if (agendamentoEditando) {
-      await api.put(`/agendamentos/${agendamentoEditando.id}`, payload);
-    } else {
-      await api.post("/agendamentos", payload);
+    if (inicio < agora) {
+      alert("Não é possível cadastrar agendamento em data ou horário que já passou.");
+      return;
     }
 
-    limparFormulario();
-    carregarTudo();
-    alert(agendamentoEditando ? "Agendamento atualizado com sucesso!" : "Agendamento cadastrado com sucesso!");
-  } catch (e) {
-  console.error("Erro ao salvar agendamento:", e);
+    if (fim <= inicio) {
+      alert("A data final deve ser maior que a data inicial.");
+      return;
+    }
 
-  if (e.response?.data?.mensagem) {
-    alert(e.response.data.mensagem);
-  } else if (e.response?.data?.mensage) {
-    alert(e.response.data.mensage);
-  } else if (e.response?.data) {
-    alert(JSON.stringify(e.response.data));
-  } else {
-    alert("Erro ao salvar agendamento.");
+    const conflito = agendamentos.some((ag) => {
+      if (agendamentoEditando && ag.id === agendamentoEditando.id) {
+        return false;
+      }
+
+      const inicioExistente = parseData(ag.dataInicio);
+      const fimExistente = parseData(ag.dataFim);
+
+      return inicio < fimExistente && fim > inicioExistente;
+    });
+
+    if (conflito) {
+      alert("Já existe um agendamento nesse intervalo de horário.");
+      return;
+    }
+
+    const payload = {
+      atividade: { id: Number(atividadeId) },
+      dataInicio: dataInicio + ":00",
+      dataFim: dataFim + ":00",
+      observacao: observacao
+    };
+
+    try {
+      if (agendamentoEditando) {
+        await api.put(`/agendamentos/${agendamentoEditando.id}`, payload);
+      } else {
+        await api.post("/agendamentos", payload);
+      }
+
+      limparFormulario();
+      carregarTudo();
+      alert(agendamentoEditando ? "Agendamento atualizado com sucesso!" : "Agendamento cadastrado com sucesso!");
+    } catch (e) {
+      console.error("Erro ao salvar agendamento:", e);
+
+      if (e.response?.data?.mensagem) {
+        alert(e.response.data.mensagem);
+      } else if (e.response?.data?.mensage) {
+        alert(e.response.data.mensage);
+      } else if (e.response?.data) {
+        alert(JSON.stringify(e.response.data));
+      } else {
+        alert("Erro ao salvar agendamento.");
+      }
+    }
   }
-}
-}
 
   function editar(ag) {
     setAgendamentoEditando(ag);
@@ -174,22 +174,22 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
     }
   }
 
- function selecionarEvento(evento) {
-  setAgendamentoSelecionado(evento.resource);
-  setMostrarOpcoes(true);
-}
-
-  function selecionarSlot(slotInfo) {
-  const agora = new Date();
-
-  if (slotInfo.start < agora) {
-    alert("Não é possível selecionar uma data ou horário que já passou.");
-    return;
+  function selecionarEvento(evento) {
+    setAgendamentoSelecionado(evento.resource);
+    setMostrarOpcoes(true);
   }
 
-  setDataInicio(formatarDatetimeLocal(slotInfo.start));
-  setDataFim(formatarDatetimeLocal(slotInfo.end));
-}
+  function selecionarSlot(slotInfo) {
+    const agora = new Date();
+
+    if (slotInfo.start < agora) {
+      alert("Não é possível selecionar uma data ou horário que já passou.");
+      return;
+    }
+
+    setDataInicio(formatarDatetimeLocal(slotInfo.start));
+    setDataFim(formatarDatetimeLocal(slotInfo.end));
+  }
   return (
     <div className="pagina-agendamentos" translate="no">
       <Menu />
@@ -233,27 +233,7 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
-
-            {agendamentoEditando && (
-              <Link to={`/planejar-etapa/${agendamentoEditando.id}`}>
-                <button type="button">Planejar</button>
-              </Link>
-            )}
-
-            <Link
-              to="/vincular"
-              state={{
-                atividadeId,
-                dataInicio,
-                dataFim,
-                observacao,
-                idAgendamento: agendamentoEditando?.id || null
-              }}
-            >
-              <button type="button">Ir para Vinculação</button>
-            </Link>
-        </div>
-
+          </div>
 
         </section>
 
@@ -293,51 +273,70 @@ const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
       </div>
 
       {mostrarOpcoes && agendamentoSelecionado && (
-  <div className="modal-overlay">
-    <div className="modal-opcoes">
+        <div className="modal-overlay">
+          <div className="modal-opcoes">
 
-      <h3>Agendamento</h3>
+            <h3>Agendamento</h3>
 
-      <p>
-        <strong>Atividade:</strong>{" "}
-        {agendamentoSelecionado.atividade?.descricao}
-      </p>
+            <p>
+              <strong>Atividade:</strong>{" "}
+              {agendamentoSelecionado.atividade?.descricao}
+            </p>
 
-      <p>
-        <strong>Funcionário:</strong>{" "}
-        {agendamentoSelecionado.atividade?.funcionario?.nome}
-      </p>
+            <p>
+              <strong>Funcionário:</strong>{" "}
+              {agendamentoSelecionado.atividade?.funcionario?.nome}
+            </p>
 
-      <div className="acoes-modal">
+            <div className="acoes-modal">
 
-        <button
-          onClick={() => {
-            editar(agendamentoSelecionado);
-            setMostrarOpcoes(false);
-          }}
-        >
-          Editar
-        </button>
+              <button
+                onClick={() => {
+                  editar(agendamentoSelecionado);
+                  setMostrarOpcoes(false);
+                }}
+              >
+                Editar
+              </button>
 
-        <button
-          onClick={() => {
-            excluir(agendamentoSelecionado.id);
-            setMostrarOpcoes(false);
-          }}
-        >
-          Excluir
-        </button>
+              <button
+                onClick={() => {
+                  excluir(agendamentoSelecionado.id);
+                  setMostrarOpcoes(false);
+                }}
+              >
+                Excluir
+              </button>
 
-        <button
-          onClick={() => setMostrarOpcoes(false)}
-        >
-          Fechar
-        </button>
+              <button
+                onClick={() => setMostrarOpcoes(false)}
+              >
+                Fechar
+              </button>
+            </div>
+            <div className="acoes-links">
 
-      </div>
-    </div>
-  </div>
-)}
+              <Link to={`/planejar-etapa/${agendamentoSelecionado.id}`}>
+                <button type="button">Planejar</button>
+              </Link>
+
+              <Link
+                to="/vincular"
+                state={{
+                  atividadeId: agendamentoSelecionado.atividade?.id,
+                  dataInicio: agendamentoSelecionado.dataInicio,
+                  dataFim: agendamentoSelecionado.dataFim,
+                  observacao: agendamentoSelecionado.observacao,
+                  idAgendamento: agendamentoSelecionado.id
+                }}
+              >
+                <button>Ir para Vinculação</button>
+              </Link>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

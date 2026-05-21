@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import Menu from "../../Components/Menu/Menu";
 import "./Auxilios.css";
 
 function Auxilios() {
@@ -10,6 +10,8 @@ function Auxilios() {
   const [categorias, setCategorias] = useState([]);
   const [categoriaId, setCategoriaId] = useState("");
   const [descricao, setDescricao] = useState("");
+
+  const [filtroStatus, setFiltroStatus] = useState("Todos");
 
   const [auxilios, setAuxilios] = useState([]);
   const [buscaListaCpf, setBuscaListaCpf] = useState("");
@@ -41,12 +43,15 @@ function Auxilios() {
     }
 
     try {
-      const resp = await api.get(`/beneficiarios/buscar?cpf=${cpfBusca}`);
-      setBeneficiario(resp.data);
+      const resp = await api.get(`/beneficiarios/cpf?cpf=${cpfBusca}`);
 
-      if (!resp.data) {
+      if (Array.isArray(resp.data) && resp.data.length > 0) {
+        setBeneficiario(resp.data[0]);
+      } else {
+        setBeneficiario(null);
         alert("Beneficiário não encontrado.");
       }
+
     } catch (error) {
       console.error("Erro ao buscar beneficiário:", error);
       setBeneficiario(null);
@@ -73,10 +78,7 @@ function Auxilios() {
 
     try {
       if (auxilioEditando) {
-        await api.put("/auxilios", {
-          id: auxilioEditando.id,
-          ...payload
-        });
+        await api.put(`/auxilios/${auxilioEditando.id}`, payload);
       } else {
         await api.post("/auxilios", payload);
       }
@@ -89,6 +91,40 @@ function Auxilios() {
     }
   }
 
+  async function alterarStatus(novoStatus) {
+
+    if (!auxilioEditando) return;
+
+    const confirmar = window.confirm(
+      `Tem certeza que deseja ${novoStatus.toLowerCase()} este auxílio?\n\nApós isso ele não poderá mais ser alterado.`
+    );
+
+    if (!confirmar) return;
+
+    const payload = {
+      descricao: descricao,
+      status: novoStatus,
+      beneficiario: { id: Number(beneficiario.id) },
+      categoria: { id: Number(categoriaId) }
+    };
+
+    try {
+
+      await api.put(`/auxilios/${auxilioEditando.id}`, payload);
+
+      alert(`Auxílio ${novoStatus.toLowerCase()} com sucesso!`);
+
+      limparFormulario();
+      carregarTudo();
+
+    } catch (error) {
+
+      console.error(`Erro ao ${novoStatus.toLowerCase()} auxílio:`, error);
+
+      alert(`Erro ao ${novoStatus.toLowerCase()} auxílio.`);
+    }
+  }
+
   function editarAuxilio(auxilio) {
     setAuxilioEditando(auxilio);
     setDescricao(auxilio.descricao || "");
@@ -98,7 +134,15 @@ function Auxilios() {
   }
 
   async function excluirAuxilio(id) {
+
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir este auxílio?"
+    );
+
+    if (!confirmar) return;
+
     try {
+
       await api.delete(`/auxilios/${id}`);
 
       if (auxilioEditando && auxilioEditando.id === id) {
@@ -106,8 +150,13 @@ function Auxilios() {
       }
 
       carregarTudo();
+
+      alert("Auxílio excluído com sucesso!");
+
     } catch (error) {
+
       console.error("Erro ao excluir auxílio:", error);
+
       alert("Erro ao excluir auxílio.");
     }
   }
@@ -121,8 +170,18 @@ function Auxilios() {
   }
 
   const auxiliosFiltrados = auxilios.filter((auxilio) => {
+
     const cpf = auxilio.beneficiario?.cpf || "";
-    return cpf.includes(buscaListaCpf);
+    const status = auxilio.status || "Processando";
+
+    const filtroCpf = cpf.includes(buscaListaCpf);
+
+    const filtroStatusValido =
+      filtroStatus === "Todos"
+        ? true
+        : status === filtroStatus;
+
+    return filtroCpf && filtroStatusValido;
   });
 
   return (
@@ -177,52 +236,148 @@ function Auxilios() {
           />
 
           <div className="acoes-formulario">
+
             <button onClick={salvarOuAtualizar}>
               {auxilioEditando ? "Atualizar" : "Confirmar"}
             </button>
+
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
+
+            {auxilioEditando && (
+              <>
+                <button
+                  type="button"
+                  className="botao-aprovar"
+                  onClick={() => alterarStatus("Aprovado")}
+                >
+                  Aprovar
+                </button>
+
+                <button
+                  type="button"
+                  className="botao-rejeitar"
+                  onClick={() => alterarStatus("Rejeitado")}
+                >
+                  Rejeitar
+                </button>
+              </>
+            )}
+
           </div>
         </section>
 
         <section className="painel-direito">
           <div className="cabecalho-lista">
+
             <h2>Auxílios cadastrados</h2>
+
+            <div className="filtros-status">
+
+              <button onClick={() => setFiltroStatus("Todos")}>
+                Todos
+              </button>
+
+              <button onClick={() => setFiltroStatus("Processando")}>
+                Processando
+              </button>
+
+              <button onClick={() => setFiltroStatus("Aprovado")}>
+                Aprovados
+              </button>
+
+              <button onClick={() => setFiltroStatus("Rejeitado")}>
+                Rejeitados
+              </button>
+
+            </div>
+
             <input
               type="text"
               placeholder="Buscar auxílio por CPF..."
               value={buscaListaCpf}
               onChange={(e) => setBuscaListaCpf(e.target.value)}
             />
+
           </div>
 
           <div className="lista-auxilios">
-            {auxiliosFiltrados.length === 0 ? (
-              <p>Nenhum auxílio encontrado.</p>
-            ) : (
-              auxiliosFiltrados.map((auxilio) => (
-                <div className="item-auxilio" key={auxilio.id}>
-                  <div className="info-auxilio">
-                    <strong>{auxilio.descricao}</strong>
-                    <span>
-                      Beneficiário: {auxilio.beneficiario?.nome || "Não informado"}
-                    </span>
-                    <span>
-                      CPF: {auxilio.beneficiario?.cpf || "Não informado"}
-                    </span>
-                    <span>
-                      Categoria: {auxilio.categoria?.nome || "Não informada"}
-                    </span>
+            {auxiliosFiltrados.map((auxilio) => {
+
+              const status = auxilio.status || "Processando";
+
+              const bloqueado =
+                status === "Aprovado" || status === "Rejeitado";
+
+              return (
+                <div
+                  className={`item-auxilio ${status === "Aprovado"
+                    ? "auxilio-aprovado"
+                    : status === "Rejeitado"
+                      ? "auxilio-rejeitado"
+                      : ""
+                    }`}
+                  key={auxilio.id}
+                >
+
+                  <div className="topo-auxilio">
+
+                    <div className="info-resumida">
+
+                      <span>
+                        <strong>Beneficiário:</strong>{" "}
+                        {auxilio.beneficiario?.nome || "Não informado"}
+                      </span>
+
+                      <span>
+                        <strong>CPF:</strong>{" "}
+                        {auxilio.beneficiario?.cpf || "Não informado"}
+                      </span>
+
+                      <span>
+                        <strong>Categoria:</strong>{" "}
+                        {auxilio.categoria?.nome || "Não informada"}
+                      </span>
+
+                      <span>
+                        <strong>Data:</strong>{" "}
+                        {
+                          auxilio.data
+                            ? new Date(auxilio.data).toLocaleDateString()
+                            : "Não informada"
+                        }
+                      </span>
+
+                      <span>
+                        <strong>Status:</strong>{" "}
+                        {status}
+                      </span>
+
+                    </div>
+
+                    <div className="botoes-item">
+                      {!bloqueado && (
+                        <>
+                          <button onClick={() => editarAuxilio(auxilio)}>
+                            Editar
+                          </button>
+                        </>
+                      )}
+                      <button onClick={() => excluirAuxilio(auxilio.id)}>
+                        Excluir
+                      </button>
+                    </div>
+
                   </div>
 
-                  <div className="botoes-item">
-                    <button onClick={() => editarAuxilio(auxilio)}>Editar</button>
-                    <button onClick={() => excluirAuxilio(auxilio.id)}>Excluir</button>
+                  <div className="descricao-auxilio">
+                    {auxilio.descricao}
                   </div>
+
                 </div>
-              ))
-            )}
+              );
+            })}
           </div>
         </section>
       </main>
