@@ -1,0 +1,158 @@
+//SQLS ATUALIZADOS
+
+CREATE TABLE categoria (
+    id_categoria SERIAL,
+    nome VARCHAR(100) NOT NULL,
+
+    CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+    CONSTRAINT un_categoria_nome UNIQUE (nome)
+);
+
+CREATE TABLE funcionario (
+    id_funcionario SERIAL,
+    nome VARCHAR(100) NOT NULL,
+    cpf CHAR(11) NOT NULL,
+    telefone VARCHAR(15),
+    nis CHAR(11) NOT NULL,
+    nascimento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(200),
+    cargo VARCHAR(50),
+
+    CONSTRAINT pk_funcionario PRIMARY KEY (id_funcionario),
+    CONSTRAINT un_cpf UNIQUE (cpf),
+    CONSTRAINT un_nis UNIQUE (nis),
+
+    CONSTRAINT chk_sexo CHECK (sexo IN ('M', 'F', 'O')),
+    CONSTRAINT chk_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_nis_format CHECK (nis ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_telefone_format CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$')
+);
+
+CREATE TABLE atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('João Silva', '12345678901', '18999999999', '11111111111', '1990-05-10', 'M', 'Rua A, 123', 'Gerente');
+
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Maria Oliveira', '98765432100', '18988888888', '22222222222', '1985-08-20', 'F', 'Rua B, 456', 'Analista');
+
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Carlos Souza', '11122233344', '18977777777', '33333333333', '1992-12-01', 'M', 'Rua C, 789', 'Supervisor');
+
+INSERT INTO funcionario (nome, cpf, telefone, nis, nascimento, sexo, endereco, cargo)
+VALUES ('Ana Costa', '55566677788', '18966666666', '44444444444', '1998-03-15', 'F', 'Rua D, 321', 'Assistente');
+
+INSERT INTO categoria (nome) VALUES
+('Educação'),
+('Saúde'),
+('Esporte'),
+('Cultura'),
+('Assistência Social');
+
+INSERT INTO atividade (descricao, id_categoria, id_funcionario) VALUES
+('Oficina de leitura para crianças', 1, 2),
+('Palestra sobre saúde preventiva', 2, 3),
+('Treinamento funcional em grupo', 3, 4),
+('Reforço escolar de matemática', 1, 2),
+('Roda de conversa sobre bem-estar', 2, 3),
+('Campeonato recreativo interno', 3, 4);
+
+
+
+CREATE TABLE beneficiario (
+    id SERIAL,
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE,
+    idade INTEGER,
+    rg VARCHAR(20),
+    cpf CHAR(11),
+    nis CHAR(11),
+    renda NUMERIC(10,2),
+    endereco VARCHAR(200),
+    bairro VARCHAR(100),
+    tipo_residencia VARCHAR(50),
+    telefone VARCHAR(15),
+    celular VARCHAR(15),
+    celular_recado VARCHAR(15),
+
+    CONSTRAINT pk_beneficiario PRIMARY KEY (id),
+    CONSTRAINT un_beneficiario_cpf UNIQUE (cpf),
+    CONSTRAINT un_beneficiario_nis UNIQUE (nis),
+
+    CONSTRAINT chk_beneficiario_cpf_format
+        CHECK (cpf IS NULL OR cpf ~ '^[0-9]{11}$'),
+
+    CONSTRAINT chk_beneficiario_nis_format
+        CHECK (nis IS NULL OR nis ~ '^[0-9]{11}$'),
+
+    CONSTRAINT chk_beneficiario_telefone_format
+        CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$'),
+
+    CONSTRAINT chk_beneficiario_celular_format
+        CHECK (celular IS NULL OR celular ~ '^[0-9]+$'),
+
+    CONSTRAINT chk_beneficiario_celular_recado_format
+        CHECK (celular_recado IS NULL OR celular_recado ~ '^[0-9]+$')
+);
+
+
+CREATE TABLE auxilio (
+    id SERIAL,
+    descricao TEXT NOT NULL,
+    id_beneficiario INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
+
+    CONSTRAINT pk_auxilio PRIMARY KEY (id),
+
+    CONSTRAINT fk_auxilio_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auxilio_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_auxilio(id)
+);
+
+CREATE TABLE categoria_auxilio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO categoria_auxilio (nome) VALUES
+('Ajuda Financeira'),
+('Doença'),
+('Moradia'),
+('Alimentação'),
+('Transporte'),
+('Educação');
+
+INSERT INTO beneficiario
+(nome, nascimento, idade, rg, cpf, nis, renda, endereco, bairro, tipo_residencia, telefone, celular, celular_recado)
+VALUES
+('João Silva', '1990-05-10', 34, '1234567', '12345678901', '11111111111', 1500.00, 'Rua A, 123', 'Centro', 'Própria', '18999990000', '18988880000', '18977770000'),
+
+('Maria Oliveira', '1985-08-20', 39, '7654321', '98765432100', '22222222222', 2000.00, 'Rua B, 456', 'Jardim', 'Alugada', '18999991111', '18988881111', '18977771111'),
+
+('Carlos Souza', '2000-01-15', 24, '1122334', '45678912300', '33333333333', 800.00, 'Rua C, 789', 'Vila Nova', 'Cedida', '18999992222', '18988882222', '18977772222'),
+
+('Ana Santos', '1995-12-01', 29, '5566778', '78912345600', '44444444444', 1200.00, 'Rua D, 321', 'Centro', 'Própria', '18999993333', '18988883333', '18977773333'),
+
+('Pedro Lima', '1978-03-25', 46, '9988776', '32165498700', '55555555555', 3000.00, 'Rua E, 654', 'Industrial', 'Alugada', '18999994444', '18988884444', '18977774444');
+
