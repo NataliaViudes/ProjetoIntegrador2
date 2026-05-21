@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api";
+import Menu from "../../components/Menu";
 import "./Ocorrencia.css";
 
 function Ocorrencias() {
