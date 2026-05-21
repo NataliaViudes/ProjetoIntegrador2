@@ -1,0 +1,329 @@
+-- =========================================
+-- CATEGORIA DE ATIVIDADE
+-- =========================================
+
+DROP TABLE IF EXISTS categoria_atividade CASCADE;
+
+CREATE TABLE categoria_atividade (
+    id_categoria SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO categoria_atividade (nome) VALUES
+('Esporte'),
+('Educação'),
+('Cultura'),
+('Lazer'),
+('Oficina');
+
+
+-- =========================================
+-- CATEGORIA DE AUXÍLIO
+-- =========================================
+
+DROP TABLE IF EXISTS categoria_auxilio CASCADE;
+
+CREATE TABLE categoria_auxilio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO categoria_auxilio (nome) VALUES
+('Cesta Básica'),
+('Auxílio Financeiro'),
+('Medicamentos'),
+('Material Escolar'),
+('Auxílio Alimentação');
+
+
+-- =========================================
+-- BENEFICIÁRIO
+-- =========================================
+
+DROP TABLE IF EXISTS beneficiario CASCADE;
+
+CREATE TABLE beneficiario (
+    id SERIAL,
+
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE NOT NULL,
+    idade INTEGER,
+
+    rg VARCHAR(20),
+    cpf CHAR(11) NOT NULL,
+    nis CHAR(11),
+
+    renda NUMERIC(10,2),
+
+    endereco VARCHAR(200),
+    bairro VARCHAR(100),
+    tipo_residencia VARCHAR(50),
+
+    telefone VARCHAR(15),
+    celular VARCHAR(15),
+    celular_recado VARCHAR(15),
+
+    alergias VARCHAR(255),
+    tratamentos VARCHAR(255),
+
+    participacao VARCHAR(100),
+    situacao VARCHAR(50),
+
+    CONSTRAINT pk_beneficiario PRIMARY KEY (id),
+
+    CONSTRAINT un_beneficiario_cpf UNIQUE (cpf),
+    CONSTRAINT un_beneficiario_nis UNIQUE (nis),
+
+    CONSTRAINT chk_beneficiario_cpf_format CHECK (cpf ~ '^[0-9]{11}$'),
+    CONSTRAINT chk_beneficiario_nis_format CHECK (nis IS NULL OR nis ~ '^[0-9]{11}$'),
+
+    CONSTRAINT chk_beneficiario_telefone CHECK (telefone IS NULL OR telefone ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular CHECK (celular IS NULL OR celular ~ '^[0-9]+$'),
+    CONSTRAINT chk_beneficiario_celular_recado CHECK (celular_recado IS NULL OR celular ~ '^[0-9]+$')
+);
+
+INSERT INTO beneficiario (
+    nome,
+    nascimento,
+    idade,
+    rg,
+    cpf,
+    nis,
+    renda,
+    endereco,
+    bairro,
+    tipo_residencia,
+    telefone,
+    celular,
+    celular_recado,
+    alergias,
+    tratamentos,
+    participacao,
+    situacao
+)
+VALUES
+(
+    'Maria Silva',
+    '1985-04-12',
+    40,
+    '456789123',
+    '12345678901',
+    '12345678901',
+    1200.00,
+    'Rua das Flores, 120',
+    'Centro',
+    'Alugada',
+    '1832654789',
+    '18999998888',
+    '18999997777',
+    'Nenhuma',
+    'Hipertensão',
+    'SCFV',
+    'Ativo'
+),
+
+(
+    'João Pereira',
+    '1992-09-20',
+    32,
+    '987654321',
+    '98765432100',
+    '98765432100',
+    850.00,
+    'Av. Brasil, 450',
+    'Vila Nova',
+    'Própria',
+    '1832547896',
+    '18988887777',
+    '18988886666',
+    'Lactose',
+    'Nenhum',
+    'Auxílio Alimentação',
+    'Ativo'
+),
+
+(
+    'Ana Souza',
+    '2001-01-05',
+    24,
+    '123123123',
+    '11122233344',
+    '11122233344',
+    600.00,
+    'Rua A, 50',
+    'Jardim Primavera',
+    'Cedida',
+    '1833334444',
+    '18977776666',
+    '18977775555',
+    'Glúten',
+    'Asma',
+    'SCFV',
+    'Ativo'
+);
+
+
+-- =========================================
+-- AGENDAMENTO DE ATIVIDADE
+-- =========================================
+
+DROP TABLE IF EXISTS agendamento_atividade CASCADE;
+
+CREATE TABLE agendamento_atividade (
+    id SERIAL PRIMARY KEY,
+
+    id_atividade INTEGER NOT NULL,
+
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP NOT NULL,
+
+    observacao TEXT,
+
+    CONSTRAINT fk_agendamento_atividade
+        FOREIGN KEY (id_atividade)
+        REFERENCES atividade(id_atividade)
+        ON DELETE CASCADE
+);
+
+
+-- =========================================
+-- AUXÍLIO
+-- =========================================
+
+DROP TABLE IF EXISTS auxilio CASCADE;
+
+CREATE TABLE auxilio (
+    id SERIAL,
+
+    descricao TEXT NOT NULL,
+    data DATE NOT NULL,
+    status VARCHAR(10),
+
+    id_beneficiario INTEGER NOT NULL,
+    id_categoria INTEGER NOT NULL,
+
+    CONSTRAINT pk_auxilio PRIMARY KEY (id),
+
+    CONSTRAINT fk_auxilio_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auxilio_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria_auxilio(id)
+);
+
+INSERT INTO auxilio (
+    descricao,
+    data,
+    status,
+    id_beneficiario,
+    id_categoria
+)
+VALUES
+(
+    'Entrega de cesta básica mensal',
+    CURRENT_DATE,
+    'ATIVO',
+    1,
+    1
+),
+
+(
+    'Auxílio para compra de medicamentos',
+    CURRENT_DATE,
+    'ATIVO',
+    2,
+    3
+),
+
+(
+    'Entrega de material escolar',
+    CURRENT_DATE,
+    'ATIVO',
+    3,
+    4
+);
+
+
+-- =========================================
+-- VINCULAR BENEFICIÁRIO
+-- =========================================
+
+DROP TABLE IF EXISTS vincularbeneficiario CASCADE;
+
+CREATE TABLE vincularbeneficiario (
+    idAgendamento INTEGER NOT NULL,
+    idBeneficiario INTEGER NOT NULL,
+
+    CONSTRAINT pk_vb_agendamento
+        PRIMARY KEY (idAgendamento, idBeneficiario),
+
+    CONSTRAINT fk_vb_agendamento
+        FOREIGN KEY (idAgendamento)
+        REFERENCES agendamento_atividade(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_vb_beneficiario
+        FOREIGN KEY (idBeneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
+);
+
+
+-- =========================================
+-- OCORRÊNCIA DE ATIVIDADE
+-- =========================================
+
+DROP TABLE IF EXISTS ocorrencia_atividade CASCADE;
+
+CREATE TABLE ocorrencia_atividade (
+    id SERIAL PRIMARY KEY,
+
+    id_agendamento INTEGER NOT NULL,
+    id_beneficiario INTEGER,
+
+    tipo VARCHAR(20) NOT NULL,
+    observacao TEXT NOT NULL,
+
+    data_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ocorrencia_agendamento
+        FOREIGN KEY (id_agendamento)
+        REFERENCES agendamento_atividade(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_ocorrencia_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT chk_tipo_ocorrencia
+        CHECK (tipo IN ('GERAL', 'INDIVIDUAL')),
+
+    CONSTRAINT chk_ocorrencia_tipo
+        CHECK (
+            (tipo = 'GERAL' AND id_beneficiario IS NULL)
+            OR
+            (tipo = 'INDIVIDUAL' AND id_beneficiario IS NOT NULL)
+        )
+);
+
+
+CREATE TABLE atividade (
+    id_atividade SERIAL,
+    descricao VARCHAR(255) NOT NULL,
+    id_categoria INTEGER NOT NULL,
+    id_funcionario INTEGER NOT NULL,
+
+    CONSTRAINT pk_atividade PRIMARY KEY (id_atividade),
+
+    CONSTRAINT fk_atividade_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES categoria(id_categoria),
+
+    CONSTRAINT fk_atividade_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
