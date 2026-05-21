@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../Services/api";
 import Menu from "../../Components/Menu/Menu.jsx";
 import "./Beneficiarios.css";
+import { Link } from "react-router-dom";
 
 function Beneficiario() {
 
@@ -43,7 +44,7 @@ function Beneficiario() {
         return String(valor || "").replace(/\D/g, "");
     }
 
-    
+
     // ================= MÁSCARAS =================
     function mascaraTelefone(valor) {
         valor = limparNumero(valor).slice(0, 11);
@@ -248,6 +249,10 @@ function Beneficiario() {
                                     <td>
                                         <button onClick={() => verDetalhes(b)}>Ver</button>
                                         <button onClick={() => deletar(b.id)}>Excluir</button>
+
+                                        <Link to={`/familiares/${b.id}`}>
+                                            <button>Familiares</button>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

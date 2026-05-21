@@ -16,14 +16,20 @@ public class DAOFamiliar {
     }
 
     public Familiar gravar(Familiar entidade){
-        String sql = "INSERT INTO familiar (nome, parentesco, profissao, renda, telefone) VALUES (?,?,?,?,?) RETURNING id_familiar";
+        String sql = """
+            INSERT INTO familiar
+            (id_beneficiario, nome, parentesco, profissao, renda, telefone)
+            VALUES (?,?,?,?,?,?)
+            RETURNING id_familiar
+            """;
 
         try (PreparedStatement stmt = bd.preparar(sql)){
-            stmt.setString(1, entidade.getNome());
-            stmt.setString(2, entidade.getParentesco());
-            stmt.setString(3, entidade.getProfissao());
-            stmt.setDouble(4, entidade.getRenda());
-            stmt.setString(5, entidade.getTelefone());
+            stmt.setInt(1, entidade.getIdBeneficiario());
+            stmt.setString(2, entidade.getNome());
+            stmt.setString(3, entidade.getParentesco());
+            stmt.setString(4, entidade.getProfissao());
+            stmt.setDouble(5, entidade.getRenda());
+            stmt.setString(6, entidade.getTelefone());
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -77,6 +83,7 @@ public class DAOFamiliar {
         f.setProfissao(rs.getString("profissao"));
         f.setRenda(rs.getDouble("renda"));
         f.setTelefone(rs.getString("telefone"));
+        f.setIdBeneficiario(rs.getInt("id_beneficiario"));
 
         return f;
     }
@@ -135,6 +142,32 @@ public class DAOFamiliar {
             if (nome != null && !nome.isEmpty()) {
                 stmt.setString(1, nome);
             }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                lista.add(mapFamiliar(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e);
+        }
+
+        return lista;
+    }
+
+    public List<Familiar> getByBeneficiario(Integer idBeneficiario){
+
+        List<Familiar> lista = new ArrayList<>();
+
+        String sql = """
+            SELECT * FROM familiar
+            WHERE id_beneficiario = ?
+            """;
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+
+            stmt.setInt(1, idBeneficiario);
 
             ResultSet rs = stmt.executeQuery();
 

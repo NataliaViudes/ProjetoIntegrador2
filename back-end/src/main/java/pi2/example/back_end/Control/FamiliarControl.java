@@ -222,4 +222,32 @@ public class FamiliarControl {
             db.desconectar();
         }
     }
+
+    public ResponseEntity<?> getByBeneficiario(Integer idBeneficiario)
+    {
+        Conexao db = Banco.getConexao();
+
+        try {
+
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar");
+            }
+
+            Familiar familiar = new Familiar();
+
+            List<Familiar> lista =
+                    familiar.buscarPorBeneficiario(idBeneficiario, db);
+
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao buscar familiares"));
+
+        } finally {
+
+            db.desconectar();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package pi2.example.back_end.Modelo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import pi2.example.back_end.DAO.DAOFuncionario;
 import pi2.example.back_end.db.Conexao;
 
 import java.util.Date;

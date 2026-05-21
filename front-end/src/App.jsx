@@ -16,6 +16,7 @@ import Beneficiario from "./Pages/Beneficiarios/Beneficiarios";
 import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
 import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
 import Funcionario from "./Pages/Funcionarios/Funcionario";
+import Familiares from "./Pages/Familiares/Familiares";
 
 
 import { Toaster } from "react-hot-toast";
@@ -50,6 +51,7 @@ function App() {
         <Route path="/vincular" element={<Vincular />} />
 
         <Route path="/beneficiarios" element={<Beneficiario />} />
+        <Route path="/familiares/:idBeneficiario" element={<Familiares />} />
 
         <Route path="/ocorrencias" element={<Ocorrencias />} />
 

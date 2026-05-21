@@ -41,4 +41,9 @@ public class FamiliarRestController {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         return control.delete(id);
     }
+
+    @GetMapping("/beneficiario/{idBeneficiario}")
+    public ResponseEntity<?> getByBeneficiario(@PathVariable Integer idBeneficiario) {
+        return control.getByBeneficiario(idBeneficiario);
+    }
 }

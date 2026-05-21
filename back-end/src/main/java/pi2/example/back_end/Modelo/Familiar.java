@@ -1,4 +1,5 @@
 package pi2.example.back_end.Modelo;
+import pi2.example.back_end.DAO.DAOFamiliar;
 import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
@@ -10,10 +11,12 @@ public class Familiar {
     private String profissao;
     private double renda;
     private String telefone;
+    private Integer idBeneficiario;
 
     public Familiar(){}
-    public Familiar(Integer id, String nome, String parentesco, String profissao, double renda, String telefone) {
+    public Familiar(Integer id, Integer idBeneficiario, String nome, String parentesco, String profissao, double renda, String telefone) {
         this.id = id;
+        this.idBeneficiario = idBeneficiario;
         this.nome = nome;
         this.parentesco = parentesco;
         this.profissao = profissao;
@@ -27,6 +30,7 @@ public class Familiar {
         this.profissao = "";
         this.renda = 0;
         this.telefone = "";
+        this.idBeneficiario = null;
     }
 
     public Integer getId() {
@@ -71,6 +75,13 @@ public class Familiar {
         this.telefone = telefone;
     }
 
+    public Integer getIdBeneficiario() {
+        return idBeneficiario;
+    }
+    public void setIdBeneficiario(Integer idBeneficiario) {
+        this.idBeneficiario = idBeneficiario;
+    }
+
     public Familiar incluir(Conexao con)
     {
         DAOFamiliar dao = new DAOFamiliar(con);
@@ -109,5 +120,10 @@ public class Familiar {
     public List<Familiar> buscarComFiltro(String filtro, Conexao con) {
         DAOFamiliar dao = new DAOFamiliar(con);
         return dao.buscarPorNome(filtro);
+    }
+
+    public List<Familiar> buscarPorBeneficiario(Integer idBeneficiario, Conexao con) {
+        DAOFamiliar dao = new DAOFamiliar(con);
+        return dao.getByBeneficiario(idBeneficiario);
     }
 }

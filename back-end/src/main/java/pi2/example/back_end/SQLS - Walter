@@ -170,3 +170,26 @@ CREATE TABLE agendamento_material (
     CONSTRAINT uq_agendamento_item
         UNIQUE (id_agendamento, id_item)
 );
+
+-- =========================================
+-- FAMILIAR
+-- =========================================
+
+CREATE TABLE familiar (
+    id_familiar SERIAL PRIMARY KEY,
+
+    id_beneficiario INTEGER NOT NULL,
+
+    nome VARCHAR(100) NOT NULL,
+    parentesco VARCHAR(50) NOT NULL,
+    profissao VARCHAR(100),
+
+    renda NUMERIC(10,2) DEFAULT 0,
+
+    telefone VARCHAR(15) NOT NULL,
+
+    CONSTRAINT fk_familiar_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
+);
