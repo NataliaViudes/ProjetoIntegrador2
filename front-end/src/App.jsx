@@ -1,64 +1,183 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Menu from "./Components/Menu/Menu";
+
 import Eventos from "./Pages/Eventos";
 import Agendar from "./Pages/AgendarEventos/agendarEventos";
-import Cargos from "./Pages/Cargos";
 
 import Auxilios from "./Pages/Auxilios/Auxilios";
 import Agendamentos from "./Pages/Agendamentos/Agendamentos";
 import Atividades from "./Pages/Atividades/Atividades";
+
 import Cargo from "./Pages/Cargo/Cargo";
+import Cargos from "./Pages/Cargos";
+
 import PlanejarEtapa from "./Pages/PlanejarEtapa/PlanejarEtapa";
+
 import CategoriaAuxilio from "./Pages/CategoriaAuxilio/CategoriaAuxilio";
 import CategoriaAtividade from "./Pages/CategoriaAtividade/CategoriaAtividade";
+
 import Vincular from "./Pages/VincularBeneficiario/VincularBeneficiario";
+
 import Beneficiario from "./Pages/Beneficiarios/Beneficiarios";
-import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
-import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
-import Funcionario from "./Pages/Funcionarios/Funcionario";
 import Familiares from "./Pages/Familiares/Familiares";
 
+import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
+import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
+
+import Funcionario from "./Pages/Funcionarios/Funcionario";
+
+//import Alimentos from "./Pages/Alimentos/Alimentos";
+
+//import TipoEstoque from "./Pages/Estoque/TipoEstoque";
+import Estoque from "./Pages/Estoque/Estoque";
+
+//import Cardapio from "./Pages/CardapioMensal/Cardapio";
+
+import PaginaInicial from "./Pages/PaginaInicial/PaginaInicial";
 
 import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <BrowserRouter>
+
       <Toaster />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/menu" />} />
 
+        {/* REDIRECIONAMENTO INICIAL */}
+        <Route
+          path="/"
+          element={<Navigate to="/pagina-inicial" />}
+        />
+
+        {/* MENU */}
         <Route path="/menu" element={<Menu />} />
 
+        {/* PÁGINA INICIAL */}
+        <Route
+          path="/pagina-inicial"
+          element={<PaginaInicial />}
+        />
+
+        {/* EVENTOS */}
         <Route path="/eventos" element={<Eventos />} />
-        <Route path="/agendarEventos" element={<Agendar />} />
 
-        <Route path="/funcionarios" element={<Funcionario />} />
-        <Route path="/cargos" element={<Cargos />} />
+        <Route
+          path="/agendarEventos"
+          element={<Agendar />}
+        />
 
-        <Route path="/atividades" element={<Atividades />} />
-        <Route path="/auxilios" element={<Auxilios />} />
-        <Route path="/agendamentos" element={<Agendamentos />} />
-        <Route path="/funcionarios" element={<Funcionario />} />
-        <Route path="/cargo" element={<Cargo />} />
+        {/* FUNCIONÁRIOS */}
+        <Route
+          path="/funcionarios"
+          element={<Funcionario />}
+        />
 
-        <Route path="/planejar-etapa/:id" element={<PlanejarEtapa />} />
+        {/* CARGOS */}
+        <Route
+          path="/cargos"
+          element={<Cargos />}
+        />
 
-        <Route path="/categoriaAuxilio" element={<CategoriaAuxilio />} />
-        <Route path="/categoriaAtividade" element={<CategoriaAtividade />} />
+        <Route
+          path="/cargo"
+          element={<Cargo />}
+        />
 
-        <Route path="/vincular" element={<Vincular />} />
+        {/* ATIVIDADES */}
+        <Route
+          path="/atividades"
+          element={<Atividades />}
+        />
 
-        <Route path="/beneficiarios" element={<Beneficiario />} />
-        <Route path="/familiares/:idBeneficiario" element={<Familiares />} />
+        {/* AUXÍLIOS */}
+        <Route
+          path="/auxilios"
+          element={<Auxilios />}
+        />
 
-        <Route path="/ocorrencias" element={<Ocorrencias />} />
+        {/* AGENDAMENTOS */}
+        <Route
+          path="/agendamentos"
+          element={<Agendamentos />}
+        />
+
+        {/* PLANEJAR ETAPA */}
+        <Route
+          path="/planejar-etapa/:id"
+          element={<PlanejarEtapa />}
+        />
+
+        {/* CATEGORIAS */}
+        <Route
+          path="/categoriaAuxilio"
+          element={<CategoriaAuxilio />}
+        />
+
+        <Route
+          path="/categoriaAtividade"
+          element={<CategoriaAtividade />}
+        />
+
+        {/* VINCULAR */}
+        <Route
+          path="/vincular"
+          element={<Vincular />}
+        />
+
+        {/* BENEFICIÁRIOS */}
+        <Route
+          path="/beneficiarios"
+          element={<Beneficiario />}
+        />
+
+        <Route
+          path="/familiares/:idBeneficiario"
+          element={<Familiares />}
+        />
+
+        {/* OCORRÊNCIAS */}
+        <Route
+          path="/ocorrencias"
+          element={<Ocorrencias />}
+        />
 
         <Route
           path="/relatorioOcorrencias"
           element={<RelatorioOcorrencias />}
         />
+
+        {/* ALIMENTOS */}
+        {/*
+        <Route
+          path="/alimentos"
+          element={<Alimentos />}
+        />
+        */}
+
+        {/* ESTOQUE */}
+        {/*
+        <Route
+          path="/tipo-estoque"
+          element={<TipoEstoque />}
+        />
+        */}
+
+        <Route
+          path="/estoque"
+          element={<Estoque />}
+        />
+
+        {/* CARDÁPIO */}
+        {/*
+        <Route
+          path="/cardapio"
+          element={<Cardapio />}
+        />
+        */}
+
       </Routes>
     </BrowserRouter>
   );
