@@ -101,7 +101,7 @@ public class DAOFuncionario {
     public Funcionario get(int id) {
         Funcionario funcionario = null;
 
-        String sql = "SELECT f.*, c.nome AS nome_cargo " +
+        String sql = "SELECT f.*, c.nome AS nome_cargo, c.nivel_acesso " +
                 "FROM funcionario f " +
                 "JOIN cargo c ON f.id_cargo = c.id_cargo " +
                 "WHERE f.id_funcionario = ?";
@@ -125,6 +125,7 @@ public class DAOFuncionario {
                 Cargo c = new Cargo();
                 c.setId(rs.getInt("id_cargo"));
                 c.setNome(rs.getString("nome_cargo"));
+                c.setNivelAcesso(rs.getInt("nivel_acesso"));
 
                 funcionario.setCargo(c);
             }
