@@ -14,7 +14,7 @@ const localizer = momentLocalizer(moment);
 
 function Agendamentos() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+  const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
   const podeEditar = nivel >= 3;
   const podeExcluir = nivel >= 3;
   const podeVincular = nivel >= 3;
