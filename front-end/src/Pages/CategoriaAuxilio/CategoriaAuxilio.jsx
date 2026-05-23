@@ -4,6 +4,9 @@ import Menu from "../../Components/Menu/Menu.jsx";
 import "./CategoriaAuxilio.css";
 
 function CategoriaAuxilio() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
   const [nome, setNome] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [filtro, setFiltro] = useState("");
@@ -63,43 +66,53 @@ function CategoriaAuxilio() {
     setNome(categoria.nome || "");
   }
 
- async function excluirCategoria(id) {
+  async function excluirCategoria(id) {
 
-  const confirmar = window.confirm(
-    "Deseja realmente excluir esta categoria?"
-  );
+    const confirmar = window.confirm(
+      "Deseja realmente excluir esta categoria?"
+    );
 
-  if (!confirmar) {
-    return;
-  }
-
-  try {
-    await api.delete(`/categorias/${id}`);
-
-    if (categoriaEditando && categoriaEditando.id === id) {
-      limparFormulario();
+    if (!confirmar) {
+      return;
     }
 
-    carregarCategorias();
+    try {
+      await api.delete(`/categorias/${id}`);
 
-    alert("Categoria excluída com sucesso!");
+      if (categoriaEditando && categoriaEditando.id === id) {
+        limparFormulario();
+      }
 
-  } catch (error) {
-    console.error("Erro ao excluir categoria:", error);
+      carregarCategorias();
 
-    if (error.response?.data) {
-      alert(error.response.data);
-    } else {
-      alert("Erro ao excluir categoria de auxílio.");
+      alert("Categoria excluída com sucesso!");
+
+    } catch (error) {
+      console.error("Erro ao excluir categoria:", error);
+
+      if (error.response?.data) {
+        alert(error.response.data);
+      } else {
+        alert("Erro ao excluir categoria de auxílio.");
+      }
     }
   }
-}
 
   function limparFormulario() {
     setNome("");
     setCategoriaEditando(null);
   }
 
+  if (nivelUsuario < 3) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-categoria-auxilio" translate="no">
       <Menu />
@@ -155,9 +168,9 @@ function CategoriaAuxilio() {
             ) : (
               categorias.map((categoria) => (
                 <div className="item-categoria" key={categoria.id}>
-                    <div className="info-categoria">
+                  <div className="info-categoria">
                     <strong>{categoria.nome}</strong>
-                    </div>
+                  </div>
 
                   <div className="botoes-item">
                     <button onClick={() => editarCategoria(categoria)}>

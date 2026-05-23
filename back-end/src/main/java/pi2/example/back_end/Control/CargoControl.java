@@ -15,6 +15,11 @@ public class CargoControl {
 
     public ResponseEntity<?> incluir(Cargo cargo)
     {
+        if (cargo.getNivelAcesso() == null || cargo.getNivelAcesso() < 1) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Erro("Nível de acesso inválido"));
+        }
         if (cargo.getNome() != null && !cargo.getNome().isEmpty()) {
             Cargo resultado=null;
             Conexao db = Banco.getConexao(); //Abre a conexao
@@ -116,6 +121,11 @@ public class CargoControl {
     {
         //id invalido
         if (cargo.getId() != null && cargo.getId()>0) {
+            if (cargo.getNivelAcesso() == null || cargo.getNivelAcesso() < 1) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new Erro("Nível de acesso inválido"));
+            }
             // nome obrigatória
             if (cargo.getNome() != null && !cargo.getNome().isEmpty()) {
                 Conexao db = Banco.getConexao(); // Abre conexao

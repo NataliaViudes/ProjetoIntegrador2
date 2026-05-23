@@ -5,6 +5,8 @@ import "./Beneficiarios.css";
 import { Link } from "react-router-dom";
 
 function Beneficiario() {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const nivel = usuario?.funcionario?.cargo?.nivel || 1;
 
     const [lista, setLista] = useState([]);
     const [busca, setBusca] = useState("");
@@ -214,7 +216,17 @@ function Beneficiario() {
     const filtrados = lista.filter(b =>
         (b.nome || "").toLowerCase().includes(busca.toLowerCase())
     );
-
+    
+    if (nivel < 3) {
+        return (
+            <div>
+                <Menu />
+                <h2 style={{ padding: "20px" }}>
+                    Você não possui acesso a esta página.
+                </h2>
+            </div>
+        );
+    }
     // ================= TABELA =================
     if (tela === "tabela") {
         return (

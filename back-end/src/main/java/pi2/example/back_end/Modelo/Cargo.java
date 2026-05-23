@@ -6,10 +6,11 @@ import pi2.example.back_end.db.Conexao;
 
 import java.util.List;
 
-@JsonPropertyOrder({ "id", "nome"})
+@JsonPropertyOrder({"id", "nome", "nivelAcesso"})
 public class Cargo {
     private Integer id;
     private String nome;
+    private Integer nivelAcesso;
 
     public Cargo() {
     }
@@ -17,16 +18,19 @@ public class Cargo {
     public Cargo(int id) {
         this.id = id;
         this.nome="";
+        this.nivelAcesso = 1;
     }
 
-    public Cargo(String nome) {
+    public Cargo(String nome, Integer nivelAcesso) {
         this.id =0;
         this.nome=nome;
+        this.nivelAcesso=nivelAcesso;
     }
 
-    public Cargo(int id, String nome) {
+    public Cargo(int id, String nome, Integer nivelAcesso) {
         this.id = id;
-        this.nome=nome;
+        this.nome = nome;
+        this.nivelAcesso = nivelAcesso;
     }
 
     public Integer getId() {
@@ -41,6 +45,13 @@ public class Cargo {
     }
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Integer getNivelAcesso() {
+        return nivelAcesso;
+    }
+    public void setNivelAcesso(Integer nivelAcesso) {
+        this.nivelAcesso = nivelAcesso;
     }
 
     public Cargo incluir(Conexao con)

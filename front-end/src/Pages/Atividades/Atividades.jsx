@@ -5,6 +5,9 @@ import "./Atividades.css";
 
 
 function Atividades() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+
   const [descricao, setDescricao] = useState("");
   const [funcionarios, setFuncionarios] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -73,37 +76,37 @@ function Atividades() {
     setCategoriaId(atividade.categoria?.id || "");
   }
 
- async function excluirAtividade(id) {
+  async function excluirAtividade(id) {
 
-  const confirmar = window.confirm(
-    "Deseja realmente excluir esta atividade?"
-  );
+    const confirmar = window.confirm(
+      "Deseja realmente excluir esta atividade?"
+    );
 
-  if (!confirmar) {
-    return;
-  }
-
-  try {
-    await api.delete(`/atividades/${id}`);
-
-    if (atividadeEditando && atividadeEditando.id === id) {
-      limparFormulario();
+    if (!confirmar) {
+      return;
     }
 
-    carregarTudo();
+    try {
+      await api.delete(`/atividades/${id}`);
 
-    alert("Atividade excluída com sucesso!");
+      if (atividadeEditando && atividadeEditando.id === id) {
+        limparFormulario();
+      }
 
-  } catch (error) {
-    console.error("Erro ao excluir:", error);
+      carregarTudo();
 
-    if (error.response?.data) {
-      alert(error.response.data);
-    } else {
-      alert("Erro ao excluir atividade.");
+      alert("Atividade excluída com sucesso!");
+
+    } catch (error) {
+      console.error("Erro ao excluir:", error);
+
+      if (error.response?.data) {
+        alert(error.response.data);
+      } else {
+        alert("Erro ao excluir atividade.");
+      }
     }
   }
-}
 
   function limparFormulario() {
     setAtividadeEditando(null);
@@ -116,6 +119,16 @@ function Atividades() {
     (atividade.descricao || "").toLowerCase().includes(busca.toLowerCase())
   );
 
+  if (nivel < 3) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-atividades" translate="no">
       <Menu />

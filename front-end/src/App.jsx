@@ -9,8 +9,7 @@ import Auxilios from "./Pages/Auxilios/Auxilios";
 import Agendamentos from "./Pages/Agendamentos/Agendamentos";
 import Atividades from "./Pages/Atividades/Atividades";
 
-import Cargo from "./Pages/Cargo/Cargo";
-import Cargos from "./Pages/Cargos";
+import Cargos from "./Pages/Cargo/Cargo";
 
 import PlanejarEtapa from "./Pages/PlanejarEtapa/PlanejarEtapa";
 
@@ -36,6 +35,9 @@ import Estoque from "./Pages/Estoque/Estoque";
 
 import PaginaInicial from "./Pages/PaginaInicial/PaginaInicial";
 
+import Login from "./Pages/Login/Login";
+import CadastroUsuario from "./Pages/CadastroUsuario/CadastroUsuario";
+
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -47,10 +49,9 @@ function App() {
       <Routes>
 
         {/* REDIRECIONAMENTO INICIAL */}
-        <Route
-          path="/"
-          element={<Navigate to="/pagina-inicial" />}
-        />
+        <Route path="/" element={<Login />} />
+
+        <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
 
         {/* MENU */}
         <Route path="/menu" element={<Menu />} />
@@ -79,11 +80,6 @@ function App() {
         <Route
           path="/cargos"
           element={<Cargos />}
-        />
-
-        <Route
-          path="/cargo"
-          element={<Cargo />}
         />
 
         {/* ATIVIDADES */}

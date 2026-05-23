@@ -5,6 +5,9 @@ import Menu from "../../Components/Menu/Menu.jsx";
 import "./Ocorrencia.css";
 
 function Ocorrencias() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
   const navigate = useNavigate();
 
   const [agendamentos, setAgendamentos] = useState([]);
@@ -37,7 +40,7 @@ function Ocorrencias() {
       });
 
       setAgendamentos(agendamentosEmAndamento);
-    
+
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
       alert("Erro ao carregar dados da tela de ocorrências.");
@@ -45,22 +48,22 @@ function Ocorrencias() {
   }
 
   async function carregarBeneficiariosVinculados(idAgendamentoSelecionado) {
-  if (!idAgendamentoSelecionado) {
-    setBeneficiarios([]);
-    return;
-  }
+    if (!idAgendamentoSelecionado) {
+      setBeneficiarios([]);
+      return;
+    }
 
-  try {
-    const resp = await api.get(
-      `/vincularBeneficiario/agendamento/${idAgendamentoSelecionado}`
-    );
+    try {
+      const resp = await api.get(
+        `/vincularBeneficiario/agendamento/${idAgendamentoSelecionado}`
+      );
 
-    setBeneficiarios(Array.isArray(resp.data) ? resp.data : []);
-  } catch (error) {
-    console.error("Erro ao carregar beneficiários vinculados:", error);
-    setBeneficiarios([]);
+      setBeneficiarios(Array.isArray(resp.data) ? resp.data : []);
+    } catch (error) {
+      console.error("Erro ao carregar beneficiários vinculados:", error);
+      setBeneficiarios([]);
+    }
   }
-}
 
   async function registrarOcorrencia() {
     if (!idAgendamento) {
@@ -114,6 +117,17 @@ function Ocorrencias() {
     }
   }
 
+  if (nivelUsuario < 2) {
+        return (
+            <div>
+                <Menu />
+                <h2 style={{ padding: "20px" }}>
+                    Você não possui acesso a esta página.
+                </h2>
+            </div>
+        );
+    }
+
   return (
     <div className="pagina-ocorrencias" translate="no">
       <Menu />
@@ -124,13 +138,13 @@ function Ocorrencias() {
 
           <label>Agendamento em andamento</label>
           <select
-                value={idAgendamento}
-                onChange={(e) => {
-                    const id = e.target.value;
-                    setIdAgendamento(id);
-                    setBeneficiarioId("");
-                    carregarBeneficiariosVinculados(id);
-                }}
+            value={idAgendamento}
+            onChange={(e) => {
+              const id = e.target.value;
+              setIdAgendamento(id);
+              setBeneficiarioId("");
+              carregarBeneficiariosVinculados(id);
+            }}
           >
             <option value="">Selecione um agendamento</option>
             {agendamentos.map((ag) => (
@@ -153,34 +167,34 @@ function Ocorrencias() {
           </select>
 
           {tipo === "INDIVIDUAL" && (
-                <>
-                    <label>Beneficiário vinculado</label>
+            <>
+              <label>Beneficiário vinculado</label>
 
-                    <select
-                    value={beneficiarioId}
-                    onChange={(e) => setBeneficiarioId(e.target.value)}
-                    disabled={!idAgendamento}
-                    >
-                    <option value="">
-                        {idAgendamento
-                        ? "Selecione o beneficiário"
-                        : "Selecione primeiro um agendamento"}
-                    </option>
+              <select
+                value={beneficiarioId}
+                onChange={(e) => setBeneficiarioId(e.target.value)}
+                disabled={!idAgendamento}
+              >
+                <option value="">
+                  {idAgendamento
+                    ? "Selecione o beneficiário"
+                    : "Selecione primeiro um agendamento"}
+                </option>
 
-                    {beneficiarios.map((b) => (
-                        <option key={b.id} value={b.id}>
-                        {b.nome} - CPF: {b.cpf}
-                        </option>
-                    ))}
-                    </select>
+                {beneficiarios.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.nome} - CPF: {b.cpf}
+                  </option>
+                ))}
+              </select>
 
-                    {idAgendamento && beneficiarios.length === 0 && (
-                    <p className="aviso-ocorrencia">
-                        Nenhum beneficiário vinculado a este agendamento.
-                    </p>
-                    )}
-                </>
-                )}
+              {idAgendamento && beneficiarios.length === 0 && (
+                <p className="aviso-ocorrencia">
+                  Nenhum beneficiário vinculado a este agendamento.
+                </p>
+              )}
+            </>
+          )}
 
           <label>Observação</label>
           <textarea

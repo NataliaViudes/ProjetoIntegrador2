@@ -18,11 +18,12 @@ public class DAOCargo {
 
 
     public Cargo gravar(Cargo entidade) {
-        String sql = "INSERT INTO CARGO (nome) VALUES (?)";
+        String sql = "INSERT INTO CARGO (nome, nivel_acesso) VALUES (?, ?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, entidade.getNome());
+            stmt.setInt(2, entidade.getNivelAcesso());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -39,17 +40,15 @@ public class DAOCargo {
     }
 
     public Cargo alterar(Cargo entidade) {
-        String sql = "UPDATE CARGO SET nome = ? WHERE id_cargo = ?";
+        String sql = "UPDATE CARGO SET nome = ?, nivel_acesso = ? WHERE id_cargo = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
-
             stmt.setString(1, entidade.getNome());
-            stmt.setInt(2, entidade.getId());
+            stmt.setInt(2, entidade.getNivelAcesso());
+            stmt.setInt(3, entidade.getId());
+
             stmt.executeUpdate();
-
-
             return entidade;
-
         } catch (SQLException e) {
             System.out.println("Erro: " + e);
             return null;
@@ -76,14 +75,14 @@ public class DAOCargo {
         String sql = "SELECT * FROM CARGO WHERE id_cargo = ?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
-
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 cargo = new Cargo(
                         rs.getInt("id_cargo"),
-                        rs.getString("nome")
+                        rs.getString("nome"),
+                        rs.getInt("nivel_acesso")
                 );
             }
 
@@ -105,7 +104,8 @@ public class DAOCargo {
             while (rs.next()) {
                 lista.add(new Cargo(
                         rs.getInt("id_cargo"),
-                        rs.getString("nome")
+                        rs.getString("nome"),
+                        rs.getInt("nivel_acesso")
                 ));
             }
 
@@ -131,7 +131,8 @@ public class DAOCargo {
                 while (rs.next()) {
                     lista.add(new Cargo(
                             rs.getInt("id_cargo"),
-                            rs.getString("nome")
+                            rs.getString("nome"),
+                            rs.getInt("nivel_acesso")
                     ));
                 }
 
@@ -150,7 +151,8 @@ public class DAOCargo {
                 while (rs.next()) {
                     lista.add(new Cargo(
                             rs.getInt("id_cargo"),
-                            rs.getString("nome")
+                            rs.getString("nome"),
+                            rs.getInt("nivel_acesso")
                     ));
                 }
 

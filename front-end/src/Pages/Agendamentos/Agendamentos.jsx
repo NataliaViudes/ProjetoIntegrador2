@@ -13,6 +13,14 @@ moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
 function Agendamentos() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+  const podeEditar = nivel >= 3;
+  const podeExcluir = nivel >= 3;
+  const podeVincular = nivel >= 3;
+  const podePlanejar = nivel >= 2;
+  const podeCadastrar = nivel >= 3;
+
   const [agendamentos, setAgendamentos] = useState([]);
   const [atividades, setAtividades] = useState([]);
 
@@ -190,52 +198,65 @@ function Agendamentos() {
     setDataInicio(formatarDatetimeLocal(slotInfo.start));
     setDataFim(formatarDatetimeLocal(slotInfo.end));
   }
+
+  if (nivel < 2) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-agendamentos" translate="no">
       <Menu />
 
       <div className="conteudo-agendamentos">
-        <section className="painel-formulario">
-          <h2>Agendar atividade</h2>
+        {podeCadastrar && (
+          <section className="painel-formulario">
+            <h2>Agendar atividade</h2>
 
-          <label>Atividade</label>
-          <select value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)}>
-            <option value="">Selecione uma atividade</option>
-            {atividades.map((atividade) => (
-              <option key={atividade.id} value={atividade.id}>
-                {atividade.descricao} - {atividade.funcionario?.nome || ""}
-              </option>
-            ))}
-          </select>
+            <label>Atividade</label>
+            <select value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)}>
+              <option value="">Selecione uma atividade</option>
+              {atividades.map((atividade) => (
+                <option key={atividade.id} value={atividade.id}>
+                  {atividade.descricao} - {atividade.funcionario?.nome || ""}
+                </option>
+              ))}
+            </select>
 
-          <label>Data e hora inicial</label>
-          <input
-            type="datetime-local"
-            value={dataInicio}
-            min={formatarDatetimeLocal(new Date())}
-            onChange={(e) => setDataInicio(e.target.value)}
-          />
+            <label>Data e hora inicial</label>
+            <input
+              type="datetime-local"
+              value={dataInicio}
+              min={formatarDatetimeLocal(new Date())}
+              onChange={(e) => setDataInicio(e.target.value)}
+            />
 
-          <label>Data e hora final</label>
-          <input
-            type="datetime-local"
-            value={dataFim}
-            min={dataInicio || formatarDatetimeLocal(new Date())}
-            onChange={(e) => setDataFim(e.target.value)}
-          />
+            <label>Data e hora final</label>
+            <input
+              type="datetime-local"
+              value={dataFim}
+              min={dataInicio || formatarDatetimeLocal(new Date())}
+              onChange={(e) => setDataFim(e.target.value)}
+            />
 
 
-          <div className="acoes-formulario">
-            <button onClick={salvar}>
-              {agendamentoEditando ? "Atualizar" : "Salvar"}
-            </button>
+            <div className="acoes-formulario">
+              <button onClick={salvar}>
+                {agendamentoEditando ? "Atualizar" : "Salvar"}
+              </button>
 
-            <button type="button" onClick={limparFormulario}>
-              Limpar
-            </button>
-          </div>
+              <button type="button" onClick={limparFormulario}>
+                Limpar
+              </button>
+            </div>
 
-        </section>
+          </section>
+        )}
 
         <section className="painel-calendario">
           <Calendar
@@ -290,23 +311,27 @@ function Agendamentos() {
 
             <div className="acoes-modal">
 
-              <button
-                onClick={() => {
-                  editar(agendamentoSelecionado);
-                  setMostrarOpcoes(false);
-                }}
-              >
-                Editar
-              </button>
+              {podeEditar && (
+                <button
+                  onClick={() => {
+                    editar(agendamentoSelecionado);
+                    setMostrarOpcoes(false);
+                  }}
+                >
+                  Editar
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  excluir(agendamentoSelecionado.id);
-                  setMostrarOpcoes(false);
-                }}
-              >
-                Excluir
-              </button>
+              {podeExcluir && (
+                <button
+                  onClick={() => {
+                    excluir(agendamentoSelecionado.id);
+                    setMostrarOpcoes(false);
+                  }}
+                >
+                  Excluir
+                </button>
+              )}
 
               <button
                 onClick={() => setMostrarOpcoes(false)}
@@ -316,22 +341,26 @@ function Agendamentos() {
             </div>
             <div className="acoes-links">
 
-              <Link to={`/planejar-etapa/${agendamentoSelecionado.id}`}>
-                <button type="button">Planejar</button>
-              </Link>
+              {podePlanejar && (
+                <Link to={`/planejar-etapa/${agendamentoSelecionado.id}`}>
+                  <button type="button">Planejar</button>
+                </Link>
+              )}
 
-              <Link
-                to="/vincular"
-                state={{
-                  atividadeId: agendamentoSelecionado.atividade?.id,
-                  dataInicio: agendamentoSelecionado.dataInicio,
-                  dataFim: agendamentoSelecionado.dataFim,
-                  observacao: agendamentoSelecionado.observacao,
-                  idAgendamento: agendamentoSelecionado.id
-                }}
-              >
-                <button>Ir para Vinculação</button>
-              </Link>
+              {podeVincular && (
+                <Link
+                  to="/vincular"
+                  state={{
+                    atividadeId: agendamentoSelecionado.atividade?.id,
+                    dataInicio: agendamentoSelecionado.dataInicio,
+                    dataFim: agendamentoSelecionado.dataFim,
+                    observacao: agendamentoSelecionado.observacao,
+                    idAgendamento: agendamentoSelecionado.id
+                  }}
+                >
+                  <button>Ir para Vinculação</button>
+                </Link>
+              )}
 
             </div>
           </div>

@@ -206,7 +206,6 @@ function PlanejarEtapa() {
     }
 
     // ================= UI =================
-
     return (
         <div className="pagina-planejamento">
             <div className="container-planejamento">

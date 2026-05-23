@@ -7,6 +7,9 @@ import style from "./styles.module.css";
 import CampoFiltro from "../../Components/CampoFiltro";
 
 export default function Eventos() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
   const [categoria, setCategoria] = useState("");
   const [descricao, setDescricao] = useState("");
   const [eventos, setEventos] = useState([]);
@@ -129,6 +132,17 @@ export default function Eventos() {
     setEventoEditando(null);
     setCategoria("");
     setDescricao("");
+  }
+
+  if (nivelUsuario < 3) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
   }
 
   return (

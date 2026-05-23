@@ -13,6 +13,9 @@ moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
 function PaginaInicial() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
   const [agendamentos, setAgendamentos] = useState([]);
   const [cardapios, setCardapios] = useState([]);
 
@@ -187,31 +190,32 @@ ${slotInfo.end.toLocaleString()}`
       </section>
 
 
-          
-      <section>
-        <div className="container">
-          <div className={`menu ${open ? "open" : ""}`}>
-            <div className="items">
-              <div className="item">
-                <div className="circle">🍔</div>
-                <span>Planejar Cardápio</span>
+      {nivelUsuario >= 3 && (
+        <section>
+          <div className="container">
+            <div className={`menu ${open ? "open" : ""}`}>
+              <div className="items">
+                <div className="item">
+                  <div className="circle">🍔</div>
+                  <span>Planejar Cardápio</span>
+                </div>
+
+                <div className="item">
+                  <div className="circle">📅</div>
+                  <span>Agendar Atividade</span>
+                </div>
               </div>
 
-              <div className="item">
-                <div className="circle">📅</div>
-                <span>Agendar Atividade</span>
-              </div>
+              <button
+                className="main-btn"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? "✕" : "+"}
+              </button>
             </div>
-
-            <button
-              className="main-btn"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? "✕" : "+"}
-            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      )};
     </div>
   );
 }

@@ -5,6 +5,8 @@ import Menu from "../../Components/Menu/Menu.jsx";
 import "./Familiares.css";
 
 function Familiares() {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
     const { idBeneficiario } = useParams();
 
@@ -190,6 +192,17 @@ function Familiares() {
             .includes(busca.toLowerCase())
     );
 
+    if (nivelUsuario < 3) {
+        return (
+            <div>
+                <Menu />
+                <h2 style={{ padding: "20px" }}>
+                    Você não possui acesso a esta página.
+                </h2>
+            </div>
+        );
+    }
+
     // ================= TABELA =================
 
     if (tela === "tabela") {
@@ -275,7 +288,6 @@ function Familiares() {
     }
 
     // ================= FORM =================
-
     return (
 
         <div className="form-familiar">

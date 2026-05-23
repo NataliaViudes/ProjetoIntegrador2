@@ -18,6 +18,14 @@ moment.locale("pt-br");
 
 const localizer = momentLocalizer(moment);
 function Eventos() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+
+  const podeVisualizar = nivel >= 2;
+  const podeCriar = nivel >= 3;
+  const podeExcluir = nivel >= 3;
+  const podeAdicionarItens = nivel >= 2;
+
   const [erros, setErros] = useState({});
   const [somenteLeitura, setSomenteLeitura] = useState(false);
 
@@ -156,7 +164,26 @@ function Eventos() {
     setSomenteLeitura(false);
   }
 
+  function podeEditarEvento(ev) {
+    if (nivel >= 3) return true;
+
+    if (nivel >= 2 && !eventoJaPassou(ev.inicio)) {
+      return true;
+    }
+
+    return false;
+  }
+
   async function salvar() {
+    if (!podeCriar) {
+      Swal.fire({
+        icon: "error",
+        title: "Sem permissão",
+        text: "Você não possui permissão para salvar eventos"
+      });
+
+      return;
+    }
     const novosErros = {};
 
     if (!nome) novosErros.nome = true;
@@ -301,6 +328,15 @@ function Eventos() {
   }
 
   async function excluir(idEvento) {
+    if (!podeExcluir) {
+      Swal.fire({
+        icon: "error",
+        title: "Sem permissão",
+        text: "Você não possui permissão para excluir eventos"
+      });
+
+      return;
+    }
     const result = await Swal.fire({
       title: "Deseja excluir esse evento?",
       text: "Essa ação não pode ser desfeita",
@@ -356,6 +392,16 @@ function Eventos() {
     }));
   }
 
+  if (!podeVisualizar) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-agendamentos" translate="no">
       <Menu />
@@ -367,7 +413,7 @@ function Eventos() {
           <label>Nome do Evento</label>
 
           <input
-            disabled={somenteLeitura}
+            disabled={somenteLeitura || !podeCriar}
             value={nome}
             onChange={(e) => {
               setNome(e.target.value);
@@ -383,7 +429,7 @@ function Eventos() {
           <label>Categoria</label>
 
           <select
-            disabled={somenteLeitura}
+            disabled={somenteLeitura || !podeCriar}
             value={idCatEvento}
             onChange={(e) => {
               setIdCatEvento(e.target.value);
@@ -407,7 +453,7 @@ function Eventos() {
           <label>Funcionário</label>
 
           <select
-            disabled={somenteLeitura}
+            disabled={somenteLeitura || !podeCriar}
             value={idFuncionario}
             onChange={(e) => {
               setIdFuncionario(e.target.value);
@@ -449,7 +495,7 @@ function Eventos() {
 
           <input
             type="datetime-local"
-            disabled={somenteLeitura}
+            disabled={somenteLeitura || !podeCriar}
             value={dataFim}
             onChange={(e) => {
               setDataFim(e.target.value);
@@ -466,7 +512,7 @@ function Eventos() {
 
           <textarea
             rows="2"
-            disabled={somenteLeitura}
+            disabled={somenteLeitura || !podeCriar}
             value={local}
             onChange={(e) => {
               setLocal(e.target.value);
@@ -497,31 +543,35 @@ function Eventos() {
           />
 
           <div className="acoes-formulario">
-            <button onClick={salvar} disabled={somenteLeitura}>
-              {eventoEditando ? "Atualizar" : "Salvar"}
-            </button>
+            {podeCriar && (
+              <button onClick={salvar} disabled={somenteLeitura || !podeCriar}>
+                {eventoEditando ? "Atualizar" : "Salvar"}
+              </button>
+            )}
 
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (!eventoSelecionado) {
-                  Swal.fire({
-                    icon: "warning",
-                    title: "Selecione um evento",
-                  });
+            {podeAdicionarItens && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!eventoSelecionado) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "Selecione um evento",
+                    });
 
-                  return;
-                }
+                    return;
+                  }
 
-                setModo("itens");
-              }}
-            >
-              Adicionar Itens
-            </button>
+                  setModo("itens");
+                }}
+              >
+                Adicionar Itens
+              </button>
+            )}
           </div>
 
           <div className="lista-agendamentos">
@@ -555,11 +605,17 @@ function Eventos() {
                   </div>
 
                   <div className="acoes-item">
-                    <button onClick={() => editar(ev)}>Editar</button>
+                    {podeEditarEvento(ev) && (
+                      <button onClick={() => editar(ev)} disabled={somenteLeitura || !podeCriar}>
+                        Editar
+                      </button>
+                    )}
 
-                    <button onClick={() => excluir(ev.idEvento)}>
-                      Excluir
-                    </button>
+                    {podeExcluir && (
+                      <button onClick={() => excluir(ev.idEvento)} disabled={somenteLeitura || !podeCriar}>
+                        Excluir
+                      </button>
+                    )}
                   </div>
                 </div>
               ))
@@ -575,7 +631,7 @@ function Eventos() {
               events={eventos}
               startAccessor="start"
               endAccessor="end"
-              selectable
+              selectable={podeCriar}
               popup
               date={dataAtual}
               view={viewAtual}
@@ -614,7 +670,9 @@ function Eventos() {
                 showMore: (total) => `+${total} mais`,
               }}
               onSelectEvent={(evento) => {
-                editar(evento.resource);
+                if (podeEditarEvento(evento.resource)) {
+                  editar(evento.resource);
+                }
               }}
               onSelectSlot={selecionarSlot}
               style={{

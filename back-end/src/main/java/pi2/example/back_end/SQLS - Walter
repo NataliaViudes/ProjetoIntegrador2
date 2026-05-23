@@ -24,15 +24,17 @@ INSERT INTO categoria_auxilio (nome) VALUES
 CREATE TABLE Cargo (
     id_cargo SERIAL,
     nome VARCHAR(50) NOT NULL, -- alterado para NOT NULL
+    nivel_acesso INTEGER DEFAULT 1,
 
     CONSTRAINT pk_cargo PRIMARY KEY (id_cargo),
     CONSTRAINT un_cargo_nome UNIQUE (nome)
 );
 
-INSERT INTO Cargo (nome) VALUES ('Gerente');
-INSERT INTO Cargo (nome) VALUES ('Analista');
-INSERT INTO Cargo (nome) VALUES ('Supervisor');
-INSERT INTO Cargo (nome) VALUES ('Assistente');
+INSERT INTO Cargo (nome, nivel_acesso) VALUES ('Administrador', 3);
+INSERT INTO Cargo (nome) VALUES ('Gerente', 3);
+INSERT INTO Cargo (nome) VALUES ('Analista', 2);
+INSERT INTO Cargo (nome) VALUES ('Supervisor', 2);
+INSERT INTO Cargo (nome) VALUES ('Assistente', 1);
 
 CREATE TABLE Funcionario (
     id_funcionario SERIAL,
@@ -193,3 +195,23 @@ CREATE TABLE familiar (
         REFERENCES beneficiario(id)
         ON DELETE CASCADE
 );
+
+-- =========================================
+-- USUARIO
+-- =========================================
+
+CREATE TABLE usuario (
+    id_usuario SERIAL PRIMARY KEY,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    id_funcionario INTEGER NOT NULL UNIQUE,
+
+    FOREIGN KEY (id_funcionario)
+        REFERENCES funcionario(id_funcionario)
+);
+
+INSERT INTO usuario (login,senha,id_funcionario)
+VALUES ('admin','$2a$10$VMj8AIRgytqxD1X9kGBCy.XLn133DX1BwIEf3tW5aKsR8Rp5crKL2',1);
+// login = admin
+// senha = admin123

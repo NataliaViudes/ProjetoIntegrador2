@@ -4,6 +4,9 @@ import Menu from "../../Components/Menu/Menu";
 import "./Auxilios.css";
 
 function Auxilios() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+
   const [cpfBusca, setCpfBusca] = useState("");
   const [beneficiario, setBeneficiario] = useState(null);
 
@@ -184,6 +187,16 @@ function Auxilios() {
     return filtroCpf && filtroStatusValido;
   });
 
+  if (nivel < 3) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-auxilios" translate="no">
       <Menu />

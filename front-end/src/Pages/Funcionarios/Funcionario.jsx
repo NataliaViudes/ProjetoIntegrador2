@@ -4,6 +4,8 @@ import Menu from "../../Components/Menu/Menu";
 import "./Funcionario.css";
 
 function Funcionario() {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
     const [funcionarios, setFuncionarios] = useState([]);
     const [busca, setBusca] = useState("");
@@ -277,6 +279,17 @@ function Funcionario() {
             console.error(e);
             alert("Erro ao gerar relatório");
         }
+    }
+
+    if (nivelUsuario < 3) {
+        return (
+            <div>
+                <Menu />
+                <h2 style={{ padding: "20px" }}>
+                    Você não possui acesso a esta página.
+                </h2>
+            </div>
+        );
     }
 
     // tela === "tabela" -> tabela de funcionários

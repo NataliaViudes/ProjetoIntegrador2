@@ -1,0 +1,44 @@
+.pagina-login {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #d9d9d9;
+}
+
+.card-login {
+    width: 350px;
+    background: #a6a6a6;
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.card-login h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.card-login input {
+    padding: 12px;
+    border: 1px solid #8f8f8f;
+    border-radius: 6px;
+    background: #f5f5f5;
+}
+
+.card-login button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #5f5f5f;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.card-login button:hover {
+    background: #474747;
+}

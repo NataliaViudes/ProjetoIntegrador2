@@ -5,6 +5,9 @@ import Menu from "../../Components/Menu/Menu.jsx";
 import "./VincularBeneficiario.css";
 
 function VincularBeneficiario() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -136,6 +139,17 @@ function VincularBeneficiario() {
     b.nome.toLowerCase().includes(busca.toLowerCase())
   );
 
+  if (nivelUsuario < 3) {
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
+  
   return (
     <div className="pagina-agendamentos">
       <Menu />
@@ -169,7 +183,7 @@ function VincularBeneficiario() {
               <>
                 <button onClick={alterar}>Atualizar Vínculos</button>
 
-                <button 
+                <button
                   onClick={desselecionarTodos}
                   style={{ marginLeft: "10px", backgroundColor: "#ccc" }}
                 >
@@ -182,7 +196,7 @@ function VincularBeneficiario() {
               <>
                 <button onClick={salvar}>Vincular</button>
 
-                <button 
+                <button
                   onClick={desselecionarTodos}
                   style={{ marginLeft: "10px", backgroundColor: "#ccc" }}
                 >
@@ -224,7 +238,7 @@ function VincularBeneficiario() {
                 checked={selecionados.includes(Number(b.id))}
                 onChange={() => toggleSelecionado(b.id)}
                 style={{
-                  transform: "scale(1.5)", 
+                  transform: "scale(1.5)",
                   cursor: "pointer"
                 }}
               />
