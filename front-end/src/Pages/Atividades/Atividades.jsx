@@ -6,7 +6,7 @@ import "./Atividades.css";
 
 function Atividades() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+  const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
   const [descricao, setDescricao] = useState("");
   const [funcionarios, setFuncionarios] = useState([]);

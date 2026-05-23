@@ -135,6 +135,7 @@ export default function Eventos() {
   }
 
   if (nivelUsuario < 3) {
+   
     return (
       <div>
         <Menu />

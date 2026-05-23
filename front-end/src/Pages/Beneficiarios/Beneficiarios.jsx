@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function Beneficiario() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+    const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
     const [lista, setLista] = useState([]);
     const [busca, setBusca] = useState("");

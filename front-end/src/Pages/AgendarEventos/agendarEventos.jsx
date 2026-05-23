@@ -19,7 +19,7 @@ moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 function Eventos() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const nivel = usuario?.funcionario?.cargo?.nivel || 1;
+  const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
   const podeVisualizar = nivel >= 2;
   const podeCriar = nivel >= 3;
@@ -393,6 +393,7 @@ function Eventos() {
   }
 
   if (!podeVisualizar) {
+    console.log(nivel);
     return (
       <div>
         <Menu />
