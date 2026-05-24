@@ -24,4 +24,18 @@ public class OcorrenciaAtividadeRestController {
     ) {
         return control.relatorio(dataInicio, dataFim, idBeneficiario);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> alterar(
+            @PathVariable Integer id,
+            @RequestBody OcorrenciaAtividade ocorrencia
+    ) {
+        ocorrencia.setId(id);
+        return control.update(ocorrencia);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> apagar(@PathVariable Integer id) {
+        return control.delete(id);
+    }
 }

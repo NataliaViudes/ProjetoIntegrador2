@@ -18,8 +18,12 @@ function Ocorrencias() {
   const [observacao, setObservacao] = useState("");
   const [beneficiarioId, setBeneficiarioId] = useState("");
 
+  const [ocorrencias, setOcorrencias] = useState([]);
+const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
+
   useEffect(() => {
     carregarDados();
+    carregarOcorrencias();
   }, []);
 
   async function carregarDados() {
@@ -46,6 +50,32 @@ function Ocorrencias() {
       alert("Erro ao carregar dados da tela de ocorrências.");
     }
   }
+
+  async function carregarOcorrencias() {
+  try {
+    const resp = await api.get("/ocorrencias/relatorio");
+
+    const lista = Array.isArray(resp.data) ? resp.data : [];
+
+    const agora = new Date();
+
+    const ocorrenciasNoPrazo = lista.filter((o) => {
+      if (!o.dataRegistro) {
+        return false;
+      }
+
+      const dataRegistro = new Date(o.dataRegistro);
+      const diferencaMinutos = (agora - dataRegistro) / 1000 / 60;
+
+      return diferencaMinutos <= 30;
+    });
+
+    setOcorrencias(ocorrenciasNoPrazo);
+  } catch (error) {
+    console.error("Erro ao carregar ocorrências:", error);
+    setOcorrencias([]);
+  }
+}
 
   async function carregarBeneficiariosVinculados(idAgendamentoSelecionado) {
     if (!idAgendamentoSelecionado) {
@@ -92,16 +122,22 @@ function Ocorrencias() {
     }
 
     try {
-      await api.post("/ocorrencias", payload);
+      if (ocorrenciaEditando) {
+        await api.put(`/ocorrencias/${ocorrenciaEditando.id}`, payload);
+      } else {
+        await api.post("/ocorrencias", payload);
+      }
 
-      alert("Ocorrência registrada com sucesso!");
+      alert(ocorrenciaEditando ? "Ocorrência alterada com sucesso!" : "Ocorrência registrada com sucesso!");
 
+      setOcorrenciaEditando(null);
       setIdAgendamento("");
       setTipo("GERAL");
       setObservacao("");
       setBeneficiarioId("");
 
       carregarDados();
+      carregarOcorrencias();
     } catch (error) {
       console.error("Erro ao registrar ocorrência:", error);
 
@@ -116,6 +152,51 @@ function Ocorrencias() {
       }
     }
   }
+
+    function editarOcorrencia(o) {
+    setOcorrenciaEditando(o);
+    setIdAgendamento(String(o.agendamento?.id || ""));
+    setTipo(o.tipo || "GERAL");
+    setObservacao(o.observacao || "");
+
+    if (o.beneficiario?.id) {
+      setBeneficiarioId(String(o.beneficiario.id));
+      carregarBeneficiariosVinculados(o.agendamento?.id);
+    } else {
+      setBeneficiarioId("");
+    }
+  }
+  async function excluirOcorrencia(id) {
+  const confirmar = window.confirm("Deseja realmente excluir esta ocorrência?");
+
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+    await api.delete(`/ocorrencias/${id}`);
+    alert("Ocorrência excluída com sucesso!");
+
+    if (ocorrenciaEditando && ocorrenciaEditando.id === id) {
+      setOcorrenciaEditando(null);
+      setObservacao("");
+      setBeneficiarioId("");
+      setTipo("GERAL");
+    }
+
+    carregarOcorrencias();
+  } catch (error) {
+    console.error("Erro ao excluir ocorrência:", error);
+
+    if (error.response?.data?.mensage) {
+      alert(error.response.data.mensage);
+    } else if (error.response?.data?.mensagem) {
+      alert(error.response.data.mensagem);
+    } else {
+      alert("Erro ao excluir ocorrência.");
+    }
+  }
+}
 
   if (nivelUsuario < 2) {
         return (
@@ -206,14 +287,53 @@ function Ocorrencias() {
 
           <div className="acoes-formulario">
             <button type="button" onClick={registrarOcorrencia}>
-              Registrar
+              {ocorrenciaEditando ? "Atualizar" : "Registrar"}
             </button>
 
             <button type="button" onClick={() => navigate("/agendamentos")}>
               Voltar
             </button>
           </div>
+
+          
         </section>
+          <section className="painel-ocorrencias">
+    <h2>Ocorrências Registradas</h2>
+
+    {ocorrencias.length === 0 ? (
+      <p>Nenhuma ocorrência registrada.</p>
+    ) : (
+      ocorrencias.map((o) => (
+        <div key={o.id} className="item-ocorrencia">
+          <strong>{o.tipo}</strong>
+
+          <span>
+            Beneficiário: {o.beneficiario?.nome || "Ocorrência geral"}
+          </span>
+
+          <span>
+            Data:{" "}
+            {o.dataRegistro
+              ? new Date(o.dataRegistro).toLocaleString()
+              : "Não informada"}
+          </span>
+
+          <p>{o.observacao}</p>
+
+          <div className="acoes-item">
+            <button type="button" onClick={() => editarOcorrencia(o)}>
+              Editar
+            </button>
+
+            <button type="button" onClick={() => excluirOcorrencia(o.id)}>
+              Excluir
+            </button>
+          </div>
+        </div>
+      ))
+    )}
+  </section>
+
       </main>
     </div>
   );

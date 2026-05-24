@@ -25,6 +25,7 @@ import Familiares from "./Pages/Familiares/Familiares";
 import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
 import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
 import RelatorioFaltas from "./Pages/RelatorioFaltas/RelatorioFaltas";
+import RelatorioAtividades from "./Pages/RelatorioAtividades/RelatorioAtividades";
 
 import Funcionario from "./Pages/Funcionarios/Funcionario";
 
@@ -155,6 +156,10 @@ function App() {
         <Route
           path="/relatorioFaltas"
           element={<RelatorioFaltas />}
+        />
+        <Route
+          path="/relatorioAtividades"
+          element={<RelatorioAtividades />}
         />
 
         {/* ALIMENTOS */}

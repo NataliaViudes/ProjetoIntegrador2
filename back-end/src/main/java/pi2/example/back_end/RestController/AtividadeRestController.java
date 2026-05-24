@@ -42,4 +42,12 @@ public class AtividadeRestController {
         atividade.setId(id);
         return control.update(atividade);
     }
+
+    @GetMapping("/relatorio")
+    public ResponseEntity<?> relatorio(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer idCategoria
+    ) {
+        return control.relatorio(status, idCategoria);
+    }
 }

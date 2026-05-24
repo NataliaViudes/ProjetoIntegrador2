@@ -1,6 +1,7 @@
 package pi2.example.back_end.Control;
 
 import org.springframework.http.ResponseEntity;
+import pi2.example.back_end.DAO.AtividadeDAOImpl;
 import pi2.example.back_end.Modelo.Atividade;
 import pi2.example.back_end.Modelo.Erro;
 import pi2.example.back_end.db.Banco;
@@ -245,6 +246,31 @@ public class AtividadeControl {
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erro ao buscar atividades: " + e.getMessage());
+        } finally {
+            db.desconectar();
+        }
+    }
+
+    public ResponseEntity<?> relatorio(String status, Integer idCategoria) {
+        Conexao db = Banco.getConexao();
+
+        try {
+            if (!db.conectar()) {
+                throw new Exception("Erro ao conectar: " + db.getMensagemErro());
+            }
+
+            AtividadeDAOImpl dao = new AtividadeDAOImpl(db);
+            List<Atividade> lista = dao.relatorio(status, idCategoria);
+
+            if (lista == null || lista.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new Erro("Erro ao gerar relatório de atividades."));
         } finally {
             db.desconectar();
         }

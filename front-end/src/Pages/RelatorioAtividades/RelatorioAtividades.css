@@ -1,0 +1,124 @@
+.pagina-relatorio-atividades {
+  min-height: 100vh;
+  background-color: #d9d9d9;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.conteudo-relatorio-atividades {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-filtros,
+.painel-resultados {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+}
+
+.painel-filtros h2,
+.painel-resultados h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.painel-filtros label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.painel-filtros select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #8f8f8f;
+  background-color: #f5f5f5;
+}
+
+.acoes-formulario {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.acoes-formulario button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.resumo-relatorio {
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.resumo-relatorio p {
+  margin: 4px 0;
+}
+
+.tabela-relatorio {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #dcdcdc;
+}
+
+.tabela-relatorio th,
+.tabela-relatorio td {
+  border: 1px solid #8f8f8f;
+  padding: 10px;
+  text-align: left;
+}
+
+.tabela-relatorio th {
+  background-color: #c9c9c9;
+}
+
+@media (max-width: 900px) {
+  .conteudo-relatorio-atividades {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  body {
+    background-color: white;
+  }
+
+  .area-nao-imprimir,
+  .topo-menu {
+    display: none !important;
+  }
+
+  .pagina-relatorio-atividades {
+    background-color: white;
+    padding: 0;
+  }
+
+  .conteudo-relatorio-atividades {
+    display: block;
+  }
+
+  .painel-resultados {
+    background-color: white;
+    border: none;
+    padding: 0;
+  }
+
+  .resumo-relatorio {
+    background-color: white;
+  }
+
+  .tabela-relatorio {
+    background-color: white;
+  }
+}

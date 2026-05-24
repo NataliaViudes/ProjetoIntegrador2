@@ -56,3 +56,57 @@
   color: #8b0000;
   font-weight: bold;
 }
+
+.painel-ocorrencias {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+  margin-top: 20px;
+}
+
+.item-ocorrencia {
+  background-color: #dcdcdc;
+  border: 1px solid #8f8f8f;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acoes-item {
+  display: flex;
+  gap: 10px;
+}
+
+.acoes-item button {
+  background-color: #e6e6e6;
+  border: 1px solid #8f8f8f;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.conteudo-ocorrencias {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-formulario,
+.painel-ocorrencias {
+  background-color: #a6a6a6;
+  border: 1px solid #8d8d8d;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.painel-ocorrencias {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+@media (max-width: 900px) {
+  .conteudo-ocorrencias {
+    grid-template-columns: 1fr;
+  }
+}

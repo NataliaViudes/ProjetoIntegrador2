@@ -148,4 +148,102 @@ public class OcorrenciaAtividadeDAOImpl {
 
         return lista;
     }
+    public OcorrenciaAtividade get(int id) {
+        String sql = """
+        SELECT id, id_agendamento, id_beneficiario, tipo, observacao, data_registro
+        FROM ocorrencia_atividade
+        WHERE id = ?
+    """;
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                OcorrenciaAtividade o = new OcorrenciaAtividade();
+                o.setId(rs.getInt("id"));
+                o.setTipo(rs.getString("tipo"));
+                o.setObservacao(rs.getString("observacao"));
+                o.setDataRegistro(rs.getTimestamp("data_registro").toLocalDateTime().toString());
+
+                AgendamentoAtividade ag = new AgendamentoAtividade();
+                ag.setId(rs.getInt("id_agendamento"));
+                o.setAgendamento(ag);
+
+                int idBeneficiario = rs.getInt("id_beneficiario");
+                if (!rs.wasNull()) {
+                    Beneficiario b = new Beneficiario();
+                    b.setId(idBeneficiario);
+                    o.setBeneficiario(b);
+                }
+
+                return o;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar ocorrência: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public boolean dentroDoPrazoDeEdicao(int id) {
+        String sql = """
+        SELECT id
+        FROM ocorrencia_atividade
+        WHERE id = ?
+        AND data_registro >= CURRENT_TIMESTAMP - INTERVAL '30 minutes'
+    """;
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("Erro ao validar prazo da ocorrência: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public OcorrenciaAtividade alterar(OcorrenciaAtividade entidade) {
+        String sql = """
+        UPDATE ocorrencia_atividade
+        SET tipo = ?,
+            id_beneficiario = ?,
+            observacao = ?
+        WHERE id = ?
+    """;
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setString(1, entidade.getTipo());
+
+            if (entidade.getBeneficiario() != null && entidade.getBeneficiario().getId() != null) {
+                stmt.setInt(2, entidade.getBeneficiario().getId());
+            } else {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            }
+
+            stmt.setString(3, entidade.getObservacao());
+            stmt.setInt(4, entidade.getId());
+
+            stmt.executeUpdate();
+            return entidade;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao alterar ocorrência: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean apagar(Integer id) {
+        String sql = "DELETE FROM ocorrencia_atividade WHERE id = ?";
+
+        try (PreparedStatement stmt = bd.preparar(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir ocorrência: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -140,6 +140,9 @@ function Menu() {
             <Link to="/estoque">
               Relatório de Estoque
             </Link>
+            <Link to="/relatorioAtividades">
+              Relatório de Atividades
+            </Link>
 
           </div>
         </div>

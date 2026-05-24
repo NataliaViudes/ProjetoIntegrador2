@@ -65,5 +65,20 @@ public class OcorrenciaAtividade {
         OcorrenciaAtividadeDAOImpl dao = new OcorrenciaAtividadeDAOImpl(con);
         return dao.gravar(this);
     }
+
+    public OcorrenciaAtividade alterar(Conexao con) {
+        OcorrenciaAtividadeDAOImpl dao = new OcorrenciaAtividadeDAOImpl(con);
+        return dao.alterar(this);
+    }
+
+    public boolean apagar(Conexao con) {
+        OcorrenciaAtividadeDAOImpl dao = new OcorrenciaAtividadeDAOImpl(con);
+        return dao.apagar(this.id);
+    }
+
+    public OcorrenciaAtividade buscarPorId(Integer id, Conexao con) {
+        OcorrenciaAtividadeDAOImpl dao = new OcorrenciaAtividadeDAOImpl(con);
+        return dao.get(id);
+    }
 }
 

@@ -81,7 +81,11 @@ public class AtividadeDAOImpl {
         atividade.setDescricao(rs.getString("descricao"));
         atividade.setCategoria(categoria);
         atividade.setFuncionario(funcionario);
-
+        try {
+            atividade.setStatusAtividade(rs.getString("status_atividade"));
+        } catch (Exception e) {
+            atividade.setStatusAtividade(null);
+        }
         return atividade;
     }
 
@@ -212,6 +216,72 @@ public class AtividadeDAOImpl {
             } catch (SQLException e) {
                 System.out.println("Erro ao buscar atividades por nome: " + e.getMessage());
             }
+        }
+
+        return lista;
+    }
+
+    public List<Atividade> relatorio(String status, Integer idCategoria) {
+        List<Atividade> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+    SELECT
+        a.id_atividade,
+        a.descricao,
+        c.id_categoria,
+        c.nome AS nome_categoria,
+        f.id_funcionario,
+        f.nome AS nome_funcionario,
+        CASE
+            WHEN MAX(ag.data_fim) >= CURRENT_TIMESTAMP THEN 'ATIVA'
+            ELSE 'ENCERRADA'
+        END AS status_atividade
+    FROM atividade a
+    JOIN categoria_atividade c ON a.id_categoria = c.id_categoria
+    JOIN funcionario f ON a.id_funcionario = f.id_funcionario
+    LEFT JOIN agendamento_atividade ag ON ag.id_atividade = a.id_atividade
+    WHERE 1 = 1
+""");
+
+        if (idCategoria != null && idCategoria > 0) {
+            sql.append(" AND c.id_categoria = ? ");
+        }
+
+        if (status != null && status.equalsIgnoreCase("ATIVA")) {
+            sql.append(" AND ag.data_fim >= CURRENT_TIMESTAMP ");
+        }
+
+        if (status != null && status.equalsIgnoreCase("ENCERRADA")) {
+            sql.append(" AND ag.data_fim < CURRENT_TIMESTAMP ");
+        }
+
+        sql.append("""
+    GROUP BY
+        a.id_atividade,
+        a.descricao,
+        c.id_categoria,
+        c.nome,
+        f.id_funcionario,
+        f.nome
+""");
+
+        sql.append(" ORDER BY a.descricao ");
+
+        try (PreparedStatement stmt = bd.preparar(sql.toString())) {
+            int index = 1;
+
+            if (idCategoria != null && idCategoria > 0) {
+                stmt.setInt(index++, idCategoria);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                lista.add(mapAtividade(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao gerar relatório de atividades: " + e.getMessage());
         }
 
         return lista;

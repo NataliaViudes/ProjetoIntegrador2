@@ -10,6 +10,8 @@ public class Atividade {
     private String descricao;
     private CategoriaAtividade categoria;
     private Funcionario funcionario;
+    private String statusAtividade;
+
 
     public Atividade() {}
 
@@ -92,5 +94,13 @@ public class Atividade {
     public List<Atividade> buscarComFiltro(String filtro, Conexao con) {
         AtividadeDAOImpl dao = new AtividadeDAOImpl(con);
         return dao.get(filtro);
+    }
+
+    public String getStatusAtividade() {
+        return statusAtividade;
+    }
+
+    public void setStatusAtividade(String statusAtividade) {
+        this.statusAtividade = statusAtividade;
     }
 }
