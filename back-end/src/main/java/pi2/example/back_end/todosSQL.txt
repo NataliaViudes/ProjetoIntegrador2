@@ -481,7 +481,6 @@ VALUES
     'Ativo'
 );
 
-
 -- =========================================
 -- ATIVIDADE
 -- =========================================
@@ -556,6 +555,29 @@ VALUES
     '2026-05-22 14:00:00',
     '2026-05-22 16:00:00',
     'Aula de matemática'
+);
+
+-- =========================================
+-- PRESENCA / FALTA DE BENEFICIARIO
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS presencabeneficiario (
+    idAgendamento INTEGER NOT NULL,
+    idBeneficiario INTEGER NOT NULL,
+    presente BOOLEAN NOT NULL,
+
+    CONSTRAINT pk_presenca_beneficiario
+        PRIMARY KEY (idAgendamento, idBeneficiario),
+
+    CONSTRAINT fk_presenca_agendamento
+        FOREIGN KEY (idAgendamento)
+        REFERENCES agendamento_atividade(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_presenca_beneficiario
+        FOREIGN KEY (idBeneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
 );
 
 

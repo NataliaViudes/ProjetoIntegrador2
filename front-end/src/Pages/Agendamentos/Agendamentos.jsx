@@ -362,6 +362,21 @@ function Agendamentos() {
                 </Link>
               )}
 
+              {podePlanejar && (
+                <Link
+                  to="/presenca"
+                  state={{
+                    atividade: agendamentoSelecionado.atividade?.descricao,
+                    funcionario: agendamentoSelecionado.atividade?.funcionario?.nome,
+                    dataInicio: agendamentoSelecionado.dataInicio,
+                    dataFim: agendamentoSelecionado.dataFim,
+                    idAgendamento: agendamentoSelecionado.id
+                  }}
+                >
+                  <button>Presenca / Falta</button>
+                </Link>
+              )}
+
             </div>
           </div>
         </div>

@@ -17,12 +17,14 @@ import CategoriaAuxilio from "./Pages/CategoriaAuxilio/CategoriaAuxilio";
 import CategoriaAtividade from "./Pages/CategoriaAtividade/CategoriaAtividade";
 
 import Vincular from "./Pages/VincularBeneficiario/VincularBeneficiario";
+import PresencaBeneficiario from "./Pages/PresencaBeneficiario/PresencaBeneficiario";
 
 import Beneficiario from "./Pages/Beneficiarios/Beneficiarios";
 import Familiares from "./Pages/Familiares/Familiares";
 
 import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
 import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
+import RelatorioFaltas from "./Pages/RelatorioFaltas/RelatorioFaltas";
 
 import Funcionario from "./Pages/Funcionarios/Funcionario";
 
@@ -123,6 +125,11 @@ function App() {
           element={<Vincular />}
         />
 
+        <Route
+          path="/presenca"
+          element={<PresencaBeneficiario />}
+        />
+
         {/* BENEFICIÁRIOS */}
         <Route
           path="/beneficiarios"
@@ -143,6 +150,11 @@ function App() {
         <Route
           path="/relatorioOcorrencias"
           element={<RelatorioOcorrencias />}
+        />
+
+        <Route
+          path="/relatorioFaltas"
+          element={<RelatorioFaltas />}
         />
 
         {/* ALIMENTOS */}

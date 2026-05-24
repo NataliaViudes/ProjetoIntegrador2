@@ -129,6 +129,10 @@ function Menu() {
               Relatório de Ocorrências
             </Link>
 
+            <Link to="/relatorioFaltas">
+              Relatorio de Faltas
+            </Link>
+
             <Link to="/funcionarios">
               Relatório de Funcionários
             </Link>

@@ -1,0 +1,20 @@
+.presenca-acoes {
+  flex-direction: column;
+}
+
+.item-presenca {
+  align-items: center;
+}
+
+.presenca-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.presenca-checkbox input {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
