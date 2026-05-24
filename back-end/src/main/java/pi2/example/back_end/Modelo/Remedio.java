@@ -1,9 +1,12 @@
 package pi2.example.back_end.Modelo;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import pi2.example.back_end.DAO.DAORemedio;
+import pi2.example.back_end.db.Conexao;
 
-@JsonPropertyOrder({ "id", "nome", "descricao" })
+import java.util.List;
+
 public class Remedio {
+
     private Integer id;
     private String nome;
     private String descricao;
@@ -11,31 +14,23 @@ public class Remedio {
     public Remedio() {
     }
 
-
-    public Remedio(int id) {
+    public Remedio(Integer id, String nome, String descricao) {
         this.id = id;
-        this.nome = "";
-        this.descricao = "";
-    }
-
-    public Remedio(String categoria, String descricao) {
-        this.id =0;
-        this.nome = categoria;
+        this.nome = nome;
         this.descricao = descricao;
     }
 
-    public Remedio(int id, String categoria, String descricao) {
-        this.id = id;
-        this.nome = categoria;
+    public Remedio(String nome, String descricao) {
+        this.nome = nome;
         this.descricao = descricao;
     }
+
+    // =====================================================
+    // GETTERS E SETTERS
+    // =====================================================
 
     public Integer getId() {
         return id;
-    }
-
-    public void setCat_evento_id(int id) {
-        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -58,4 +53,59 @@ public class Remedio {
         this.descricao = descricao;
     }
 
+    // =====================================================
+    // VALIDAÇÃO
+    // =====================================================
+
+    public String validar() {
+
+        String erros = "";
+
+        if (nome == null || nome.trim().isEmpty())
+            erros += "Nome inválido\n";
+
+        if (descricao == null || descricao.trim().isEmpty())
+            erros += "Descrição inválida\n";
+
+        return erros;
+    }
+
+    // =====================================================
+    // DAO
+    // =====================================================
+
+    public List<Remedio> listar(Conexao con) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.listar();
+    }
+
+    public Remedio buscarPorId(Conexao con, int id) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.buscarPorId(id);
+    }
+
+    public List<Remedio> buscarPorNome(Conexao con, String nome) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.buscarPorNome(nome);
+    }
+
+    public List<Remedio> buscarPorDescricao(Conexao con, String descricao) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.buscarPorDescricao(descricao);
+    }
+
+    public Remedio incluir(Conexao con) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.gravar(this);
+    }
+
+    public Remedio alterar(Conexao con) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.alterar(this);
+    }
+
+    public Boolean apagar(Conexao con) {
+        DAORemedio dao = new DAORemedio(con);
+        return dao.apagar(this);
+    }
 }
