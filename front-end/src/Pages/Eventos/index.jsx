@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api.js";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "animate.css";
 import Swal from "sweetalert2";
 import style from "./styles.module.css";
-import CampoFiltro from "../../Components/CampoFiltro";
+import CampoFiltro from "../../components/CampoFiltro/index.jsx";
 
 export default function Eventos() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -135,7 +135,7 @@ export default function Eventos() {
   }
 
   if (nivelUsuario < 3) {
-   
+
     return (
       <div>
         <Menu />

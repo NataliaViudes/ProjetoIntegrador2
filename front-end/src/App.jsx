@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Menu from "./Components/Menu/Menu";
+import Menu from "./components/Menu/Menu";
 
 import Eventos from "./Pages/Eventos";
 import Agendar from "./Pages/AgendarEventos/agendarEventos";
@@ -29,12 +29,13 @@ import RelatorioAtividades from "./Pages/RelatorioAtividades/RelatorioAtividades
 
 import Funcionario from "./Pages/Funcionarios/Funcionario";
 
-//import Alimentos from "./Pages/Alimentos/Alimentos";
+import Alimentos from "./Pages/Alimentos/Alimentos";
 
-//import TipoEstoque from "./Pages/Estoque/TipoEstoque";
+import TipoEstoque from "./Pages/Estoque/TipoEstoque";
 import Estoque from "./Pages/Estoque/Estoque";
 
-//import Cardapio from "./Pages/CardapioMensal/Cardapio";
+import Cardapio from "./Pages/CardapioMensal/Cardapio";
+import ItensCardapio from "./Pages/CardapioMensal/ItensCardapio";
 
 import PaginaInicial from "./Pages/PaginaInicial/PaginaInicial";
 
@@ -163,33 +164,32 @@ function App() {
         />
 
         {/* ALIMENTOS */}
-        {/*
+       
         <Route
           path="/alimentos"
           element={<Alimentos />}
         />
-        */}
+      
 
         {/* ESTOQUE */}
-        {/*
+       
         <Route
           path="/tipo-estoque"
           element={<TipoEstoque />}
         />
-        */}
-
+       
         <Route
           path="/estoque"
           element={<Estoque />}
         />
 
         {/* CARDÁPIO */}
-        {/*
+        
         <Route
           path="/cardapio"
           element={<Cardapio />}
         />
-        */}
+        
 
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "../VincularBeneficiario/VincularBeneficiario.css";
 import "./PresencaBeneficiario.css";
 

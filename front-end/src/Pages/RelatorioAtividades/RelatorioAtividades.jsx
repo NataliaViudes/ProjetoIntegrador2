@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu";
+import api from "../../services/api";
+import Menu from "../../components/Menu/Menu";
 import "./RelatorioAtividades.css";
 
 function RelatorioAtividades() {
@@ -110,7 +110,7 @@ function RelatorioAtividades() {
               <strong>Categoria:</strong>{" "}
               {idCategoria
                 ? categorias.find((c) => String(c.id) === String(idCategoria))
-                    ?.nome
+                  ?.nome
                 : "Todas"}
             </p>
 
@@ -140,7 +140,7 @@ function RelatorioAtividades() {
                     <td>{atividade.funcionario?.nome || "Não informado"}</td>
                     <td>{atividade.statusAtividade || "-"}</td>
                   </tr>
-                  
+
                 ))}
               </tbody>
             </table>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./Ocorrencia.css";
 
 function Ocorrencias() {
@@ -19,7 +19,7 @@ function Ocorrencias() {
   const [beneficiarioId, setBeneficiarioId] = useState("");
 
   const [ocorrencias, setOcorrencias] = useState([]);
-const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
+  const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
 
   useEffect(() => {
     carregarDados();
@@ -52,30 +52,30 @@ const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
   }
 
   async function carregarOcorrencias() {
-  try {
-    const resp = await api.get("/ocorrencias/relatorio");
+    try {
+      const resp = await api.get("/ocorrencias/relatorio");
 
-    const lista = Array.isArray(resp.data) ? resp.data : [];
+      const lista = Array.isArray(resp.data) ? resp.data : [];
 
-    const agora = new Date();
+      const agora = new Date();
 
-    const ocorrenciasNoPrazo = lista.filter((o) => {
-      if (!o.dataRegistro) {
-        return false;
-      }
+      const ocorrenciasNoPrazo = lista.filter((o) => {
+        if (!o.dataRegistro) {
+          return false;
+        }
 
-      const dataRegistro = new Date(o.dataRegistro);
-      const diferencaMinutos = (agora - dataRegistro) / 1000 / 60;
+        const dataRegistro = new Date(o.dataRegistro);
+        const diferencaMinutos = (agora - dataRegistro) / 1000 / 60;
 
-      return diferencaMinutos <= 30;
-    });
+        return diferencaMinutos <= 30;
+      });
 
-    setOcorrencias(ocorrenciasNoPrazo);
-  } catch (error) {
-    console.error("Erro ao carregar ocorrências:", error);
-    setOcorrencias([]);
+      setOcorrencias(ocorrenciasNoPrazo);
+    } catch (error) {
+      console.error("Erro ao carregar ocorrências:", error);
+      setOcorrencias([]);
+    }
   }
-}
 
   async function carregarBeneficiariosVinculados(idAgendamentoSelecionado) {
     if (!idAgendamentoSelecionado) {
@@ -153,7 +153,7 @@ const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
     }
   }
 
-    function editarOcorrencia(o) {
+  function editarOcorrencia(o) {
     setOcorrenciaEditando(o);
     setIdAgendamento(String(o.agendamento?.id || ""));
     setTipo(o.tipo || "GERAL");
@@ -167,47 +167,47 @@ const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
     }
   }
   async function excluirOcorrencia(id) {
-  const confirmar = window.confirm("Deseja realmente excluir esta ocorrência?");
+    const confirmar = window.confirm("Deseja realmente excluir esta ocorrência?");
 
-  if (!confirmar) {
-    return;
-  }
-
-  try {
-    await api.delete(`/ocorrencias/${id}`);
-    alert("Ocorrência excluída com sucesso!");
-
-    if (ocorrenciaEditando && ocorrenciaEditando.id === id) {
-      setOcorrenciaEditando(null);
-      setObservacao("");
-      setBeneficiarioId("");
-      setTipo("GERAL");
+    if (!confirmar) {
+      return;
     }
 
-    carregarOcorrencias();
-  } catch (error) {
-    console.error("Erro ao excluir ocorrência:", error);
+    try {
+      await api.delete(`/ocorrencias/${id}`);
+      alert("Ocorrência excluída com sucesso!");
 
-    if (error.response?.data?.mensage) {
-      alert(error.response.data.mensage);
-    } else if (error.response?.data?.mensagem) {
-      alert(error.response.data.mensagem);
-    } else {
-      alert("Erro ao excluir ocorrência.");
+      if (ocorrenciaEditando && ocorrenciaEditando.id === id) {
+        setOcorrenciaEditando(null);
+        setObservacao("");
+        setBeneficiarioId("");
+        setTipo("GERAL");
+      }
+
+      carregarOcorrencias();
+    } catch (error) {
+      console.error("Erro ao excluir ocorrência:", error);
+
+      if (error.response?.data?.mensage) {
+        alert(error.response.data.mensage);
+      } else if (error.response?.data?.mensagem) {
+        alert(error.response.data.mensagem);
+      } else {
+        alert("Erro ao excluir ocorrência.");
+      }
     }
   }
-}
 
   if (nivelUsuario < 2) {
-        return (
-            <div>
-                <Menu />
-                <h2 style={{ padding: "20px" }}>
-                    Você não possui acesso a esta página.
-                </h2>
-            </div>
-        );
-    }
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="pagina-ocorrencias" translate="no">
@@ -295,44 +295,44 @@ const [ocorrenciaEditando, setOcorrenciaEditando] = useState(null);
             </button>
           </div>
 
-          
+
         </section>
-          <section className="painel-ocorrencias">
-    <h2>Ocorrências Registradas</h2>
+        <section className="painel-ocorrencias">
+          <h2>Ocorrências Registradas</h2>
 
-    {ocorrencias.length === 0 ? (
-      <p>Nenhuma ocorrência registrada.</p>
-    ) : (
-      ocorrencias.map((o) => (
-        <div key={o.id} className="item-ocorrencia">
-          <strong>{o.tipo}</strong>
+          {ocorrencias.length === 0 ? (
+            <p>Nenhuma ocorrência registrada.</p>
+          ) : (
+            ocorrencias.map((o) => (
+              <div key={o.id} className="item-ocorrencia">
+                <strong>{o.tipo}</strong>
 
-          <span>
-            Beneficiário: {o.beneficiario?.nome || "Ocorrência geral"}
-          </span>
+                <span>
+                  Beneficiário: {o.beneficiario?.nome || "Ocorrência geral"}
+                </span>
 
-          <span>
-            Data:{" "}
-            {o.dataRegistro
-              ? new Date(o.dataRegistro).toLocaleString()
-              : "Não informada"}
-          </span>
+                <span>
+                  Data:{" "}
+                  {o.dataRegistro
+                    ? new Date(o.dataRegistro).toLocaleString()
+                    : "Não informada"}
+                </span>
 
-          <p>{o.observacao}</p>
+                <p>{o.observacao}</p>
 
-          <div className="acoes-item">
-            <button type="button" onClick={() => editarOcorrencia(o)}>
-              Editar
-            </button>
+                <div className="acoes-item">
+                  <button type="button" onClick={() => editarOcorrencia(o)}>
+                    Editar
+                  </button>
 
-            <button type="button" onClick={() => excluirOcorrencia(o.id)}>
-              Excluir
-            </button>
-          </div>
-        </div>
-      ))
-    )}
-  </section>
+                  <button type="button" onClick={() => excluirOcorrencia(o.id)}>
+                    Excluir
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </section>
 
       </main>
     </div>

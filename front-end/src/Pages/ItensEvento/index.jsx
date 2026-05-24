@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
 import Swal from "sweetalert2";
 
-import api from "../../Services/api";
+import api from "../../services/api";
 
 import "./ItensEvento.css";
 
@@ -383,11 +383,10 @@ export default function ItensEvento({ evento, voltar, somenteLeitura }) {
                     type="text"
                     placeholder="Buscar item..."
                     disabled={!!item.estoque?.id || somenteLeitura}
-                    className={`input-busca ${
-                      item.estoque?.id || somenteLeitura
+                    className={`input-busca ${item.estoque?.id || somenteLeitura
                         ? "input-desabilitado"
                         : ""
-                    }`}
+                      }`}
                     value={busca[index] ?? item.estoque?.descricao ?? ""}
                     onChange={(e) => buscarEstoque(index, e.target.value)}
                     onFocus={() => buscarEstoque(index, "")}

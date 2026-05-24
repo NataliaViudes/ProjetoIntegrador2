@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
+import api from "../../services/api";
 import "./CadastroUsuario.css";
 
 function CadastroUsuario() {

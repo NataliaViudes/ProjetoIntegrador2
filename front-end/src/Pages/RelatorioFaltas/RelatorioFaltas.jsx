@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./RelatorioFaltas.css";
 
 function RelatorioFaltas() {
@@ -34,7 +34,7 @@ function RelatorioFaltas() {
 
       const resp = await api.get(`/presencas/relatorio/beneficiario/${idBeneficiario}`);
 
-      console.log("Resposta da API:", resp);  
+      console.log("Resposta da API:", resp);
 
       setRegistros(Array.isArray(resp.data) ? resp.data : []);
       setRelatorioBuscado(true);
@@ -85,7 +85,7 @@ function RelatorioFaltas() {
 
   const beneficiariosFiltrados = beneficiarios.filter(b =>
     (b.nome || "").toLowerCase().includes(busca.toLowerCase())
-      || (b.cpf || "").includes(busca)
+    || (b.cpf || "").includes(busca)
   );
 
   const beneficiarioSelecionado = beneficiarios.find(b => String(b.id) === String(idBeneficiario));

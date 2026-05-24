@@ -7,8 +7,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import Swal from "sweetalert2";
 
 import ItensEvento from "../ItensEvento";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu";
+import api from "../../services/api";
+import Menu from "../../components/Menu/Menu";
 
 import "./agendarEventos.css";
 
