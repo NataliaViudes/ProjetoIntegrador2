@@ -27,7 +27,9 @@ import TipoEstoque from "./Pages/Estoque/TipoEstoque";
 import Estoque from "./Pages/Estoque/Estoque";
 import Cardapio from "./Pages/CardapioMensal/Cardapio";
 import ItensCardapio from "./Pages/CardapioMensal/ItensCardapio";
+import OrdemJudicial from "./Pages/OrdemJudicial/OrdemJudicial";
 import PaginaInicial from "./Pages/PaginaInicial/PaginaInicial";
+
 
 import Login from "./Pages/Login/Login";
 import CadastroUsuario from "./Pages/CadastroUsuario/CadastroUsuario";
@@ -158,7 +160,7 @@ function App() {
           path="/relatorioFaltas"
           element={<RelatorioFaltas />}
         />
-        
+
         <Route
           path="/relatorioAtividades"
           element={<RelatorioAtividades />}
@@ -196,7 +198,12 @@ function App() {
           element={<Cardapio />}
         />
 
+        {/* ORDEM JUDICIAL */}
 
+        <Route
+          path="/ordemJudicial"
+          element={<OrdemJudicial />}
+        />
       </Routes>
     </BrowserRouter>
   );

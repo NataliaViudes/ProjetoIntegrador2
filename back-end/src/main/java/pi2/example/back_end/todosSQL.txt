@@ -886,8 +886,11 @@ VALUES
 ('Torta de Frango', 'Salgado', 'Torta recheada com frango'),
 ('Esfiha de Carne', 'Salgado', 'Esfiha aberta de carne'),
 ('Pão Francês', 'Padaria', 'Pão tradicional francês');
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 1ccdea0006a1dd0d72831b1ac44e00a0a27dc101
 
 
 INSERT INTO cardapio (nome, data, hora, id_agendamento)
@@ -906,6 +909,7 @@ VALUES
     2
 );
 
+<<<<<<< HEAD
 -- =========================================
 -- REMEDIO
 -- =========================================
@@ -1109,3 +1113,16 @@ VALUES
     4
 );
 
+=======
+CREATE TABLE ordem_judicial (
+    id SERIAL PRIMARY KEY,
+    beneficiario_id INTEGER NOT NULL UNIQUE,
+    possui_ordem BOOLEAN NOT NULL DEFAULT true,
+    descricao VARCHAR(255),
+
+    CONSTRAINT fk_ordem_beneficiario
+        FOREIGN KEY (beneficiario_id)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
+);
+>>>>>>> 1ccdea0006a1dd0d72831b1ac44e00a0a27dc101
