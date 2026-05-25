@@ -13,6 +13,8 @@ function RelatorioEstoque() {
   const [idTipo, setIdTipo] = useState("");
   const [idMaterial, setIdMaterial] = useState("");
 
+  const [filtroQtd, setFiltroQtd] = useState("TODOS");
+
   useEffect(() => {
     carregarTipos();
     carregarMateriais();
@@ -31,7 +33,17 @@ function RelatorioEstoque() {
   async function carregarMateriais() {
     try {
       const resp = await api.get("/estoque/descricao");
-      setMateriais(Array.isArray(resp.data) ? resp.data : []);
+
+      const dados = Array.isArray(resp.data) ? resp.data : [];
+
+      // 🔥 ORDEM ALFABÉTICA
+      dados.sort((a, b) =>
+        a.descricao.localeCompare(b.descricao, "pt-BR", {
+          sensitivity: "base",
+        })
+      );
+
+      setMateriais(dados);
     } catch (error) {
       console.error("Erro ao carregar materiais:", error);
       setMateriais([]);
@@ -40,7 +52,6 @@ function RelatorioEstoque() {
 
   function alterarModoBusca(valor) {
     setModoBusca(valor);
-
     setIdTipo("");
     setIdMaterial("");
     setItens([]);
@@ -54,9 +65,7 @@ function RelatorioEstoque() {
       return;
     }
 
-    const material = materiais.find(
-      (m) => String(m.id) === String(id)
-    );
+    const material = materiais.find((m) => String(m.id) === String(id));
 
     if (material?.tipo?.id) {
       setIdTipo(String(material.tipo.id));
@@ -64,58 +73,65 @@ function RelatorioEstoque() {
   }
 
   async function buscarRelatorio() {
-  try {
-    let resp;
+    try {
+      let resp;
 
-    // BUSCA POR MATERIAL
-    if (modoBusca === "MATERIAL") {
+      if (modoBusca === "MATERIAL") {
+        if (!idMaterial) {
+          alert("Selecione um material.");
+          return;
+        }
 
-      if (!idMaterial) {
-        alert("Selecione um material.");
-        return;
+        resp = await api.get(`/estoque/${idMaterial}`);
+
+        const dados = Array.isArray(resp.data) ? resp.data : [resp.data];
+
+        // 🔥 ORDEM ALFABÉTICA
+        dados.sort((a, b) =>
+          a.descricao.localeCompare(b.descricao, "pt-BR", {
+            sensitivity: "base",
+          })
+        );
+
+        setItens(dados);
       }
 
-      resp = await api.get(`/estoque/${idMaterial}`);
+      if (modoBusca === "CATEGORIA") {
+        if (!idTipo) {
+          alert("Selecione uma categoria.");
+          return;
+        }
 
-      const dados = Array.isArray(resp.data)
-        ? resp.data
-        : [resp.data];
+        const tipoSelecionado = tipos.find(
+          (t) => String(t.id) === String(idTipo)
+        );
 
-      setItens(dados);
-    }
+        resp = await api.get(
+          `/estoque/tipo?tipo=${tipoSelecionado.tipo}`
+        );
 
-    // BUSCA POR CATEGORIA
-    if (modoBusca === "CATEGORIA") {
+        const dados = Array.isArray(resp.data) ? resp.data : [];
 
-      if (!idTipo) {
-        alert("Selecione uma categoria.");
-        return;
+        // 🔥 ORDEM ALFABÉTICA
+        dados.sort((a, b) =>
+          a.descricao.localeCompare(b.descricao, "pt-BR", {
+            sensitivity: "base",
+          })
+        );
+
+        setItens(dados);
       }
-
-      const tipoSelecionado = tipos.find(
-        (t) => String(t.id) === String(idTipo)
-      );
-
-      resp = await api.get(
-        `/estoque/tipo?tipo=${tipoSelecionado.tipo}`
-      );
-
-      const dados = Array.isArray(resp.data)
-        ? resp.data
-        : [];
-
-      setItens(dados);
+    } catch (error) {
+      console.error("Erro ao buscar relatório:", error);
+      setItens([]);
     }
-
-  } catch (error) {
-    console.error("Erro ao buscar relatório:", error);
-    setItens([]);
   }
-}
+
   function limparFiltros() {
     setIdTipo("");
     setIdMaterial("");
     setItens([]);
+    setFiltroQtd("TODOS");
   }
 
   function imprimirRelatorio() {
@@ -123,9 +139,15 @@ function RelatorioEstoque() {
   }
 
   const materiaisDaCategoria = materiais.filter(
-    (m) =>
-      String(m.tipo?.id) === String(idTipo)
+    (m) => String(m.tipo?.id) === String(idTipo)
   );
+
+  const itensFiltrados = itens.filter((item) => {
+    if (filtroQtd === "TODOS") return true;
+    if (filtroQtd === "ZERADOS") return item.qtd === 0;
+    if (filtroQtd === "NAO_ZERADOS") return item.qtd > 0;
+    return true;
+  });
 
   return (
     <div className="pagina-relatorio-estoque" translate="no">
@@ -137,23 +159,23 @@ function RelatorioEstoque() {
           <h2>Relatório de Estoque</h2>
 
           <label>Modo de busca</label>
-
           <select
             value={modoBusca}
-            onChange={(e) =>
-              alterarModoBusca(e.target.value)
-            }
+            onChange={(e) => alterarModoBusca(e.target.value)}
           >
-            <option value="MATERIAL">
-              Buscar por material
-            </option>
-
-            <option value="CATEGORIA">
-              Buscar por categoria
-            </option>
+            <option value="MATERIAL">Buscar por material</option>
+            <option value="CATEGORIA">Buscar por categoria</option>
           </select>
 
-          {/* BUSCA POR MATERIAL */}
+          <label>Filtro de estoque</label>
+          <select
+            value={filtroQtd}
+            onChange={(e) => setFiltroQtd(e.target.value)}
+          >
+            <option value="TODOS">Todos</option>
+            <option value="ZERADOS">Apenas zerados</option>
+            <option value="NAO_ZERADOS">Apenas com estoque</option>
+          </select>
 
           {modoBusca === "MATERIAL" && (
             <>
@@ -161,17 +183,12 @@ function RelatorioEstoque() {
 
               <select
                 value={idMaterial}
-                onChange={(e) =>
-                  selecionarMaterial(e.target.value)
-                }
+                onChange={(e) => selecionarMaterial(e.target.value)}
               >
                 <option value="">Selecione</option>
 
                 {materiais.map((material) => (
-                  <option
-                    key={material.id}
-                    value={material.id}
-                  >
+                  <option key={material.id} value={material.id}>
                     {material.descricao}
                   </option>
                 ))}
@@ -183,16 +200,12 @@ function RelatorioEstoque() {
                 type="text"
                 readOnly
                 value={
-                  tipos.find(
-                    (t) =>
-                      String(t.id) === String(idTipo)
-                  )?.tipo || ""
+                  tipos.find((t) => String(t.id) === String(idTipo))
+                    ?.tipo || ""
                 }
               />
             </>
           )}
-
-          {/* BUSCA POR CATEGORIA */}
 
           {modoBusca === "CATEGORIA" && (
             <>
@@ -200,17 +213,12 @@ function RelatorioEstoque() {
 
               <select
                 value={idTipo}
-                onChange={(e) =>
-                  setIdTipo(e.target.value)
-                }
+                onChange={(e) => setIdTipo(e.target.value)}
               >
                 <option value="">Selecione</option>
 
                 {tipos.map((tipo) => (
-                  <option
-                    key={tipo.id}
-                    value={tipo.id}
-                  >
+                  <option key={tipo.id} value={tipo.id}>
                     {tipo.tipo}
                   </option>
                 ))}
@@ -231,24 +239,9 @@ function RelatorioEstoque() {
           )}
 
           <div className="acoes-formulario">
-            <button
-              type="button"
-              onClick={buscarRelatorio}
-            >
-              Buscar
-            </button>
-
-            <button
-              type="button"
-              onClick={limparFiltros}
-            >
-              Limpar
-            </button>
-
-            <button
-              type="button"
-              onClick={imprimirRelatorio}
-            >
+            <button onClick={buscarRelatorio}>Buscar</button>
+            <button onClick={limparFiltros}>Limpar</button>
+            <button onClick={imprimirRelatorio}>
               Gerar para impressão
             </button>
           </div>
@@ -266,12 +259,15 @@ function RelatorioEstoque() {
             </p>
 
             <p>
-              <strong>Total encontrado:</strong>{" "}
-              {itens.length}
+              <strong>Total encontrado:</strong> {itensFiltrados.length}
+            </p>
+
+            <p>
+              <strong>Filtro:</strong> {filtroQtd}
             </p>
           </div>
 
-          {itens.length === 0 ? (
+          {itensFiltrados.length === 0 ? (
             <p>Nenhum item encontrado.</p>
           ) : (
             <table className="tabela-relatorio">
@@ -284,16 +280,11 @@ function RelatorioEstoque() {
               </thead>
 
               <tbody>
-                {itens.map((item) => (
+                {itensFiltrados.map((item) => (
                   <tr key={item.id}>
                     <td>{item.descricao}</td>
-
                     <td>{item.qtd}</td>
-
-                    <td>
-                      {item.tipo?.tipo ||
-                        "Não informada"}
-                    </td>
+                    <td>{item.tipo?.tipo || "Não informada"}</td>
                   </tr>
                 ))}
               </tbody>
