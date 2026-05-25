@@ -553,7 +553,26 @@ VALUES
     'Artrite',
     'Artesanato',
     'Inativo'
-);
+),
+  (
+      'José Ferreira Santos',
+      '1955-03-18',
+      71,
+      '369258147',
+      '89012345678',
+      '89012345678',
+      1412.00,
+      'Rua das Acácias, 134',
+      'Jardim América',
+      'Própria',
+      '1832678899',
+      '18922221111',
+      '18922220000',
+      'Nenhuma',
+      'Hipertensão e colesterol alto',
+      'Caminhada',
+      'Ativo'
+  );
 
 -- =========================================
 -- ATIVIDADE
@@ -887,6 +906,207 @@ VALUES
     2
 );
 
+-- =========================================
+-- REMEDIO
+-- =========================================
 
+CREATE TABLE IF NOT EXISTS remedio (
+    id SERIAL,
+
+    nome VARCHAR(100) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+
+    CONSTRAINT pk_remedio
+        PRIMARY KEY (id),
+
+    CONSTRAINT un_remedio_nome
+        UNIQUE (nome)
+);
+
+-- =========================================
+-- INSERTS REMEDIO
+-- =========================================
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Paracetamol', 'Analgésico e antitérmico utilizado para febre e dores leves');
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Ibuprofeno', 'Anti-inflamatório utilizado para dores musculares e febre');
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Amoxicilina', 'Antibiótico utilizado no tratamento de infecções bacterianas');
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Losartana', 'Medicamento utilizado para controle da pressão arterial');
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Omeprazol', 'Medicamento utilizado para gastrite e refluxo');
+
+INSERT INTO remedio (nome, descricao)
+VALUES
+('Dipirona', 'Medicamento utilizado para dor e febre');
+
+
+-- =========================================
+-- PRESCRICAO
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS prescricao (
+    id SERIAL,
+
+    dosagem VARCHAR(100) NOT NULL,
+    quantidade INTEGER NOT NULL,
+
+    horario TIMESTAMP NOT NULL,
+
+    intervalo VARCHAR(20) NOT NULL,
+
+    id_beneficiario INTEGER NOT NULL,
+    id_remedio INTEGER NOT NULL,
+
+    CONSTRAINT pk_prescricao
+        PRIMARY KEY (id),
+
+    CONSTRAINT fk_prescricao_beneficiario
+        FOREIGN KEY (id_beneficiario)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_prescricao_remedio
+        FOREIGN KEY (id_remedio)
+        REFERENCES remedio(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_prescricao_quantidade
+        CHECK (quantidade > 0),
+
+    CONSTRAINT chk_prescricao_intervalo
+        CHECK (
+            intervalo IN (
+                '6h',
+                '8h',
+                '12h',
+                '1dia',
+                '1semana'
+            )
+        )
+);
+
+-- =========================================
+-- INSERTS PRESCRICAO
+-- =========================================
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '1 comprimido',
+    30,
+    '2026-05-25 08:00:00',
+    '12h',
+    1,
+    1
+);
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '2 comprimidos',
+    20,
+    '2026-05-25 14:00:00',
+    '8h',
+    2,
+    2
+);
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '5ml',
+    10,
+    '2026-05-26 07:00:00',
+    '6h',
+    3,
+    3
+);
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '1 cápsula',
+    15,
+    '2026-05-26 09:00:00',
+    '1dia',
+    1,
+    5
+);
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '10 gotas',
+    25,
+    '2026-05-27 18:00:00',
+    '12h',
+    2,
+    6
+);
+
+INSERT INTO prescricao (
+    dosagem,
+    quantidade,
+    horario,
+    intervalo,
+    id_beneficiario,
+    id_remedio
+)
+VALUES
+(
+    '1 comprimido após almoço',
+    8,
+    '2026-05-28 12:00:00',
+    '1semana',
+    3,
+    4
+);
 
 
