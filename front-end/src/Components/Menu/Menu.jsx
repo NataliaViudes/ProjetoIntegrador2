@@ -62,6 +62,8 @@ function Menu() {
 
             <Link to="/funcionarios">Funcionários</Link>
 
+            <Link to="/ordemJudicial">Ordem Judicial</Link>
+
             <Link to="/remedios">Remedios</Link>
 
             <Link to="/tipo-estoque">

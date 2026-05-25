@@ -851,7 +851,7 @@ VALUES
 ('Macarrão', 'Massa', 'Macarrão ao molho vermelho'),
 ('Salada Verde', 'Salada', 'Alface e rúcula'),
 ('Bolo de Chocolate', 'Sobremesa', 'Bolo simples'),
-('Leite', 'Bebida', 'Leite integral');
+('Leite', 'Bebida', 'Leite integral'),
 ('Hambúrguer Artesanal', 'Prato', 'Hambúrguer bovino artesanal'),
 ('Batata Frita', 'Porção', 'Batata frita crocante'),
 ('Refrigerante Cola', 'Bebida', 'Refrigerante sabor cola'),
@@ -866,9 +866,7 @@ VALUES
 ('Chá de Camomila', 'Bebida', 'Chá natural calmante'),
 ('Torta de Frango', 'Salgado', 'Torta recheada com frango'),
 ('Esfiha de Carne', 'Salgado', 'Esfiha aberta de carne'),
-('Pão Francês', 'Padaria', 'Pão tradicional francês'),
-
-
+('Pão Francês', 'Padaria', 'Pão tradicional francês');
 
 
 INSERT INTO cardapio (nome, data, hora, id_agendamento)
@@ -887,6 +885,14 @@ VALUES
     2
 );
 
+CREATE TABLE ordem_judicial (
+    id SERIAL PRIMARY KEY,
+    beneficiario_id INTEGER NOT NULL UNIQUE,
+    possui_ordem BOOLEAN NOT NULL DEFAULT true,
+    descricao VARCHAR(255),
 
-
-
+    CONSTRAINT fk_ordem_beneficiario
+        FOREIGN KEY (beneficiario_id)
+        REFERENCES beneficiario(id)
+        ON DELETE CASCADE
+);
