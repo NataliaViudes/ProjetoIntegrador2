@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu";
+import api from "../../services/api";
+import Menu from "../../components/Menu/Menu";
 import Swal from "sweetalert2";
 import "./Remedio.css";
 

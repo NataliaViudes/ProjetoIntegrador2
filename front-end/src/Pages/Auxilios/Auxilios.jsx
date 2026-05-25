@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
-import Menu from "../../components/Menu/Menu";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./Auxilios.css";
 
 function Auxilios() {

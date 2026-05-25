@@ -140,7 +140,9 @@ CREATE TABLE IF NOT EXISTS TIPO_ESTOQUE(
 INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material escolar');
 INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material fisio');
 INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material artesanato');
-
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material limpeza');
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material escritório');
+INSERT INTO TIPO_ESTOQUE(tipo) VALUES('Material esportivo');
 
 CREATE TABLE IF NOT EXISTS  ESTOQUE(
     id SERIAL,
@@ -151,12 +153,29 @@ CREATE TABLE IF NOT EXISTS  ESTOQUE(
     CONSTRAINT FK_ESTOQUE_TIPO_ESTOQUE FOREIGN KEY (id_tipo_estoque)  REFERENCES TIPO_ESTOQUE(id)
 );
 
-INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('borracha grande',10,1);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Borracha grande',10,1);
 INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Grampeador',2,1);
-INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar reto',2,2);
-INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Porrete pra deixar um pouco torto',2,2);
-
-
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Caderno 100 folhas',2,1);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Tinta',2,3);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Lápis preto',50,1);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Caneta azul',40,1);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Régua 30cm',15,1);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Faixa elástica',12,2);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Bola de pilates',5,2);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Colchonete',7,2);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Banbolê',2,2);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Pincel fino',20,3);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Cola quente',10,3);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Tesoura artesanal',6,3);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Detergente',25,4);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Álcool 70%',18,4);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Vassoura',9,4);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Papel sulfite A4',30,5);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Clips caixa',20,5);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Calculadora',11,5);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Bola de futebol',6,6);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Cone treinamento',15,6);
+INSERT INTO ESTOQUE(descricao,qtd,id_tipo_estoque) VALUES('Corda de pular',10,6);
 
 CREATE TABLE IF NOT EXISTS itens_evento (
 
@@ -826,20 +845,28 @@ CREATE TABLE itens_cardapio (
 INSERT INTO alimento (nome, tipo, descricao)
 VALUES
 ('Feijoada', 'Prato', 'Feijoada'),
-
 ('Cachorro quente', 'Prato', 'Pão, salsicha, molho, batata palha'),
-
 ('Frango Grelhado', 'Proteína', 'Peito de frango grelhado'),
-
 ('Suco de Laranja', 'Bebida', 'Suco natural'),
-
 ('Macarrão', 'Massa', 'Macarrão ao molho vermelho'),
-
 ('Salada Verde', 'Salada', 'Alface e rúcula'),
-
 ('Bolo de Chocolate', 'Sobremesa', 'Bolo simples'),
-
 ('Leite', 'Bebida', 'Leite integral');
+('Hambúrguer Artesanal', 'Prato', 'Hambúrguer bovino artesanal'),
+('Batata Frita', 'Porção', 'Batata frita crocante'),
+('Refrigerante Cola', 'Bebida', 'Refrigerante sabor cola'),
+('Suco de Uva', 'Bebida', 'Suco integral de uva'),
+('Pizza Calabresa', 'Prato', 'Pizza de calabresa com cebola'),
+('Lasanha', 'Massa', 'Lasanha à bolonhesa'),
+('Sorvete de Morango', 'Sobremesa', 'Sorvete cremoso'),
+('Pudim', 'Sobremesa', 'Pudim de leite condensado'),
+('Omelete', 'Prato', 'Ovos com queijo e tomate'),
+('Panqueca', 'Massa', 'Panqueca recheada com carne moída'),
+('Café', 'Bebida', 'Café preto quente'),
+('Chá de Camomila', 'Bebida', 'Chá natural calmante'),
+('Torta de Frango', 'Salgado', 'Torta recheada com frango'),
+('Esfiha de Carne', 'Salgado', 'Esfiha aberta de carne'),
+('Pão Francês', 'Padaria', 'Pão tradicional francês'),
 
 
 
