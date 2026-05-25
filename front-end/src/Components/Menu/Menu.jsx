@@ -170,15 +170,7 @@ function Menu() {
 
       </div>
 
-      {/* PESQUISA */}
-      <div className="area-pesquisa-topo">
-
-        <input
-          type="text"
-          placeholder="Pesquisar..."
-        />
-
-      </div>
+     
 
     </header>
   );

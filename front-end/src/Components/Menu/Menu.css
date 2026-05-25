@@ -10,9 +10,11 @@
   width: 100%;
   height: 78px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 18px;
 
   padding: 0 32px;
 
@@ -31,6 +33,7 @@
 .icone-home {
   width: 48px;
   height: 48px;
+  justify-self: start;
 
   border-radius: 14px;
 
@@ -53,13 +56,16 @@
 .grupo-botoes {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 /* LINKS E BOTÕES */
 .grupo-botoes button {
   height: 44px;
 
+  min-width: 116px;
   padding: 0 18px;
 
   border: none;
@@ -71,6 +77,7 @@
 
   font-size: 15px;
   font-weight: 600;
+  white-space: nowrap;
 
   cursor: pointer;
 
@@ -186,6 +193,7 @@
 @media (max-width: 1200px) {
   .topo-menu {
     padding: 0 16px;
+    grid-template-columns: 52px 1fr 0;
   }
 
   .area-pesquisa-topo {
@@ -194,11 +202,22 @@
 }
 
 @media (max-width: 900px) {
+  .topo-menu {
+    height: auto;
+    min-height: 78px;
+    grid-template-columns: 48px 1fr;
+    padding: 12px 14px;
+  }
+
   .grupo-botoes {
     gap: 4px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
   }
 
   .grupo-botoes button {
+    min-width: 104px;
     padding: 0 12px;
     font-size: 14px;
   }

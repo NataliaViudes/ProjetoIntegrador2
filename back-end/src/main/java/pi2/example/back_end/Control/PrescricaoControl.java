@@ -23,7 +23,7 @@ public class PrescricaoControl {
 
                 if (p.getHorario() != null) {
 
-                    if (p.getIntervalo() != null && p.getIntervalo() > 0) {
+                    if (p.getIntervalo() != null && !p.getIntervalo().isEmpty()) {
 
                         if (p.getBeneficiario() != null &&
                                 p.getBeneficiario().getId() != null &&
@@ -43,7 +43,11 @@ public class PrescricaoControl {
 
                                     Prescricao resultado = p.incluir(db);
 
-                                    return ResponseEntity.ok(resultado);
+                                    if (resultado != null) {
+                                        return ResponseEntity.ok(resultado);
+                                    } else {
+                                        return ResponseEntity.badRequest().body(new Erro("Erro ao salvar prescriÃ§Ã£o"));
+                                    }
 
                                 } catch (SQLException e) {
 

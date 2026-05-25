@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import Swal from "sweetalert2";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -111,6 +112,22 @@ function Prescricao() {
     setBuscaBeneficiario("");
   }
 
+  function carregarPrescricaoNoFormulario(p) {
+
+    setPrescricaoEditando(p);
+
+    setBeneficiarioId(String(p.beneficiario?.id || ""));
+    setRemedioId(String(p.remedio?.id || ""));
+
+    setDosagem(p.dosagem || "");
+    setQuantidade(String(p.quantidade || ""));
+
+    setDataHora(p.horario ? formatarDatetimeLocal(p.horario) : "");
+
+    setIntervalo(p.intervalo || "");
+    setBuscaBeneficiario(p.beneficiario?.nome || "");
+  }
+
   function gerarProximasDatas(dataInicial, tipoIntervalo) {
 
     const eventos = [];
@@ -173,7 +190,55 @@ function Prescricao() {
       !intervalo
     ) {
 
-      alert("Preencha todos os campos.");
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obrigatorios",
+        text: "Preencha todos os campos."
+      });
+      return;
+    }
+
+    if (prescricaoEditando) {
+
+      try {
+
+        const payload = {
+          id: prescricaoEditando.id,
+          dosagem,
+          quantidade: Number(quantidade),
+          horario: dataHora + ":00",
+          beneficiario: {
+            id: Number(beneficiarioId)
+          },
+          remedio: {
+            id: Number(remedioId)
+          },
+          intervalo
+        };
+
+        await api.put("/prescricoes", payload);
+
+        await Swal.fire({
+          icon: "success",
+          title: "Prescricao atualizada",
+          timer: 1600,
+          showConfirmButton: false
+        });
+
+        limparFormulario();
+        carregarTudo();
+
+      } catch (e) {
+
+        console.error("Erro ao salvar prescriÃ§Ã£o:", e);
+
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao salvar prescricao",
+          text: e.response?.data?.message || "Confira os dados e tente novamente."
+        });
+      }
+
       return;
     }
 
@@ -199,12 +264,7 @@ function Prescricao() {
             id: Number(remedioId)
           },
 
-          intervalo:
-            intervalo === "12h" ? 12 :
-            intervalo === "8h" ? 8 :
-            intervalo === "6h" ? 6 :
-            intervalo === "1dia" ? 24 :
-            168
+          intervalo
         };
 
         await api.post("/prescricoes", payload);
@@ -224,25 +284,47 @@ function Prescricao() {
     }
   }
 
-  async function excluir(id) {
+  async function excluirComSwal(id) {
 
-    const confirmou = window.confirm(
-      "Deseja excluir esta prescrição?"
-    );
+    const resultado = await Swal.fire({
+      icon: "warning",
+      title: "Excluir prescricao?",
+      text: "Essa acao nao podera ser desfeita.",
+      showCancelButton: true,
+      confirmButtonText: "Excluir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#c1121f",
+      cancelButtonColor: "#6c757d"
+    });
 
-    if (!confirmou) return;
+    if (!resultado.isConfirmed) return;
 
     try {
 
       await api.delete(`/prescricoes/${id}`);
 
+      if (prescricaoEditando?.id === id) {
+        limparFormulario();
+      }
+
       carregarTudo();
+
+      Swal.fire({
+        icon: "success",
+        title: "Prescricao excluida",
+        timer: 1400,
+        showConfirmButton: false
+      });
 
     } catch (e) {
 
       console.error("Erro ao excluir:", e);
 
-      alert("Erro ao excluir prescrição.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao excluir prescricao",
+        text: "Tente novamente."
+      });
     }
   }
 
@@ -364,16 +446,7 @@ function Prescricao() {
 
             onSelectEvent={(evento) => {
 
-              const p = evento.resource;
-
-              const confirmou = window.confirm(
-                `Excluir prescrição de ${p.remedio?.nome}?`
-              );
-
-              if (confirmou) {
-
-                excluir(p.id);
-              }
+              carregarPrescricaoNoFormulario(evento.resource);
             }}
 
             style={{ height: "80vh" }}
@@ -525,7 +598,7 @@ function Prescricao() {
           <div className="acoes-formulario">
 
             <button onClick={salvar}>
-              Salvar
+              {prescricaoEditando ? "Atualizar" : "Salvar"}
             </button>
 
             <button onClick={limparFormulario}>
@@ -533,6 +606,16 @@ function Prescricao() {
             </button>
 
           </div>
+
+          {prescricaoEditando && (
+            <button
+              type="button"
+              className="btn-excluir-prescricao-form"
+              onClick={() => excluirComSwal(prescricaoEditando.id)}
+            >
+              Excluir prescricao
+            </button>
+          )}
 
         </section>
         <section>
@@ -587,7 +670,7 @@ function Prescricao() {
 
                 <button
                   className="btn-excluir"
-                  onClick={() => excluir(p.id)}
+                  onClick={() => excluirComSwal(p.id)}
                 >
                   Excluir
                 </button>

@@ -1,0 +1,771 @@
+:root {
+  --azul-900: #1F4F61;
+  --azul-700: #2E6B82;
+  --azul-500: #5493AB;
+  --azul-100: #D2E7EF;
+  --verde-800: #667C51;
+  --verde-500: #9AAF85;
+  --verde-100: #E0E7DA;
+  --branco: #FBFBFA;
+  --texto: #163a47;
+  --texto-suave: #5c7280;
+  --borda: rgba(84, 147, 171, 0.24);
+  --sombra: 0 14px 36px rgba(31, 79, 97, 0.12);
+  --sombra-suave: 0 8px 22px rgba(31, 79, 97, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(210, 231, 239, 0.95), transparent 36%),
+    linear-gradient(135deg, var(--branco) 0%, var(--verde-100) 48%, var(--azul-100) 100%);
+  color: var(--texto);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+.pagina-agendamentos,
+.pagina-inicial,
+.pagina-funcionario,
+.form-funcionario,
+.pagina-login,
+.pagina-prescricao,
+.pagina-alimentos,
+.pagina-atividades,
+.pagina-auxilios,
+.pagina-cargos,
+.pagina-categoria-atividade,
+.pagina-categoria-auxilio,
+.pagina-familiar,
+.form-familiar,
+.pagina-planejamento,
+.pagina-relatorio-faltas,
+.pagina-relatorio-ocorrencias,
+.pagina-relatorio-atividades,
+.pagina-relatorio-estoque,
+.pagina-ocorrencia,
+.pagina-ocorrencias,
+.pagina-cardapio,
+.pagina-ordem-judicial,
+.itens-container,
+.beneficiario-page,
+.pagina-remedio {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(84, 147, 171, 0.18), transparent 30%),
+    linear-gradient(135deg, var(--branco) 0%, var(--verde-100) 50%, var(--azul-100) 100%) !important;
+  color: var(--texto);
+}
+
+.conteudo-agendamentos,
+.conteudo-inicial,
+.conteudo-prescricao,
+.conteudo-alimentos,
+.conteudo-atividades,
+.conteudo-auxilios,
+.conteudo-categoria-atividade,
+.conteudo-categoria-auxilio,
+.conteudo-cardapio,
+.conteudo-ocorrencias,
+.conteudo-relatorio-faltas,
+.conteudo-relatorio-ocorrencias,
+.conteudo-relatorio-atividades,
+.conteudo-relatorio-estoque,
+.container-planejamento,
+.itens-container,
+.container-remedio {
+  width: min(1220px, calc(100% - 32px));
+  margin: 24px auto 0;
+}
+
+.painel-formulario,
+.painel-calendario,
+.painel-esquerdo,
+.painel-direito,
+.painel-filtros,
+.painel-resultados,
+.painel-ocorrencia,
+.painel-ocorrencias,
+.painel-info,
+.painel-material,
+.painel-cronograma,
+.painel-itens,
+.painel-itens2,
+.lista-cardapio,
+.pagina-cargos .form,
+.pagina-cargos .lista,
+.card-formulario,
+.card-lista,
+.topo,
+.tabela,
+.table-card,
+.form-card,
+.form-header,
+.topbar,
+.lista-prescricoes,
+.card-login {
+  background: rgba(251, 251, 250, 0.86) !important;
+  border: 1px solid var(--borda) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--sombra) !important;
+  backdrop-filter: blur(12px);
+}
+
+.painel-formulario,
+.painel-calendario,
+.painel-esquerdo,
+.painel-direito,
+.painel-filtros,
+.painel-resultados,
+.painel-ocorrencia,
+.painel-ocorrencias,
+.painel-info,
+.painel-material,
+.painel-cronograma,
+.painel-itens,
+.painel-itens2,
+.lista-cardapio,
+.pagina-cargos .form,
+.pagina-cargos .lista,
+.card-formulario,
+.card-lista,
+.topo,
+.tabela,
+.form-card,
+.form-header,
+.topbar {
+  padding: 22px !important;
+}
+
+h1,
+h2,
+h3,
+.topo-lista h2,
+.painel-formulario h2,
+.painel-resultados h2,
+.painel-filtros h2,
+.form-header h1 {
+  color: var(--azul-900) !important;
+  letter-spacing: 0;
+}
+
+p,
+span,
+label,
+td {
+  color: inherit;
+}
+
+label,
+.campo label,
+.grupo-input label,
+.painel-filtros label,
+.painel-formulario label,
+.painel-esquerdo label,
+.painel-ocorrencia label {
+  color: var(--azul-900) !important;
+  font-weight: 700 !important;
+}
+
+input,
+select,
+textarea,
+.campo input,
+.campo select,
+.grupo-input input,
+.painel-formulario input,
+.painel-formulario select,
+.painel-formulario textarea,
+.painel-esquerdo input,
+.painel-esquerdo select,
+.painel-esquerdo textarea,
+.painel-direito input,
+.painel-ocorrencia select,
+.painel-ocorrencia textarea,
+.cabecalho-lista input,
+.linha-busca-categoria input,
+.area-pesquisa-topo input,
+.linha-busca-cpf input,
+.form input,
+.form select,
+.form-grid input,
+.form-grid select,
+.linha-material input,
+.linha-cronograma input,
+.input-busca,
+.input-qtd,
+.painel-filtros input,
+.painel-filtros select,
+.topo input,
+.topo-lista input {
+  background: rgba(251, 251, 250, 0.96) !important;
+  border: 1px solid rgba(84, 147, 171, 0.34) !important;
+  border-radius: 12px !important;
+  color: var(--texto) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.campo input:focus,
+.campo select:focus,
+.grupo-input input:focus,
+.painel-formulario input:focus,
+.painel-formulario select:focus,
+.painel-formulario textarea:focus,
+.painel-esquerdo input:focus,
+.painel-esquerdo select:focus,
+.painel-esquerdo textarea:focus,
+.painel-direito input:focus,
+.painel-ocorrencia select:focus,
+.painel-ocorrencia textarea:focus,
+.cabecalho-lista input:focus,
+.linha-busca-categoria input:focus,
+.area-pesquisa-topo input:focus,
+.linha-busca-cpf input:focus,
+.form input:focus,
+.form select:focus,
+.form-grid input:focus,
+.form-grid select:focus,
+.linha-material input:focus,
+.linha-cronograma input:focus,
+.input-busca:focus,
+.input-qtd:focus,
+.painel-filtros input:focus,
+.painel-filtros select:focus {
+  outline: none !important;
+  border-color: var(--azul-500) !important;
+  box-shadow: 0 0 0 4px rgba(84, 147, 171, 0.16) !important;
+}
+
+button,
+.btn,
+.acoes-formulario button,
+.acoes-item button,
+.rodape button,
+.botoes button,
+.btn-salvar,
+.btn-primary {
+  border: none !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, var(--azul-900), var(--azul-700)) !important;
+  color: var(--branco) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 18px rgba(31, 79, 97, 0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button:hover,
+.btn:hover,
+.acoes-formulario button:hover,
+.acoes-item button:hover,
+.rodape button:hover,
+.botoes button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 12px 24px rgba(31, 79, 97, 0.22);
+}
+
+.topo-menu {
+  width: min(1248px, calc(100% - 32px)) !important;
+  margin: 16px auto 0 !important;
+  display: grid !important;
+  grid-template-columns: 56px 1fr 56px !important;
+  align-items: center !important;
+  background: rgba(251, 251, 250, 0.92) !important;
+  border: 1px solid var(--borda) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--sombra-suave) !important;
+}
+
+.topo-menu .icone-home {
+  justify-self: start;
+}
+
+.topo-menu .grupo-botoes {
+  justify-content: center !important;
+  width: 100%;
+}
+
+.grupo-botoes button {
+  min-width: 116px;
+  background: linear-gradient(135deg, var(--azul-900), var(--azul-700)) !important;
+  color: var(--branco) !important;
+  box-shadow: 0 8px 18px rgba(31, 79, 97, 0.16);
+}
+
+.grupo-botoes button:hover {
+  background: linear-gradient(135deg, var(--azul-700), var(--azul-500)) !important;
+}
+
+.btn-limpar,
+.btn-secondary,
+.acoes-formulario button:last-child {
+  background: var(--verde-100) !important;
+  color: var(--azul-900) !important;
+  box-shadow: none;
+}
+
+.btn-editar,
+.btn-success {
+  background: linear-gradient(135deg, var(--verde-800), var(--verde-500)) !important;
+  color: var(--branco) !important;
+}
+
+.btn-excluir,
+.btn-excluir-prescricao-form {
+  background: linear-gradient(135deg, #9f1d2a, #c43d4c) !important;
+  color: var(--branco) !important;
+}
+
+table {
+  overflow: hidden;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+th {
+  background: var(--azul-900) !important;
+  color: var(--branco) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+td {
+  background: rgba(251, 251, 250, 0.9) !important;
+  border-color: rgba(84, 147, 171, 0.18) !important;
+}
+
+tbody tr:nth-child(even) td {
+  background: rgba(224, 231, 218, 0.6) !important;
+}
+
+tbody tr:hover td {
+  background: rgba(210, 231, 239, 0.78) !important;
+}
+
+.item-agendamento,
+.item-ocorrencia,
+.item-falta,
+.item-alimento,
+.item-atividade,
+.item-categoria,
+.item-auxilio,
+.item-cardapio,
+.pagina-cargos .item,
+.pagina-ordem-judicial .card,
+.box,
+.card-prescricao,
+.item-remedio {
+  background: rgba(251, 251, 250, 0.95) !important;
+  border: 1px solid var(--borda) !important;
+  border-left: 5px solid var(--azul-500) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--sombra-suave) !important;
+}
+
+.painel-calendario .rbc-calendar,
+.rbc-calendar {
+  background: rgba(251, 251, 250, 0.96) !important;
+  border-radius: 16px;
+}
+
+.rbc-toolbar button {
+  background: var(--azul-700) !important;
+  color: var(--branco) !important;
+  border-radius: 10px !important;
+  box-shadow: none;
+}
+
+.rbc-toolbar button.rbc-active {
+  background: var(--verde-800) !important;
+}
+
+.rbc-button-link,
+.rbc-date-cell button,
+.rbc-show-more {
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--azul-900) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+  transform: none !important;
+}
+
+.rbc-button-link:hover,
+.rbc-date-cell button:hover,
+.rbc-show-more:hover {
+  background: transparent !important;
+  color: var(--azul-700) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.rbc-event,
+.evento-atividade {
+  background: var(--azul-700) !important;
+  color: var(--branco) !important;
+  border-radius: 8px !important;
+}
+
+.evento-cardapio {
+  background: var(--verde-800) !important;
+  color: var(--branco) !important;
+}
+
+.swal2-popup {
+  border-radius: 18px !important;
+  background: var(--branco) !important;
+  color: var(--texto) !important;
+}
+
+.swal2-title {
+  color: var(--azul-900) !important;
+}
+
+.swal2-confirm {
+  background: var(--azul-700) !important;
+}
+
+.swal2-cancel {
+  background: var(--verde-800) !important;
+}
+
+.pagina-alimentos,
+.pagina-atividades,
+.pagina-auxilios,
+.pagina-categoria-atividade,
+.pagina-categoria-auxilio,
+.pagina-cargos,
+.pagina-familiar,
+.form-familiar,
+.pagina-planejamento,
+.itens-container {
+  padding: 16px !important;
+}
+
+.conteudo-alimentos,
+.conteudo-atividades,
+.conteudo-auxilios,
+.conteudo-categoria-atividade,
+.conteudo-categoria-auxilio,
+.conteudo-cardapio,
+.conteudo-ocorrencias {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+
+.lista-alimentos,
+.lista-atividades,
+.lista-categorias,
+.lista-auxilios,
+.lista-cardapio,
+.pagina-cargos .lista,
+.pagina-ordem-judicial .lista,
+.lista-material,
+.lista-cronograma {
+  gap: 12px !important;
+}
+
+.cabecalho-lista,
+.topo-menu,
+.topo,
+.topo-itens,
+.linha-busca-categoria {
+  gap: 14px;
+}
+
+.box-beneficiario,
+.descricao-auxilio,
+.sugestoes-box {
+  background: rgba(251, 251, 250, 0.94) !important;
+  border: 1px solid var(--borda) !important;
+  border-radius: 12px !important;
+  color: var(--texto) !important;
+}
+
+.descricao-auxilio {
+  background: rgba(210, 231, 239, 0.42) !important;
+}
+
+.auxilio-aprovado {
+  border-left-color: var(--verde-800) !important;
+  background: rgba(224, 231, 218, 0.86) !important;
+}
+
+.auxilio-rejeitado,
+.card-alerta {
+  border-left-color: #c43d4c !important;
+  background: #fff6f7 !important;
+}
+
+.botao-aprovar {
+  background: linear-gradient(135deg, var(--verde-800), var(--verde-500)) !important;
+}
+
+.botao-rejeitar,
+.btn-delete {
+  background: linear-gradient(135deg, #9f1d2a, #c43d4c) !important;
+  color: var(--branco) !important;
+}
+
+.itens-container {
+  width: min(1220px, calc(100% - 32px));
+  margin: 24px auto;
+  border-radius: 18px;
+}
+
+.itens-tabela {
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.topo-itens {
+  padding: 18px 0;
+}
+
+.sugestao-item:hover {
+  background: rgba(210, 231, 239, 0.8) !important;
+}
+
+.linha-selecionada td {
+  background: rgba(224, 231, 218, 0.88) !important;
+}
+
+.container-planejamento {
+  grid-template-columns: minmax(240px, 0.35fr) 1fr !important;
+}
+
+.pagina-planejamento .titulo {
+  color: var(--azul-900) !important;
+  font-size: 18px;
+}
+
+.linha-material,
+.linha-cronograma,
+.item-cardapio,
+.item-alimento,
+.item-atividade,
+.item-categoria,
+.item-auxilio {
+  align-items: center;
+}
+
+.painel-itens,
+.topo-itens {
+  justify-content: space-between;
+}
+
+.painel-itens2 {
+  gap: 10px !important;
+}
+
+.nome-alimento {
+  color: var(--azul-900);
+  font-weight: 700;
+}
+
+.texto-salvo {
+  color: var(--verde-800) !important;
+}
+
+.aviso-ocorrencia,
+.erro,
+.erro-texto {
+  color: #9f1d2a !important;
+  font-weight: 700;
+}
+
+.btn-pequeno {
+  min-width: 40px;
+  padding: 8px 10px !important;
+}
+
+.form-familiar .form-grid,
+.form-funcionario,
+.pagina-funcionario .form-grid {
+  width: min(1100px, calc(100% - 32px));
+  margin: 20px auto 0;
+  background: rgba(251, 251, 250, 0.88) !important;
+  border: 1px solid var(--borda) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--sombra) !important;
+  padding: 22px !important;
+}
+
+.rodape-familiar,
+.rodape,
+.acoes-form,
+.botoes,
+.acoes,
+.botoes-item,
+.acoes-item,
+.acoes-topo,
+.grupo-botoes,
+.acoes-formulario {
+  gap: 10px !important;
+}
+
+@media (max-width: 900px) {
+  .topo-menu {
+    grid-template-columns: 48px 1fr !important;
+  }
+
+  .topo-menu .grupo-botoes {
+    justify-content: flex-start !important;
+    overflow-x: auto;
+  }
+
+  .conteudo-agendamentos,
+  .conteudo-inicial,
+  .conteudo-prescricao,
+  .conteudo-alimentos,
+  .conteudo-atividades,
+  .conteudo-auxilios,
+  .conteudo-categoria-atividade,
+  .conteudo-categoria-auxilio,
+  .conteudo-cardapio,
+  .conteudo-ocorrencias,
+  .conteudo-relatorio-faltas,
+  .conteudo-relatorio-ocorrencias,
+  .conteudo-relatorio-atividades,
+  .conteudo-relatorio-estoque,
+  .container-planejamento,
+  .itens-container,
+  .container-remedio {
+    width: calc(100% - 20px);
+    margin-top: 14px;
+  }
+
+  .container-planejamento,
+  .conteudo-alimentos,
+  .conteudo-atividades,
+  .conteudo-auxilios,
+  .conteudo-categoria-atividade,
+  .conteudo-categoria-auxilio,
+  .conteudo-cardapio,
+  .conteudo-ocorrencias {
+    grid-template-columns: 1fr !important;
+  }
+
+  .item-cardapio,
+  .item-alimento,
+  .item-atividade,
+  .item-categoria,
+  .item-auxilio,
+  .topo-itens,
+  .painel-itens {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+}
+
+.pagina-ordem-judicial .topo {
+  width: min(1100px, calc(100% - 32px)) !important;
+  margin: 24px auto 18px !important;
+  padding: 22px !important;
+  border-radius: 18px !important;
+}
+
+.pagina-ordem-judicial .lista {
+  width: min(1100px, calc(100% - 32px)) !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 14px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.pagina-ordem-judicial .card {
+  min-height: 146px;
+  align-items: flex-start !important;
+  border-radius: 16px !important;
+}
+
+.pagina-ordem-judicial .toggle-area {
+  background: rgba(210, 231, 239, 0.6) !important;
+  border-radius: 999px;
+}
+
+.pagina-ordem-judicial .slider {
+  box-shadow: none !important;
+}
+
+.beneficiario-page .form-card,
+.beneficiario-page .form-header,
+.beneficiario-page .topbar,
+.beneficiario-page .table-card {
+  width: min(1100px, calc(100% - 32px)) !important;
+  max-width: none !important;
+  background: rgba(251, 251, 250, 0.94) !important;
+}
+
+.beneficiario-page .form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.beneficiario-page .campo.grande {
+  grid-column: span 6 !important;
+}
+
+.beneficiario-page .campo.medio {
+  grid-column: span 4 !important;
+}
+
+.beneficiario-page .campo.pequeno {
+  grid-column: span 3 !important;
+}
+
+.beneficiario-page .campo.mini {
+  grid-column: span 2 !important;
+}
+
+.beneficiario-page .campo input:disabled {
+  background: #fbfbfa !important;
+  color: var(--azul-900) !important;
+  border-color: rgba(84, 147, 171, 0.2) !important;
+  opacity: 0.88;
+}
+
+@media (max-width: 760px) {
+  .pagina-ordem-judicial .lista {
+    grid-template-columns: 1fr !important;
+  }
+
+  .beneficiario-page .campo.grande,
+  .beneficiario-page .campo.medio,
+  .beneficiario-page .campo.pequeno,
+  .beneficiario-page .campo.mini {
+    grid-column: span 12 !important;
+  }
+}

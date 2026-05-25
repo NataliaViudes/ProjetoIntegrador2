@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -18,6 +18,8 @@ function PaginaInicial() {
 
   const [agendamentos, setAgendamentos] = useState([]);
   const [cardapios, setCardapios] = useState([]);
+  const [prescricoes, setPrescricoes] = useState([]);
+  const [notificacaoPrescricao, setNotificacaoPrescricao] = useState(null);
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [viewAtual, setViewAtual] = useState("month");
@@ -30,9 +32,10 @@ function PaginaInicial() {
 
   async function carregarTudo() {
     try {
-      const [respAgendamentos, respCardapios] = await Promise.all([
+      const [respAgendamentos, respCardapios, respPrescricoes] = await Promise.all([
         api.get("/agendamentos"),
         api.get("/cardapio"),
+        api.get("/prescricoes"),
       ]);
 
       setAgendamentos(
@@ -46,9 +49,107 @@ function PaginaInicial() {
           ? respCardapios.data
           : []
       );
+
+      setPrescricoes(
+        Array.isArray(respPrescricoes.data)
+          ? respPrescricoes.data
+          : []
+      );
     } catch (e) {
       console.error("Erro ao carregar dados:", e);
     }
+  }
+
+  function getChavePrescricaoConfirmada(prescricao) {
+    return `prescricao-confirmada-${prescricao.id}-${prescricao.horario}`;
+  }
+
+  function tocarAlarmePrescricao() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioContext = new AudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+      gain.gain.setValueAtTime(0.18, audioContext.currentTime);
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.35);
+    } catch (e) {
+      console.warn("Nao foi possivel tocar o alarme da prescricao:", e);
+    }
+  }
+
+  const verificarPrescricoes = useCallback(() => {
+    if (notificacaoPrescricao) return;
+
+    const agora = new Date();
+
+    const prescricaoDaHora = prescricoes.find((p) => {
+      if (!p?.horario) return false;
+
+      const horario = new Date(p.horario);
+
+      if (Number.isNaN(horario.getTime())) return false;
+
+      const mesmaData =
+        horario.getFullYear() === agora.getFullYear() &&
+        horario.getMonth() === agora.getMonth() &&
+        horario.getDate() === agora.getDate() &&
+        horario.getHours() === agora.getHours() &&
+        horario.getMinutes() === agora.getMinutes();
+
+      if (!mesmaData) return false;
+
+      return localStorage.getItem(getChavePrescricaoConfirmada(p)) !== "ok";
+    });
+
+    if (prescricaoDaHora) {
+      tocarAlarmePrescricao();
+      setNotificacaoPrescricao(prescricaoDaHora);
+    }
+  }, [prescricoes, notificacaoPrescricao]);
+
+  useEffect(() => {
+    verificarPrescricoes();
+
+    const intervalo = setInterval(() => {
+      verificarPrescricoes();
+    }, 15000);
+
+    return () => clearInterval(intervalo);
+  }, [verificarPrescricoes]);
+
+  useEffect(() => {
+    if (!notificacaoPrescricao) return;
+
+    tocarAlarmePrescricao();
+
+    const intervalo = setInterval(() => {
+      tocarAlarmePrescricao();
+    }, 5000);
+
+    return () => clearInterval(intervalo);
+  }, [notificacaoPrescricao]);
+
+  function confirmarPrescricao() {
+    if (notificacaoPrescricao) {
+      localStorage.setItem(
+        getChavePrescricaoConfirmada(notificacaoPrescricao),
+        "ok"
+      );
+    }
+
+    setNotificacaoPrescricao(null);
+
+    setTimeout(() => {
+      verificarPrescricoes();
+    }, 300);
   }
 
   const eventos = useMemo(() => {
@@ -207,7 +308,49 @@ ${slotInfo.end.toLocaleString()}`
             </div>
           </div>
         </section>
-      )};
+      )}
+
+      {notificacaoPrescricao && (
+        <div className="prescricao-alerta-overlay">
+          <div className="prescricao-alerta-modal">
+            <div className="prescricao-alerta-icone">!</div>
+
+            <h2>Horario de prescricao</h2>
+
+            <p>
+              <strong>Beneficiario:</strong>{" "}
+              {notificacaoPrescricao.beneficiario?.nome || "Nao informado"}
+            </p>
+
+            <p>
+              <strong>Remedio:</strong>{" "}
+              {notificacaoPrescricao.remedio?.nome || "Nao informado"}
+            </p>
+
+            <p>
+              <strong>Dosagem:</strong>{" "}
+              {notificacaoPrescricao.dosagem || "Nao informada"}
+            </p>
+
+            <p>
+              <strong>Quantidade:</strong>{" "}
+              {notificacaoPrescricao.quantidade || "Nao informada"}
+            </p>
+
+            <p>
+              <strong>Horario:</strong>{" "}
+              {new Date(notificacaoPrescricao.horario).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+
+            <button type="button" onClick={confirmarPrescricao}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,6 @@ package pi2.example.back_end.Modelo;
 import pi2.example.back_end.DAO.DAOPrescricao;
 import pi2.example.back_end.db.Conexao;
 
-import java.sql.Date;
 import java.util.List;
 
 public class Prescricao {
@@ -11,16 +10,16 @@ public class Prescricao {
     private Integer id;
     private String dosagem;
     private Integer quantidade;
-    private Date horario;
+    private String horario;
     private Beneficiario beneficiario;
     private Remedio remedio;
-    private Integer intervalo;
+    private String intervalo;
 
     public Prescricao() {
     }
 
-    public Prescricao(Integer id, String dosagem, Integer quantidade, Date horario,
-                      Beneficiario beneficiario, Remedio remedio, Integer intervalo) {
+    public Prescricao(Integer id, String dosagem, Integer quantidade, String horario,
+                      Beneficiario beneficiario, Remedio remedio, String intervalo) {
 
         this.id = id;
         this.dosagem = dosagem;
@@ -31,8 +30,8 @@ public class Prescricao {
         this.intervalo = intervalo;
     }
 
-    public Prescricao(String dosagem, Integer quantidade, Date horario,
-                      Beneficiario beneficiario, Remedio remedio, Integer intervalo) {
+    public Prescricao(String dosagem, Integer quantidade, String horario,
+                      Beneficiario beneficiario, Remedio remedio, String intervalo) {
 
         this.dosagem = dosagem;
         this.quantidade = quantidade;
@@ -70,11 +69,11 @@ public class Prescricao {
         this.quantidade = quantidade;
     }
 
-    public Date getHorario() {
+    public String getHorario() {
         return horario;
     }
 
-    public void setHorario(Date horario) {
+    public void setHorario(String horario) {
         this.horario = horario;
     }
 
@@ -94,11 +93,11 @@ public class Prescricao {
         this.remedio = remedio;
     }
 
-    public Integer getIntervalo() {
+    public String getIntervalo() {
         return intervalo;
     }
 
-    public void setIntervalo(Integer intervalo) {
+    public void setIntervalo(String intervalo) {
         this.intervalo = intervalo;
     }
 
@@ -119,7 +118,7 @@ public class Prescricao {
         if (horario == null)
             erros += "Horário obrigatório\n";
 
-        if (intervalo == null || intervalo <= 0)
+        if (intervalo == null || intervalo.trim().isEmpty())
             erros += "Intervalo inválido\n";
 
         if (beneficiario == null || beneficiario.getId() == null || beneficiario.getId() <= 0)

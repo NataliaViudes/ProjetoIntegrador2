@@ -35,6 +35,7 @@ import Login from "./Pages/Login/Login";
 import CadastroUsuario from "./Pages/CadastroUsuario/CadastroUsuario";
 
 import { Toaster } from "react-hot-toast";
+import "./theme.css";
 
 function App() {
   return (

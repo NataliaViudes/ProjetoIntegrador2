@@ -8,6 +8,7 @@ import pi2.example.back_end.db.Conexao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,43 @@ public class DAOPrescricao {
 
     public DAOPrescricao(Conexao bd) {
         this.bd = bd;
+    }
+
+    private Timestamp converterTimestamp(String dataHora) {
+        if (dataHora == null || dataHora.isEmpty()) {
+            return null;
+        }
+
+        String valor = dataHora.replace("T", " ");
+
+        if (valor.length() == 16) {
+            valor += ":00";
+        }
+
+        return Timestamp.valueOf(valor);
+    }
+
+    private Prescricao mapPrescricao(ResultSet rs) throws SQLException {
+        Beneficiario beneficiario = new Beneficiario();
+        beneficiario.setId(rs.getInt("id_beneficiario"));
+        beneficiario.setNome(rs.getString("beneficiario_nome"));
+
+        Remedio remedio = new Remedio();
+        remedio.setId(rs.getInt("id_remedio"));
+        remedio.setNome(rs.getString("remedio_nome"));
+        remedio.setDescricao(rs.getString("remedio_descricao"));
+
+        Timestamp horario = rs.getTimestamp("horario");
+
+        return new Prescricao(
+                rs.getInt("id"),
+                rs.getString("dosagem"),
+                rs.getInt("quantidade"),
+                horario != null ? horario.toLocalDateTime().toString() : null,
+                beneficiario,
+                remedio,
+                rs.getString("intervalo")
+        );
     }
 
     // -------------------- INSERT --------------------
@@ -30,10 +68,10 @@ public class DAOPrescricao {
 
             stmt.setString(1, p.getDosagem());
             stmt.setInt(2, p.getQuantidade());
-            stmt.setDate(3, p.getHorario());
+            stmt.setTimestamp(3, converterTimestamp(p.getHorario()));
             stmt.setInt(4, p.getIdBeneficiario());
             stmt.setInt(5, p.getIdRemedio());
-            stmt.setInt(6, p.getIntervalo());
+            stmt.setString(6, p.getIntervalo());
 
             stmt.executeUpdate();
 
@@ -62,10 +100,10 @@ public class DAOPrescricao {
 
             stmt.setString(1, p.getDosagem());
             stmt.setInt(2, p.getQuantidade());
-            stmt.setDate(3, p.getHorario());
+            stmt.setTimestamp(3, converterTimestamp(p.getHorario()));
             stmt.setInt(4, p.getIdBeneficiario());
             stmt.setInt(5, p.getIdRemedio());
-            stmt.setInt(6, p.getIntervalo());
+            stmt.setString(6, p.getIntervalo());
             stmt.setInt(7, p.getId());
 
             stmt.executeUpdate();
@@ -100,7 +138,16 @@ public class DAOPrescricao {
 
         Prescricao p = null;
 
-        String sql = "SELECT * FROM PRESCRICAO WHERE id=?";
+        String sql = """
+            SELECT p.*,
+                   b.nome AS beneficiario_nome,
+                   r.nome AS remedio_nome,
+                   r.descricao AS remedio_descricao
+            FROM prescricao p
+            LEFT JOIN beneficiario b ON b.id = p.id_beneficiario
+            LEFT JOIN remedio r ON r.id = p.id_remedio
+            WHERE p.id=?
+        """;
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
@@ -110,21 +157,7 @@ public class DAOPrescricao {
 
             if (rs.next()) {
 
-                Beneficiario beneficiario = new Beneficiario();
-                beneficiario.setId(rs.getInt("id_beneficiario"));
-
-                Remedio remedio = new Remedio();
-                remedio.setId(rs.getInt("id_remedio"));
-
-                p = new Prescricao(
-                        rs.getInt("id"),
-                        rs.getString("dosagem"),
-                        rs.getInt("quantidade"),
-                        rs.getDate("horario"),
-                        beneficiario,
-                        remedio,
-                        rs.getInt("intervalo")
-                );
+                p = mapPrescricao(rs);
             }
 
         } catch (SQLException e) {
@@ -144,7 +177,7 @@ public class DAOPrescricao {
         if (idBeneficiario == null || idBeneficiario <= 0) {
             sql = "SELECT * FROM PRESCRICAO ORDER BY id ASC";
         } else {
-            sql = "SELECT * FROM PRESCRICAO WHERE idbeneficiario=? ORDER BY id ASC";
+            sql = "SELECT * FROM PRESCRICAO WHERE id_beneficiario=? ORDER BY id ASC";
         }
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -176,7 +209,7 @@ public class DAOPrescricao {
         if (idRemedio == null || idRemedio <= 0) {
             sql = "SELECT * FROM PRESCRICAO ORDER BY id ASC";
         } else {
-            sql = "SELECT * FROM PRESCRICAO WHERE idremedio=? ORDER BY id ASC";
+            sql = "SELECT * FROM PRESCRICAO WHERE id_remedio=? ORDER BY id ASC";
         }
 
         try (PreparedStatement stmt = bd.preparar(sql)) {

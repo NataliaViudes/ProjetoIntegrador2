@@ -3,42 +3,59 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #d9d9d9;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(84, 147, 171, 0.22), transparent 34%),
+      linear-gradient(135deg, #FBFBFA 0%, #E0E7DA 50%, #D2E7EF 100%);
+    padding: 24px;
 }
 
 .card-login {
-    width: 350px;
-    background: #a6a6a6;
-    padding: 30px;
-    border-radius: 10px;
+    width: min(390px, 100%);
+    background: rgba(251, 251, 250, 0.88);
+    padding: 34px;
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    border: 1px solid rgba(84, 147, 171, 0.24);
+    box-shadow: 0 18px 42px rgba(31, 79, 97, 0.16);
+    backdrop-filter: blur(12px);
 }
 
 .card-login h1 {
     text-align: center;
     margin-bottom: 10px;
+    color: #1F4F61;
+    font-weight: 800;
 }
 
 .card-login input {
     padding: 12px;
-    border: 1px solid #8f8f8f;
-    border-radius: 6px;
-    background: #f5f5f5;
+    border: 1px solid rgba(84, 147, 171, 0.36);
+    border-radius: 12px;
+    background: #FBFBFA;
+    color: #1F4F61;
+}
+
+.card-login input:focus {
+    outline: none;
+    border-color: #5493AB;
+    box-shadow: 0 0 0 4px rgba(84, 147, 171, 0.16);
 }
 
 .card-login button {
     padding: 12px;
     border: none;
-    border-radius: 6px;
-    background: #5f5f5f;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1F4F61, #2E6B82);
     color: white;
     cursor: pointer;
     transition: 0.2s;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(31, 79, 97, 0.24);
 }
 
 .card-login button:hover {
-    background: #474747;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #2E6B82, #5493AB);
 }

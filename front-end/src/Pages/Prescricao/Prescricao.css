@@ -230,6 +230,23 @@
   background: #dfe8cf;
 }
 
+.btn-excluir-prescricao-form {
+  width: 100%;
+  height: 46px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 14px;
+  background: #c1121f;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-excluir-prescricao-form:hover {
+  background: #9b0f18;
+}
+
 /* =========================
    RESPONSIVO
 ========================= */
