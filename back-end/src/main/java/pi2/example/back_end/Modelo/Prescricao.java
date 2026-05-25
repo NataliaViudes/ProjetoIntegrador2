@@ -188,12 +188,4 @@ public class Prescricao {
 
         return remedio.getId();
     }
-
-    public boolean possuiBeneficiario() {
-        return getIdBeneficiario() != null;
-    }
-
-    public boolean possuiRemedio() {
-        return getIdRemedio() != null;
-    }
 }
