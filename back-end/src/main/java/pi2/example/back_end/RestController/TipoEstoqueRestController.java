@@ -7,7 +7,7 @@ import pi2.example.back_end.Modelo.TipoEstoque;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/tipoEstoque")
+@RequestMapping("/tipo-estoque")
 public class TipoEstoqueRestController {
     private final TipoEstoqueControl control = new TipoEstoqueControl();
 
@@ -16,7 +16,7 @@ public class TipoEstoqueRestController {
         return  control.getById(id);
     }
 
-    @GetMapping("tipo")
+    @GetMapping("/tipo")
     public ResponseEntity<?> getTipo(@RequestParam (required = false) String tipo) {
         return control.buscaPorTipo(tipo);
     }

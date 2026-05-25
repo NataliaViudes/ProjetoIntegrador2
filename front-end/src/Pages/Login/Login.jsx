@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../Services/api";
+import api from "../../services/api";
 import "./Login.css";
 
 function Login() {
@@ -14,9 +14,9 @@ function Login() {
     async function entrar(e) {
         e.preventDefault();
         try {
-            const response = await api.post("/auth/login",form);
-            localStorage.setItem("token",response.data.token);
-            localStorage.setItem("usuario",JSON.stringify(response.data.usuario));
+            const response = await api.post("/auth/login", form);
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
             navigate("/pagina-inicial");
         } catch (e) {
             console.error(e);

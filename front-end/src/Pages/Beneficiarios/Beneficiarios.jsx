@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./Beneficiarios.css";
 import { Link } from "react-router-dom";
 
@@ -443,7 +443,7 @@ function Beneficiario() {
     const filtrados = lista.filter(b =>
         (b.nome || "").toLowerCase().includes(busca.toLowerCase())
     );
-    
+
     if (nivel < 3) {
         return (
             <div>

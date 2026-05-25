@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./RelatorioOcorrencias.css";
 
 function RelatorioOcorrencias() {

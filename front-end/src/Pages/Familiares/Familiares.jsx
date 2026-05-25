@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../Services/api";
-import Menu from "../../Components/Menu/Menu.jsx";
+import api from "../../services/api.js";
+import Menu from "../../components/Menu/Menu.jsx";
 import "./Familiares.css";
 
 function Familiares() {
