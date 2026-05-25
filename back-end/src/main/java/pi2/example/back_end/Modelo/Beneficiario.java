@@ -26,7 +26,6 @@ public class Beneficiario {
     //infos gerais - fazer
     private String alergias;
     private String tratamentos;
-    private List<Prescricao> medicamentos;
     private String participacao;
     private String situacao;
 
@@ -40,7 +39,7 @@ public class Beneficiario {
         this.id = id;
     }
 
-    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, List<Prescricao> medicamentos, String participacao, String situacao) {
+    public Beneficiario(Integer id, String nome, String nascimento, Integer idade, String rg, String cpf, String nis, Double renda, String endereco, String bairro, String tipoResidencia, String telefone, String celular, String celularRecado, String alergias, String tratamentos, String participacao, String situacao) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -57,7 +56,6 @@ public class Beneficiario {
         this.celularRecado = celularRecado;
         this.alergias = alergias;
         this.tratamentos = tratamentos;
-        this.medicamentos = medicamentos;
         this.participacao = participacao;
         this.situacao = situacao;
     }
@@ -190,14 +188,6 @@ public class Beneficiario {
         this.tratamentos = tratamentos;
     }
 
-    public List<Prescricao> getMedicamentos() {
-        return medicamentos;
-    }
-
-    public void setMedicamentos(List<Prescricao> medicamentos) {
-        this.medicamentos = medicamentos;
-    }
-
     public String getParticipacao() {
         return participacao;
     }
@@ -260,14 +250,4 @@ public class Beneficiario {
         return dao.getAll();
     }
 
-    public List<Beneficiario> buscarRelatorio(
-            Boolean ativo,
-            String faixaEtaria,
-            Boolean ordemJudicial,
-            String atividade,
-            Conexao db
-    ) {
-
-        return getAll(db);
-    }
 }

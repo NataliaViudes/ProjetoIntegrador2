@@ -143,7 +143,6 @@ public class DAOBeneficiario {
                         rs.getString("celular_recado"),
                         rs.getString("alergias"),
                         rs.getString("tratamentos"),
-                        null,
                         rs.getString("participacao"),
                         rs.getString("situacao")
                 );
@@ -255,7 +254,6 @@ public class DAOBeneficiario {
                         rs.getString("celular_recado"),
                         rs.getString("alergias"),
                         rs.getString("tratamentos"),
-                        null,
                         rs.getString("participacao"),
                         rs.getString("situacao")
                 ));
