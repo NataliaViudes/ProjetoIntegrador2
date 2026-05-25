@@ -8,7 +8,7 @@ function Beneficiario() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
-    const [filtroAtivo, setFiltroAtivo] = useState("");
+    const [filtroSituacao, setFiltroSituacao] = useState("");
     const [filtroFaixaEtaria, setFiltroFaixaEtaria] = useState("");
     const [filtroOrdemJudicial, setFiltroOrdemJudicial] = useState("");
     const [filtroAtividade, setFiltroAtividade] = useState("");
@@ -396,32 +396,100 @@ function Beneficiario() {
         }
     }
 
+    function normalizarTexto(valor) {
+        return String(valor ?? "")
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function obterSituacao(valor) {
+        const texto = normalizarTexto(valor);
+
+        if (texto.includes("inativo")) return "inativo";
+        if (texto.includes("ativo")) return "ativo";
+
+        if (texto === "false" || texto === "0") return "inativo";
+        if (texto === "true" || texto === "1") return "ativo";
+
+        return texto;
+    }
+
+    function obterIdade(beneficiario) {
+        const idade = Number(beneficiario.idade);
+
+        if (!Number.isNaN(idade) && idade > 0) {
+            return idade;
+        }
+
+        return Number(calcularIdade(beneficiario.nascimento));
+    }
+
+    function estaNaFaixaEtaria(beneficiario, faixa) {
+        if (!faixa) return true;
+
+        const idade = obterIdade(beneficiario);
+
+        if (Number.isNaN(idade)) return false;
+
+        if (faixa === "80+") {
+            return idade >= 80;
+        }
+
+        const [min, max] = faixa.split("-").map(Number);
+
+        return idade >= min && idade <= max;
+    }
+
     async function gerarRelatorioBeneficiario() {
         try {
-            const params = {};
+            console.log("LISTA ORIGINAL:", lista);
+            console.log("TOTAL ORIGINAL:", lista.length);
+            console.log("FILTRO SITUAÇÃO:", filtroSituacao);
+            console.log("FILTRO FAIXA:", filtroFaixaEtaria);
 
-            if (filtroAtivo !== "") {
-                params.ativo = filtroAtivo;
-            }
+            const beneficiariosFiltrados = lista.filter((beneficiario) => {
+                const situacaoOk =
+                    !filtroSituacao ||
+                    obterSituacao(beneficiario.situacao) === obterSituacao(filtroSituacao);
 
-            if (filtroFaixaEtaria !== "") {
-                params.faixaEtaria = filtroFaixaEtaria;
-            }
+                const faixaEtariaOk = estaNaFaixaEtaria(
+                    beneficiario,
+                    filtroFaixaEtaria
+                );
 
+                console.log({
+                    nome: beneficiario.nome,
+                    situacao: beneficiario.situacao,
+                    situacaoNormalizada: obterSituacao(beneficiario.situacao),
+                    idade: beneficiario.idade,
+                    idadeCalculada: obterIdade(beneficiario),
+                    situacaoOk,
+                    faixaEtariaOk
+                });
 
-            if (filtroAtividade !== "") {
-                params.atividade = filtroAtividade;
-            }
-
-            const response = await api.get("/beneficiarios/relatorio", {
-                responseType: "blob",
-                params
+                return situacaoOk && faixaEtariaOk;
             });
 
+            console.log("FILTRADOS:", beneficiariosFiltrados);
+            console.log("TOTAL FILTRADO:", beneficiariosFiltrados.length);
+
+            if (beneficiariosFiltrados.length === 0) {
+                alert("Nenhum beneficiário encontrado para os filtros selecionados.");
+                return;
+            }
+
+            const response = await api.post(
+                "/beneficiarios/relatorio",
+                beneficiariosFiltrados,
+                {
+                    responseType: "blob"
+                }
+            );
+
             const url = window.URL.createObjectURL(
-                new Blob([response.data], {
-                    type: "application/pdf"
-                })
+                new Blob([response.data], { type: "application/pdf" })
             );
 
             const link = document.createElement("a");
@@ -471,12 +539,12 @@ function Beneficiario() {
                     <div className="relatorio-beneficiario">
 
                         <select
-                            value={filtroAtivo}
-                            onChange={(e) => setFiltroAtivo(e.target.value)}
+                            value={filtroSituacao}
+                            onChange={(e) => setFiltroSituacao(e.target.value)}
                         >
-                            <option value="">Ativos/Inativos</option>
-                            <option value="true">Ativos</option>
-                            <option value="false">Inativos</option>
+                            <option value="">Todas as situações</option>
+                            <option value="Ativo">Ativos</option>
+                            <option value="Inativo">Inativos</option>
                         </select>
 
                         <select
