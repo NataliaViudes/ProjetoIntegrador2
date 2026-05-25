@@ -125,8 +125,12 @@ function Menu() {
 
           <div className="dropdown-conteudo">
 
-            <Link to="/relatorioOcorrencias">
-              Relatório de Ocorrências
+            <Link to="/relatorioAtividades">
+              Relatório de Atividades
+            </Link>
+
+            <Link to="/relatorioEstoque">
+              Relatório de Estoque
             </Link>
 
             <Link to="/relatorioFaltas">
@@ -137,13 +141,10 @@ function Menu() {
               Relatório de Funcionários
             </Link>
 
-            <Link to="/estoque">
-              Relatório de Estoque
+            <Link to="/relatorioOcorrencias">
+              Relatório de Ocorrências
             </Link>
-            <Link to="/relatorioAtividades">
-              Relatório de Atividades
-            </Link>
-
+            
           </div>
         </div>
 

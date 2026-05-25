@@ -26,6 +26,7 @@ import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
 import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
 import RelatorioFaltas from "./Pages/RelatorioFaltas/RelatorioFaltas";
 import RelatorioAtividades from "./Pages/RelatorioAtividades/RelatorioAtividades";
+import RelatorioEstoque from "./Pages/RelatorioEstoque/RelatorioEstoque";
 
 import Funcionario from "./Pages/Funcionarios/Funcionario";
 
@@ -158,38 +159,44 @@ function App() {
           path="/relatorioFaltas"
           element={<RelatorioFaltas />}
         />
+        
         <Route
           path="/relatorioAtividades"
           element={<RelatorioAtividades />}
         />
 
+        <Route
+          path="/relatorioEstoque"
+          element={<RelatorioEstoque />}
+        />
+
         {/* ALIMENTOS */}
-       
+
         <Route
           path="/alimentos"
           element={<Alimentos />}
         />
-      
+
 
         {/* ESTOQUE */}
-       
+
         <Route
           path="/tipo-estoque"
           element={<TipoEstoque />}
         />
-       
+
         <Route
           path="/estoque"
           element={<Estoque />}
         />
 
         {/* CARDÁPIO */}
-        
+
         <Route
           path="/cardapio"
           element={<Cardapio />}
         />
-        
+
 
       </Routes>
     </BrowserRouter>
