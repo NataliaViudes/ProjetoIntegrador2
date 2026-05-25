@@ -45,7 +45,7 @@ function Menu() {
             <Link to="/auxilios">Auxílios</Link>
 
             <Link to="/beneficiarios">Beneficiários</Link>
-            
+
             <Link to="/cargos">Cargos</Link>
 
             <Link to="/categoriaAtividade">
@@ -55,12 +55,14 @@ function Menu() {
             <Link to="/categoriaAuxilio">
               Categoria Auxílio
             </Link>
-            
+
             <Link to="/estoque">Estoque</Link>
 
             <Link to="/eventos">Eventos</Link>
 
             <Link to="/funcionarios">Funcionários</Link>
+
+            <Link to="/ordemJudicial">Ordem Judicial</Link>
 
             <Link to="/remedios">Remedios</Link>
 
@@ -135,26 +137,22 @@ function Menu() {
               Relatório de Atividades
             </Link>
 
+            <Link to="/beneficiarios">
+              Relatório de Beneficiarios
+            </Link>
+
             <Link to="/relatorioEstoque">
               Relatório de Estoque
             </Link>
 
-            <Link to="/beneficiarios">
-              Relatório de Beneficiarios
-            </Link>
-          
-            <Link to="/estoque">
-              Relatório de Estoque
-            </Link>
-            
             <Link to="/relatorioFaltas">
               Relatorio de Faltas
             </Link>
-            
+
             <Link to="/funcionarios">
               Relatório de Funcionários
             </Link>
-            
+
             <Link to="/relatorioOcorrencias">
               Relatório de Ocorrências
             </Link>
@@ -166,7 +164,7 @@ function Menu() {
             <Link to="/relatorioOcorrencias">
               Relatório de Ocorrências
             </Link>
-            
+
           </div>
         </div>
 

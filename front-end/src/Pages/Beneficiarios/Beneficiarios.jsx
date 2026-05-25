@@ -8,6 +8,8 @@ function Beneficiario() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
+
+    const [filtrados, setFiltrados] = useState([]);
     const [filtroSituacao, setFiltroSituacao] = useState("");
     const [filtroFaixaEtaria, setFiltroFaixaEtaria] = useState("");
     const [filtroOrdemJudicial, setFiltroOrdemJudicial] = useState("");
@@ -39,6 +41,7 @@ function Beneficiario() {
         participacao: "",
         alergias: "",
         tratamentos: "",
+        situacao: "",
         medicamentos: null
     });
 
@@ -132,7 +135,9 @@ function Beneficiario() {
     async function carregar() {
         try {
             const resp = await api.get("/beneficiarios");
+            console.log("Resposta da API:", resp.data);
             setLista(Array.isArray(resp.data) ? resp.data : []);
+            setFiltrados(Array.isArray(resp.data) ? resp.data : []);
         } catch (e) {
             console.error(e);
         }
@@ -407,11 +412,25 @@ function Beneficiario() {
     function obterSituacao(valor) {
         const texto = normalizarTexto(valor);
 
-        if (texto.includes("inativo")) return "inativo";
-        if (texto.includes("ativo")) return "ativo";
+        if (!texto) return "";
 
-        if (texto === "false" || texto === "0") return "inativo";
-        if (texto === "true" || texto === "1") return "ativo";
+        if (
+            texto === "inativo" ||
+            texto === "inativa" ||
+            texto === "false" ||
+            texto === "0"
+        ) {
+            return "inativo";
+        }
+
+        if (
+            texto === "ativo" ||
+            texto === "ativa" ||
+            texto === "true" ||
+            texto === "1"
+        ) {
+            return "ativo";
+        }
 
         return texto;
     }
@@ -419,19 +438,22 @@ function Beneficiario() {
     function obterIdade(beneficiario) {
         const idade = Number(beneficiario.idade);
 
-        if (!Number.isNaN(idade) && idade > 0) {
+
+        if (!Number.isNaN(idade) && idade >= 0) {
             return idade;
         }
 
-        return Number(calcularIdade(beneficiario.nascimento));
+        const idadeCalculada = Number(calcularIdade(beneficiario.nascimento));
+
+        return Number.isNaN(idadeCalculada) ? null : idadeCalculada;
     }
 
     function estaNaFaixaEtaria(beneficiario, faixa) {
-        if (!faixa) return true;
+        if (!faixa || faixa === "todas") return true;
 
         const idade = obterIdade(beneficiario);
 
-        if (Number.isNaN(idade)) return false;
+        if (idade === null) return false;
 
         if (faixa === "80+") {
             return idade >= 80;
@@ -508,9 +530,19 @@ function Beneficiario() {
         }
     }
 
-    const filtrados = lista.filter(b =>
-        (b.nome || "").toLowerCase().includes(busca.toLowerCase())
-    );
+    function filtrarPorIdade(texto) {
+        setFiltroFaixaEtaria(texto);
+        setFiltrados(lista.filter(b =>
+            estaNaFaixaEtaria(b, texto)
+        ));
+    }
+
+    function filtrarPorSituacao(situacao) {
+        setFiltroSituacao(situacao);
+        setFiltrados(lista.filter(b =>
+            obterSituacao(b.situacao) === obterSituacao(situacao)
+        ));
+    }
 
     if (nivel < 3) {
         return (
@@ -540,7 +572,11 @@ function Beneficiario() {
 
                         <select
                             value={filtroSituacao}
-                            onChange={(e) => setFiltroSituacao(e.target.value)}
+
+                            onChange={(e) => {
+
+                                filtrarPorSituacao(e.target.value)
+                            }}
                         >
                             <option value="">Todas as situações</option>
                             <option value="Ativo">Ativos</option>
@@ -549,7 +585,7 @@ function Beneficiario() {
 
                         <select
                             value={filtroFaixaEtaria}
-                            onChange={(e) => setFiltroFaixaEtaria(e.target.value)}
+                            onChange={(e) => filtrarPorIdade(e.target.value) }
                         >
                             <option value="">Todas as idades</option>
                             <option value="60-65">60 a 65 anos</option>
@@ -645,13 +681,13 @@ function Beneficiario() {
 
                     <div className="campo grande">
                         <label>Nome</label>
-                        <input name="nome" value={form.nome} disabled={!editando} onChange={handleChange}/>
+                        <input name="nome" value={form.nome} disabled={!editando} onChange={handleChange} />
 
                         {erros.nome && (
                             <span className="erro">
                                 {erros.nome}
                             </span>
-                        )}                
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -662,7 +698,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.cpf}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -672,7 +708,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.rg}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo pequeno">
@@ -682,7 +718,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.nascimento}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo mini">
@@ -692,7 +728,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.idade}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -702,7 +738,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.telefone}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -712,7 +748,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.celular}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -722,7 +758,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.celularRecado}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo grande">
@@ -732,7 +768,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.endereco}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -742,7 +778,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.bairro}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -752,7 +788,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.tipoResidencia}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -762,7 +798,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.nis}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -772,7 +808,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.renda}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -782,7 +818,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.participacao}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo medio">
@@ -792,7 +828,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.situacao}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo grande">
@@ -802,7 +838,7 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.alergias}
                             </span>
-                        )} 
+                        )}
                     </div>
 
                     <div className="campo grande">
@@ -812,9 +848,9 @@ function Beneficiario() {
                             <span className="erro">
                                 {erros.tratamentos}
                             </span>
-                        )} 
+                        )}
                     </div>
-                </div>            
+                </div>
             </div>
 
             <div className="acoes-form">
