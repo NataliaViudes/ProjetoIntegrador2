@@ -278,11 +278,33 @@ public class DAOBeneficiario {
             ResultSet rs = bd.consultar(sql);
 
             while (rs.next()) {
+
                 Beneficiario b = new Beneficiario();
 
                 b.setId(rs.getInt("id"));
                 b.setNome(rs.getString("nome"));
+                b.setNascimento(rs.getString("nascimento"));
+                b.setIdade(rs.getInt("idade"));
+
+                b.setRg(rs.getString("rg"));
                 b.setCpf(rs.getString("cpf"));
+                b.setNis(rs.getString("nis"));
+
+                b.setRenda(rs.getDouble("renda"));
+
+                b.setEndereco(rs.getString("endereco"));
+                b.setBairro(rs.getString("bairro"));
+                b.setTipoResidencia(rs.getString("tipo_residencia"));
+
+                b.setTelefone(rs.getString("telefone"));
+                b.setCelular(rs.getString("celular"));
+                b.setCelularRecado(rs.getString("celular_recado"));
+
+                b.setAlergias(rs.getString("alergias"));
+                b.setTratamentos(rs.getString("tratamentos"));
+
+                b.setParticipacao(rs.getString("participacao"));
+                b.setSituacao(rs.getString("situacao"));
 
                 lista.add(b);
             }
