@@ -497,188 +497,82 @@ public class BeneficiarioControl {
 
     // ================= RELATÓRIO =================
 
-    public byte[] gerarRelatorioBeneficiarios(
-            Boolean ativo,
-            String faixaEtaria,
-            Boolean ordemJudicial,
-            String atividade
-    ) {
-
-        Conexao db = Banco.getConexao();
+    public byte[] gerarRelatorioBeneficiarios(List<Beneficiario> lista) {
 
         try {
-
-            if (!db.conectar()) {
-                throw new Exception(
-                        "Erro ao conectar"
-                );
-            }
-
-            Beneficiario model =
-                    new Beneficiario();
-
-            List<Beneficiario> lista =
-                    model.buscarRelatorio(
-                            ativo,
-                            faixaEtaria,
-                            ordemJudicial,
-                            atividade,
-                            db
-                    );
 
             if (lista == null || lista.isEmpty()) {
                 return null;
             }
 
-            ByteArrayOutputStream out =
-                    new ByteArrayOutputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            Document document =
-                    new Document(
-                            PageSize.A4.rotate(),
-                            40,
-                            40,
-                            50,
-                            50
-                    );
+            Document document = new Document(
+                    PageSize.A4.rotate(),
+                    40,
+                    40,
+                    50,
+                    50
+            );
 
             PdfWriter.getInstance(document, out);
 
             document.open();
 
-            Font tituloFonte =
-                    new Font(
-                            Font.FontFamily.HELVETICA,
-                            20,
-                            Font.BOLD
-                    );
-
-            Font cabecalhoFonte =
-                    new Font(
-                            Font.FontFamily.HELVETICA,
-                            12,
-                            Font.BOLD
-                    );
-
-            Font textoFonte =
-                    new Font(
-                            Font.FontFamily.HELVETICA,
-                            11
-                    );
-
-            Paragraph titulo =
-                    new Paragraph(
-                            "RELATÓRIO DE BENEFICIÁRIOS",
-                            tituloFonte
-                    );
-
-            titulo.setAlignment(
-                    Element.ALIGN_CENTER
+            Font tituloFonte = new Font(
+                    Font.FontFamily.HELVETICA,
+                    20,
+                    Font.BOLD
             );
 
+            Font cabecalhoFonte = new Font(
+                    Font.FontFamily.HELVETICA,
+                    12,
+                    Font.BOLD
+            );
+
+            Font textoFonte = new Font(
+                    Font.FontFamily.HELVETICA,
+                    11
+            );
+
+            Paragraph titulo = new Paragraph(
+                    "RELATÓRIO DE BENEFICIÁRIOS",
+                    tituloFonte
+            );
+
+            titulo.setAlignment(Element.ALIGN_CENTER);
             titulo.setSpacingAfter(15);
 
             document.add(titulo);
 
-            PdfPTable tabela =
-                    new PdfPTable(6);
+            PdfPTable tabela = new PdfPTable(6);
 
             tabela.setWidthPercentage(100);
 
-            tabela.setWidths(
-                    new float[]{
-                            4f,
-                            3f,
-                            2f,
-                            3f,
-                            3f,
-                            3f
-                    }
-            );
+            tabela.setWidths(new float[]{
+                    4f,
+                    3f,
+                    2f,
+                    3f,
+                    3f,
+                    3f
+            });
 
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "Nome",
-                    cabecalhoFonte
-            );
-
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "CPF",
-                    cabecalhoFonte
-            );
-
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "Telefone",
-                    cabecalhoFonte
-            );
-
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "Situação",
-                    cabecalhoFonte
-            );
-
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "Nascimento",
-                    cabecalhoFonte
-            );
-
-            adicionarCabecalhoTabela(
-                    tabela,
-                    "Bairro",
-                    cabecalhoFonte
-            );
+            adicionarCabecalhoTabela(tabela, "Nome", cabecalhoFonte);
+            adicionarCabecalhoTabela(tabela, "CPF", cabecalhoFonte);
+            adicionarCabecalhoTabela(tabela, "Telefone", cabecalhoFonte);
+            adicionarCabecalhoTabela(tabela, "Situação", cabecalhoFonte);
+            adicionarCabecalhoTabela(tabela, "Nascimento", cabecalhoFonte);
+            adicionarCabecalhoTabela(tabela, "Bairro", cabecalhoFonte);
 
             for (Beneficiario b : lista) {
-
-                tabela.addCell(
-                        new Phrase(
-                                b.getNome(),
-                                textoFonte
-                        )
-                );
-
-                tabela.addCell(
-                        new Phrase(
-                                formatarCpf(b.getCpf()),
-                                textoFonte
-                        )
-                );
-
-                tabela.addCell(
-                        new Phrase(
-                                formatarTelefone(
-                                        b.getTelefone()
-                                ),
-                                textoFonte
-                        )
-                );
-
-                tabela.addCell(
-                        new Phrase(
-                                b.getSituacao(),
-                                textoFonte
-                        )
-                );
-
-                tabela.addCell(
-                        new Phrase(
-                                formatarData(
-                                        b.getNascimento()
-                                ),
-                                textoFonte
-                        )
-                );
-
-                tabela.addCell(
-                        new Phrase(
-                                b.getBairro(),
-                                textoFonte
-                        )
-                );
+                tabela.addCell(new Phrase(b.getNome(), textoFonte));
+                tabela.addCell(new Phrase(formatarCpf(b.getCpf()), textoFonte));
+                tabela.addCell(new Phrase(formatarTelefone(b.getTelefone()), textoFonte));
+                tabela.addCell(new Phrase(b.getSituacao(), textoFonte));
+                tabela.addCell(new Phrase(formatarData(b.getNascimento()), textoFonte));
+                tabela.addCell(new Phrase(b.getBairro(), textoFonte));
             }
 
             document.add(tabela);
@@ -688,16 +582,11 @@ public class BeneficiarioControl {
             return out.toByteArray();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
             return null;
-
-        } finally {
-
-            db.desconectar();
         }
     }
+
 
     // ================= AUX =================
 

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.BeneficiarioControl;
 import pi2.example.back_end.Modelo.Beneficiario;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/beneficiarios")
@@ -87,28 +89,12 @@ public class BeneficiarioRestController {
 
     // ================= RELATÓRIO =================
 
-    @GetMapping("/relatorio")
+    @PostMapping("/relatorio")
     public ResponseEntity<byte[]> gerarRelatorioBeneficiarios(
-
-            @RequestParam(required = false)
-            Boolean ativo,
-
-            @RequestParam(required = false)
-            String faixaEtaria,
-
-            @RequestParam(required = false)
-            Boolean ordemJudicial,
-
-            @RequestParam(required = false)
-            String atividade
+            @RequestBody List<Beneficiario> beneficiarios
     ) {
 
-        byte[] pdf = controll.gerarRelatorioBeneficiarios(
-                ativo,
-                faixaEtaria,
-                ordemJudicial,
-                atividade
-        );
+        byte[] pdf = controll.gerarRelatorioBeneficiarios(beneficiarios);
 
         if (pdf == null) {
             return ResponseEntity.notFound().build();

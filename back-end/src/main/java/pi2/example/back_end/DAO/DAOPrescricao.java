@@ -23,7 +23,7 @@ public class DAOPrescricao {
     public Prescricao gravar(Prescricao p) {
 
         String sql = "INSERT INTO PRESCRICAO " +
-                "(dosagem, quantidade, horario, idbeneficiario, idremedio, intervalo) " +
+                "(dosagem, quantidade, horario, id_beneficiario, id_remedio, intervalo) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
@@ -55,7 +55,7 @@ public class DAOPrescricao {
     public Prescricao alterar(Prescricao p) {
 
         String sql = "UPDATE PRESCRICAO SET " +
-                "dosagem=?, quantidade=?, horario=?, idbeneficiario=?, idremedio=?, intervalo=? " +
+                "dosagem=?, quantidade=?, horario=?, id_beneficiario=?, id_remedio=?, intervalo=? " +
                 "WHERE id=?";
 
         try (PreparedStatement stmt = bd.preparar(sql)) {
@@ -111,10 +111,10 @@ public class DAOPrescricao {
             if (rs.next()) {
 
                 Beneficiario beneficiario = new Beneficiario();
-                beneficiario.setId(rs.getInt("idbeneficiario"));
+                beneficiario.setId(rs.getInt("id_beneficiario"));
 
                 Remedio remedio = new Remedio();
-                remedio.setId(rs.getInt("idremedio"));
+                remedio.setId(rs.getInt("id_remedio"));
 
                 p = new Prescricao(
                         rs.getInt("id"),

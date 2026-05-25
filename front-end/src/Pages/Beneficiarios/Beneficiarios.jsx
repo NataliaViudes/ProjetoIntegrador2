@@ -8,6 +8,7 @@ function Beneficiario() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
+
     const [filtrados, setFiltrados] = useState([]);
     const [filtroSituacao, setFiltroSituacao] = useState("");
     const [filtroFaixaEtaria, setFiltroFaixaEtaria] = useState("");
@@ -437,6 +438,7 @@ function Beneficiario() {
     function obterIdade(beneficiario) {
         const idade = Number(beneficiario.idade);
 
+
         if (!Number.isNaN(idade) && idade >= 0) {
             return idade;
         }
@@ -570,6 +572,7 @@ function Beneficiario() {
 
                         <select
                             value={filtroSituacao}
+
                             onChange={(e) => {
 
                                 filtrarPorSituacao(e.target.value)
