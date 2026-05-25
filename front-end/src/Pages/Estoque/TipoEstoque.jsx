@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu/Menu";
-import "../Alimentos/Alimentos.css";    
+import "../Alimentos/Alimentos.css";
 
 function TipoEstoque() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
+
+
+
   const [tipo, setTipo] = useState("");
   const [busca, setBusca] = useState("");
   const [tipos, setTipos] = useState([]);
@@ -24,31 +30,31 @@ function TipoEstoque() {
   }
 
   async function salvar() {
-  if (!tipo) {
-    setErro(true);
-    console.log("aaaaa");
-    return;
-  }
-  console.log(tipo);
-  setErro(false);
-
-  try {
-    if (editando) {
-      await api.put("/tipo-estoque", {
-        id: editando.id,
-        tipo,
-      });
-    } else {
-      await api.post("/tipo-estoque", { tipo });
+    if (!tipo) {
+      setErro(true);
+      console.log("aaaaa");
+      return;
     }
+    console.log(tipo);
+    setErro(false);
 
-    limpar();
-    carregar();
-  } catch (e) {
-    console.error(e);
-    alert("Erro ao salvar");
+    try {
+      if (editando) {
+        await api.put("/tipo-estoque", {
+          id: editando.id,
+          tipo,
+        });
+      } else {
+        await api.post("/tipo-estoque", { tipo });
+      }
+
+      limpar();
+      carregar();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao salvar");
+    }
   }
-}
 
   function editar(item) {
     setEditando(item);
@@ -56,18 +62,18 @@ function TipoEstoque() {
   }
 
   async function excluir(id) {
-        const confirmar = window.confirm("Tem certeza que deseja excluir esta categoria?");
+    const confirmar = window.confirm("Tem certeza que deseja excluir esta categoria?");
 
-        if (!confirmar) return;
+    if (!confirmar) return;
 
-        try {
-            await api.delete(`/tipo-estoque/${id}`);
-            carregar();
-        } catch (e) {
-            console.error(e);
-            alert("Erro ao excluir");
-        }
+    try {
+      await api.delete(`/tipo-estoque/${id}`);
+      carregar();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao excluir");
     }
+  }
 
   function limpar() {
     setTipo("");
@@ -78,6 +84,17 @@ function TipoEstoque() {
     t.tipo.toLowerCase().includes(busca.toLowerCase())
   );
 
+  if (nivelUsuario < 3) {
+
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-alimentos">
       <Menu />
@@ -87,7 +104,7 @@ function TipoEstoque() {
           <h2>Tipo de Estoque</h2>
 
           <label>Categoria</label>
-          
+
           <input
             value={tipo}
             onChange={(e) => {

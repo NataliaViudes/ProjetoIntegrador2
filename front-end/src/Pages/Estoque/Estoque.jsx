@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Menu from "../../components/Menu/Menu";
-import "../Alimentos/Alimentos.css"; 
+import "../Alimentos/Alimentos.css";
 
 function Estoque() {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
+
   const [descricao, setDescricao] = useState("");
   const [qtd, setQtd] = useState("");
   const [tipoId, setTipoId] = useState("");
@@ -15,9 +19,9 @@ function Estoque() {
   const [editando, setEditando] = useState(null);
 
   const [erros, setErros] = useState({
-  descricao: false,
-  qtd: false,
-  tipoId: false,
+    descricao: false,
+    qtd: false,
+    tipoId: false,
   });
 
   useEffect(() => {
@@ -45,40 +49,40 @@ function Estoque() {
   }
 
   async function salvar() {
-  const novosErros = {
-    descricao: !descricao.trim(),
-    qtd: !qtd || qtd < 0,
-    tipoId: !tipoId,
-  };
+    const novosErros = {
+      descricao: !descricao.trim(),
+      qtd: !qtd || qtd < 0,
+      tipoId: !tipoId,
+    };
 
-  setErros(novosErros);
+    setErros(novosErros);
 
-  // se tiver algum erro, para aqui
-  if (Object.values(novosErros).some((e) => e)) return;
+    // se tiver algum erro, para aqui
+    if (Object.values(novosErros).some((e) => e)) return;
 
-  const payload = {
-    descricao,
-    qtd: parseInt(qtd),
-    tipo: { id: parseInt(tipoId) },
-  };
+    const payload = {
+      descricao,
+      qtd: parseInt(qtd),
+      tipo: { id: parseInt(tipoId) },
+    };
 
-  try {
-    if (editando) {
-      await api.put("/estoque", {
-        id: editando.id,
-        ...payload,
-      });
-    } else {
-      await api.post("/estoque", payload);
+    try {
+      if (editando) {
+        await api.put("/estoque", {
+          id: editando.id,
+          ...payload,
+        });
+      } else {
+        await api.post("/estoque", payload);
+      }
+
+      limpar();
+      carregarTudo();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao salvar");
     }
-
-    limpar();
-    carregarTudo();
-  } catch (e) {
-    console.error(e);
-    alert("Erro ao salvar");
   }
-}
 
   function editar(item) {
     setEditando(item);
@@ -113,7 +117,17 @@ function Estoque() {
   const filtrados = itens.filter((i) =>
     (i.descricao || "").toLowerCase().includes(busca.toLowerCase())
   );
+  if (nivelUsuario < 3) {
 
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="pagina-alimentos">
       <Menu />
@@ -134,7 +148,7 @@ function Estoque() {
 
           <label>Quantidade</label>
           <input
-          className={erros.qtd ? "input-erro" : ""}
+            className={erros.qtd ? "input-erro" : ""}
             type="number"
             min="0"
             value={qtd}
@@ -145,9 +159,9 @@ function Estoque() {
               if (valor < 0) return;
 
               setQtd(valor);
-              
+
             }
-          }
+            }
           />
 
           <label>Categoria</label>

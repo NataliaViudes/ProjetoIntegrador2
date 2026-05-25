@@ -6,6 +6,12 @@ import "./Remedio.css";
 
 export default function Remedio() {
 
+
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
+
+
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
 
@@ -241,6 +247,18 @@ export default function Remedio() {
       nome: false,
       descricao: false
     });
+  }
+
+  if (nivelUsuario < 3) {
+
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
   }
 
   return (

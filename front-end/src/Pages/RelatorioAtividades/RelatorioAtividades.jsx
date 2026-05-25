@@ -110,7 +110,7 @@ function RelatorioAtividades() {
               <strong>Categoria:</strong>{" "}
               {idCategoria
                 ? categorias.find((c) => String(c.id) === String(idCategoria))
-                  ?.nome
+                    ?.nome
                 : "Todas"}
             </p>
 
@@ -140,7 +140,6 @@ function RelatorioAtividades() {
                     <td>{atividade.funcionario?.nome || "Não informado"}</td>
                     <td>{atividade.statusAtividade || "-"}</td>
                   </tr>
-
                 ))}
               </tbody>
             </table>

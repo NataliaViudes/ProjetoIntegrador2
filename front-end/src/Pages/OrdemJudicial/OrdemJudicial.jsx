@@ -4,6 +4,11 @@ import Menu from "../../components/Menu/Menu";
 import "./OrdemJudicial.css";
 
 function OrdemJudicial() {
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
+
     const [lista, setLista] = useState([]);
     const [busca, setBusca] = useState("");
     const [loadingId, setLoadingId] = useState(null);
@@ -105,6 +110,17 @@ function OrdemJudicial() {
         (b.nome || "").toLowerCase().includes(busca.toLowerCase())
     );
 
+    if (nivelUsuario < 3) {
+
+        return (
+            <div>
+                <Menu />
+                <h2 style={{ padding: "20px" }}>
+                    Você não possui acesso a esta página.
+                </h2>
+            </div>
+        );
+    }
     return (
         <div className="pagina-ordem-judicial">
             <Menu />

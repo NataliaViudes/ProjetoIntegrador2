@@ -1,124 +1,96 @@
-.pagina-relatorio-atividades {
-  min-height: 100vh;
-  background-color: #d9d9d9;
-  padding: 16px;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-.conteudo-relatorio-atividades {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 20px;
-  align-items: start;
-}
-
-.painel-filtros,
-.painel-resultados {
-  background-color: #a6a6a6;
-  border: 1px solid #8d8d8d;
-  padding: 18px;
-}
-
-.painel-filtros h2,
-.painel-resultados h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-}
-
-.painel-filtros label {
-  display: block;
-  margin-top: 12px;
-  margin-bottom: 6px;
-  font-weight: bold;
-}
-
-.painel-filtros select {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  border: 1px solid #8f8f8f;
-  background-color: #f5f5f5;
-}
-
-.acoes-formulario {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-  flex-wrap: wrap;
-}
-
-.acoes-formulario button {
-  background-color: #e6e6e6;
-  border: 1px solid #8f8f8f;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-
-.resumo-relatorio {
-  background-color: #dcdcdc;
-  border: 1px solid #8f8f8f;
-  padding: 12px;
-  margin-bottom: 16px;
-}
-
-.resumo-relatorio p {
-  margin: 4px 0;
-}
-
-.tabela-relatorio {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #dcdcdc;
-}
-
-.tabela-relatorio th,
-.tabela-relatorio td {
-  border: 1px solid #8f8f8f;
-  padding: 10px;
-  text-align: left;
-}
-
-.tabela-relatorio th {
-  background-color: #c9c9c9;
-}
-
-@media (max-width: 900px) {
-  .conteudo-relatorio-atividades {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media print {
-  body {
-    background-color: white;
+  html,
+  body,
+  #root {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #000 !important;
   }
 
-  .area-nao-imprimir,
-  .topo-menu {
+  body * {
+    visibility: hidden !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .area-impressao,
+  .area-impressao * {
+    visibility: visible !important;
+  }
+
+  .topo-menu,
+  .area-nao-imprimir {
     display: none !important;
   }
 
-  .pagina-relatorio-atividades {
-    background-color: white;
-    padding: 0;
+  .pagina-relatorio-atividades,
+  .conteudo-relatorio-atividades {
+    display: block !important;
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
 
-  .conteudo-relatorio-atividades {
-    display: block;
+  .area-impressao {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    border: none !important;
+    padding: 20px !important;
   }
 
   .painel-resultados {
-    background-color: white;
-    border: none;
-    padding: 0;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .painel-resultados h2 {
+    color: #000 !important;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   .resumo-relatorio {
-    background-color: white;
+    background: white !important;
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+    margin-bottom: 16px;
+  }
+
+  .resumo-relatorio p,
+  .resumo-relatorio strong {
+    color: #000 !important;
   }
 
   .tabela-relatorio {
-    background-color: white;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background: white !important;
+  }
+
+  .tabela-relatorio th,
+  .tabela-relatorio td {
+    visibility: visible !important;
+    border: 1px solid #000 !important;
+    padding: 8px !important;
+    color: #000 !important;
+    background: white !important;
+  }
+
+  .tabela-relatorio th {
+    font-weight: bold !important;
+    background: #e6e6e6 !important;
+  }
+
+  tbody tr:nth-child(even) td,
+  tbody tr:hover td {
+    background: white !important;
   }
 }

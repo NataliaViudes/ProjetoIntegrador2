@@ -6,7 +6,7 @@ public class TesteSenha {
 
     public static void main(String[] args) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String senha = encoder.encode("admin123");
+        String senha = encoder.encode("deideCosta");
         System.out.println(senha);
     }
 }

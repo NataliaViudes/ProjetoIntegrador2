@@ -4,6 +4,11 @@ import Menu from "../../components/Menu/Menu";
 import "./Alimentos.css";
 
 function Alimentos() {
+
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
+
+
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -80,6 +85,19 @@ function Alimentos() {
   const alimentosFiltrados = alimentos.filter((alimento) =>
     (alimento.nome || "").toLowerCase().includes(busca.toLowerCase())
   );
+
+  if (nivelUsuario < 3) {
+
+    return (
+      <div>
+        <Menu />
+        <h2 style={{ padding: "20px" }}>
+          Você não possui acesso a esta página.
+        </h2>
+      </div>
+    );
+  }
+
 
   return (
     <div className="pagina-alimentos" translate="no">

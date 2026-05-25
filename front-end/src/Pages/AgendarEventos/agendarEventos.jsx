@@ -18,6 +18,9 @@ moment.locale("pt-br");
 
 const localizer = momentLocalizer(moment);
 function Eventos() {
+
+ 
+  
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const nivel = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 

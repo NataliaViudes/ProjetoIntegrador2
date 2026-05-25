@@ -28,8 +28,7 @@ public class DAOBeneficiario {
         try (PreparedStatement stmt = bd.prepararComRetorno(sql)) {
 
             stmt.setString(1, b.getNome());
-            stmt.setString(2, b.getNascimento());
-            stmt.setInt(3, b.getIdade());
+            stmt.setDate(2, java.sql.Date.valueOf(b.getNascimento()));            stmt.setInt(3, b.getIdade());
             stmt.setString(4, b.getRg());
             stmt.setString(5, b.getCpf());
             stmt.setString(6, b.getNis());
@@ -71,7 +70,7 @@ public class DAOBeneficiario {
         try (PreparedStatement stmt = bd.preparar(sql)) {
 
             stmt.setString(1, b.getNome());
-            stmt.setString(2, b.getNascimento());
+            stmt.setDate(2, java.sql.Date.valueOf(b.getNascimento()));
             stmt.setInt(3, b.getIdade());
             stmt.setString(4, b.getRg());
             stmt.setString(5, b.getCpf());

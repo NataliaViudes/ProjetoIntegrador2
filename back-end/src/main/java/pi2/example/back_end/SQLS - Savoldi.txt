@@ -14,10 +14,10 @@ CREATE TABLE Cargo (
 );
 
 INSERT INTO Cargo (nome, nivel_acesso) VALUES ('Administrador', 3);
-INSERT INTO Cargo (nome) VALUES ('Gerente', 3);
-INSERT INTO Cargo (nome) VALUES ('Analista', 2);
-INSERT INTO Cargo (nome) VALUES ('Supervisor', 2);
-INSERT INTO Cargo (nome) VALUES ('Assistente', 1);
+INSERT INTO Cargo (nome,nivel_acesso) VALUES ('Gerente', 3);
+INSERT INTO Cargo (nome,nivel_acesso) VALUES ('Analista', 2);
+INSERT INTO Cargo (nome,nivel_acesso) VALUES ('Supervisor', 2);
+INSERT INTO Cargo (nome,nivel_acesso) VALUES ('Assistente', 1);
 
 CREATE TABLE Funcionario (
     id_funcionario SERIAL,
