@@ -261,3 +261,153 @@
     border-radius: 20px;
   }
 }
+
+.lista-prescricoes {
+
+  margin-top: 30px;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  padding: 20px;
+
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.lista-prescricoes h2 {
+
+  margin-bottom: 20px;
+
+  color: #246286;
+}
+
+.lista-scroll {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  max-height: 350px;
+
+  overflow-y: auto;
+
+  padding-right: 5px;
+}
+
+.card-prescricao {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  background: #f8f9fb;
+
+  border-left: 6px solid #d62828;
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  transition: 0.2s;
+}
+
+.card-prescricao:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-prescricao p {
+
+  margin: 4px 0;
+
+  color: #555;
+}
+
+.btn-excluir {
+
+  background: #d62828;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-excluir:hover {
+
+  background: #b71c1c;
+}
+
+.rbc-event {
+  background: #c1121f !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 10px !important;
+}
+
+.rbc-event-content {
+  font-weight: 600;
+}
+
+.lista-scroll {
+
+  margin-top: 20px;
+
+  max-height: 400px;
+
+  overflow-y: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.card-prescricao {
+
+  background: white;
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.btn-excluir {
+
+  background: #c1121f;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}

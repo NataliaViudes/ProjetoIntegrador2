@@ -259,4 +259,15 @@ public class Beneficiario {
         DAOBeneficiario dao = new DAOBeneficiario(db);
         return dao.getAll();
     }
+
+    public List<Beneficiario> buscarRelatorio(
+            Boolean ativo,
+            String faixaEtaria,
+            Boolean ordemJudicial,
+            String atividade,
+            Conexao db
+    ) {
+
+        return getAll(db);
+    }
 }

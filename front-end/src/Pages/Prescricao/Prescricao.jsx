@@ -92,9 +92,7 @@ function Prescricao() {
     return `${ano}-${mes}-${dia}T${hora}:${minuto}`;
   }
 
-  function parseData(data) {
-    return new Date(data.replace(" ", "T"));
-  }
+  
 
   function limparFormulario() {
 
@@ -250,21 +248,31 @@ function Prescricao() {
 
   const eventos = useMemo(() => {
 
-    return prescricoes.map((p) => ({
+    return prescricoes
+      .filter((p) =>
+        p &&
+        p.horario
+      )
+      .map((p) => {
 
-      id: p.id,
+        const dataInicio = new Date(p.horario);
 
-      title:
-        `${p.remedio?.nome || "Remédio"} - ${p.beneficiario?.nome || ""}`,
+        return {
 
-      start: parseData(p.horario),
+          id: p.id,
 
-      end: new Date(
-        parseData(p.horario).getTime() + (30 * 60000)
-      ),
+          title:
+            `${p.remedio?.nome || "Remédio"} - ${p.beneficiario?.nome || ""}`,
 
-      resource: p
-    }));
+          start: dataInicio,
+
+          end: new Date(
+            dataInicio.getTime() + (30 * 60000)
+          ),
+
+          resource: p
+        };
+      });
 
   }, [prescricoes]);
 
@@ -289,21 +297,55 @@ function Prescricao() {
             endAccessor="end"
             popup
             selectable
+
+            eventPropGetter={(event) => ({
+
+              style: {
+
+                backgroundColor: "#c1121f",
+
+                border: "none",
+
+                color: "white",
+
+                borderRadius: "10px",
+
+                fontWeight: "600",
+
+                padding: "3px",
+
+                fontSize: "13px"
+              }
+            })}
+
+            onSelectSlot={(slotInfo) => {
+
+              setDataHora(
+                formatarDatetimeLocal(slotInfo.start)
+              );
+            }}
+
             date={dataAtual}
+
             view={viewAtual}
+
             onNavigate={(novaData) =>
               setDataAtual(novaData)
             }
+
             onView={(novaView) =>
               setViewAtual(novaView)
             }
+
             views={[
               "month",
               "week",
               "day",
               "agenda"
             ]}
+
             defaultView="week"
+
             messages={{
               next: "Próximo",
               previous: "Anterior",
@@ -319,6 +361,7 @@ function Prescricao() {
                 "Nenhuma prescrição neste período",
               allDay: "Dia inteiro"
             }}
+
             onSelectEvent={(evento) => {
 
               const p = evento.resource;
@@ -328,9 +371,11 @@ function Prescricao() {
               );
 
               if (confirmou) {
+
                 excluir(p.id);
               }
             }}
+
             style={{ height: "80vh" }}
           />
 
@@ -490,7 +535,69 @@ function Prescricao() {
           </div>
 
         </section>
+        <section>
+        <div className="lista-scroll">
 
+          {prescricoes
+            .filter((p) =>
+              p &&
+              p.remedio &&
+              p.beneficiario
+            )
+            .map((p) => (
+
+              <div
+                key={p.id}
+                className="card-prescricao"
+              >
+
+                <div>
+
+                  <strong>
+                    {p.remedio?.nome}
+                  </strong>
+
+                  <p>
+                    Beneficiário:
+                    {" "}
+                    {p.beneficiario?.nome}
+                  </p>
+
+                  <p>
+                    Dosagem:
+                    {" "}
+                    {p.dosagem}
+                  </p>
+
+                  <p>
+                    Quantidade:
+                    {" "}
+                    {p.quantidade}
+                  </p>
+
+                  <p>
+                    Horário:
+                    {" "}
+                    {moment(p.horario).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                  </p>
+
+                </div>
+
+                <button
+                  className="btn-excluir"
+                  onClick={() => excluir(p.id)}
+                >
+                  Excluir
+                </button>
+
+              </div>
+
+          ))}
+
+        </div>
+        </section>
         
 
       </div>

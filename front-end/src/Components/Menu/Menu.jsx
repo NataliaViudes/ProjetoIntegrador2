@@ -42,21 +42,11 @@ function Menu() {
 
             <Link to="/atividades">Atividades</Link>
 
-            <Link to="/eventos">Eventos</Link>
-
             <Link to="/auxilios">Auxílios</Link>
 
             <Link to="/beneficiarios">Beneficiários</Link>
-
-            <Link to="/funcionarios">Funcionários</Link>
-
+            
             <Link to="/cargos">Cargos</Link>
-
-            <Link to="/estoque">Estoque</Link>
-
-            <Link to="/tipo-estoque">
-              Tipo de Estoque
-            </Link>
 
             <Link to="/categoriaAtividade">
               Categoria de Atividade
@@ -64,6 +54,18 @@ function Menu() {
 
             <Link to="/categoriaAuxilio">
               Categoria Auxílio
+            </Link>
+            
+            <Link to="/estoque">Estoque</Link>
+
+            <Link to="/eventos">Eventos</Link>
+
+            <Link to="/funcionarios">Funcionários</Link>
+
+            <Link to="/remedios">Remedios</Link>
+
+            <Link to="/tipo-estoque">
+              Tipo de Estoque
             </Link>
 
           </div>
@@ -79,15 +81,19 @@ function Menu() {
           <div className="dropdown-conteudo">
 
             <Link to="/agendamentos">
-              Calendário Atividades
+              Agendar Atividades
             </Link>
 
             <Link to="/agendarEventos">
-              Calendário Eventos
+              Agendar Eventos
             </Link>
 
             <Link to="/cardapio">
               Agendar Cardápio
+            </Link>
+
+            <Link to="/prescricoes">
+              Agendar Remédio
             </Link>
 
           </div>
@@ -124,24 +130,29 @@ function Menu() {
           </button>
 
           <div className="dropdown-conteudo">
-
-            <Link to="/relatorioOcorrencias">
-              Relatório de Ocorrências
+            
+            <Link to="/relatorioAtividades">
+              Relatório de Atividades
             </Link>
 
-            <Link to="/relatorioFaltas">
-              Relatorio de Faltas
+            <Link to="/beneficiarios">
+              Relatório de Beneficiarios
             </Link>
-
-            <Link to="/funcionarios">
-              Relatório de Funcionários
-            </Link>
-
+          
             <Link to="/estoque">
               Relatório de Estoque
             </Link>
-            <Link to="/relatorioAtividades">
-              Relatório de Atividades
+            
+            <Link to="/relatorioFaltas">
+              Relatorio de Faltas
+            </Link>
+            
+            <Link to="/funcionarios">
+              Relatório de Funcionários
+            </Link>
+            
+            <Link to="/relatorioOcorrencias">
+              Relatório de Ocorrências
             </Link>
 
           </div>

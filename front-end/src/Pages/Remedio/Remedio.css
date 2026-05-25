@@ -1,0 +1,417 @@
+.pagina-remedio {
+
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #DFE8CF 0%,
+      #EEF5E7 100%
+    );
+
+  padding: 24px;
+
+  font-family: "Inter", sans-serif;
+}
+
+.container-remedio {
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+}
+
+/* =========================
+   TOPO
+========================= */
+
+.topo-remedio {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.topo-remedio h1 {
+
+  margin: 0;
+
+  color: #246286;
+
+  font-size: 36px;
+
+  font-weight: 700;
+}
+
+.topo-remedio p {
+
+  margin-top: 6px;
+
+  color: #5f6f7a;
+}
+
+.badge-remedio {
+
+  background: linear-gradient(
+    135deg,
+    #246286,
+    #8CB3CA
+  );
+
+  color: white;
+
+  padding: 12px 20px;
+
+  border-radius: 16px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 20px rgba(36,98,134,0.25);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card-formulario,
+.card-lista {
+
+  background:
+    rgba(255,255,255,0.72);
+
+  backdrop-filter: blur(10px);
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  margin-bottom: 24px;
+
+  border:
+    1px solid rgba(255,255,255,0.5);
+
+  box-shadow:
+    0 10px 30px rgba(36,98,134,0.10);
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.linha-inputs {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 18px;
+}
+
+.grupo-input {
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.grupo-input label {
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #246286;
+}
+
+.grupo-input input {
+
+  height: 48px;
+
+  border-radius: 14px;
+
+  border: 1px solid #d6dee5;
+
+  padding: 0 14px;
+
+  background:
+    rgba(255,255,255,0.92);
+
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.grupo-input input:focus {
+
+  outline: none;
+
+  border-color: #246286;
+
+  box-shadow:
+    0 0 0 4px rgba(36,98,134,0.10);
+}
+
+.input-erro {
+
+  border: 2px solid #d33 !important;
+
+  background: #fff0f0 !important;
+}
+
+/* =========================
+   BOTOES
+========================= */
+
+.acoes-formulario {
+
+  display: flex;
+
+  gap: 14px;
+
+  margin-top: 24px;
+}
+
+.acoes-formulario button {
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 16px;
+
+  padding: 0 24px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-salvar {
+
+  background:
+    linear-gradient(
+      135deg,
+      #246286,
+      #8CB3CA
+    );
+
+  color: white;
+
+  box-shadow:
+    0 8px 20px rgba(36,98,134,0.25);
+}
+
+.btn-salvar:hover {
+
+  transform: translateY(-2px);
+}
+
+.btn-limpar {
+
+  background: #EFF4E8;
+
+  color: #246286;
+}
+
+.btn-limpar:hover {
+
+  background: #DFE8CF;
+}
+
+/* =========================
+   LISTA
+========================= */
+
+.topo-lista {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.topo-lista h2 {
+
+  margin: 0;
+
+  color: #246286;
+}
+
+.topo-lista input {
+
+  width: 320px;
+
+  height: 44px;
+
+  border-radius: 14px;
+
+  border: 1px solid #d6dee5;
+
+  padding: 0 14px;
+
+  background: white;
+}
+
+.lista-remedios {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.item-remedio {
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  border: 1px solid #e2e8ee;
+
+  transition: 0.2s;
+}
+
+.item-remedio:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(36,98,134,0.08);
+}
+
+.info-remedio h3 {
+
+  margin: 0;
+
+  color: #246286;
+
+  font-size: 18px;
+}
+
+.info-remedio p {
+
+  margin-top: 6px;
+
+  color: #60717d;
+}
+
+/* =========================
+   ACOES ITEM
+========================= */
+
+.acoes-item {
+
+  display: flex;
+
+  gap: 10px;
+}
+
+.acoes-item button {
+
+  border: none;
+
+  height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-editar {
+
+  background: #8CB3CA;
+
+  color: white;
+}
+
+.btn-editar:hover {
+
+  filter: brightness(0.95);
+}
+
+.btn-excluir {
+
+  background: #ff5f5f;
+
+  color: white;
+}
+
+.btn-excluir:hover {
+
+  filter: brightness(0.95);
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 900px) {
+
+  .linha-inputs {
+
+    grid-template-columns: 1fr;
+  }
+
+  .topo-lista {
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .topo-lista input {
+
+    width: 100%;
+  }
+
+  .item-remedio {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+  }
+
+  .acoes-item {
+
+    width: 100%;
+  }
+
+  .acoes-item button {
+
+    flex: 1;
+  }
+}

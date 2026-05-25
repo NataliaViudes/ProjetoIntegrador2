@@ -26,9 +26,9 @@ import Ocorrencias from "./Pages/Ocorrencias/Ocorrencias";
 import RelatorioOcorrencias from "./Pages/RelatorioOcorrencias/RelatorioOcorrencias";
 import RelatorioFaltas from "./Pages/RelatorioFaltas/RelatorioFaltas";
 import RelatorioAtividades from "./Pages/RelatorioAtividades/RelatorioAtividades";
-
+import Prescricao from "./Pages/Prescricao/Prescricao"
 import Funcionario from "./Pages/Funcionarios/Funcionario";
-
+import Remedio from "./Pages/Remedio/Remedio"
 //import Alimentos from "./Pages/Alimentos/Alimentos";
 
 //import TipoEstoque from "./Pages/Estoque/TipoEstoque";
@@ -131,6 +131,11 @@ function App() {
           element={<PresencaBeneficiario />}
         />
 
+        <Route
+          path="/remedios"
+          element={<Remedio />}
+        />
+
         {/* BENEFICIÁRIOS */}
         <Route
           path="/beneficiarios"
@@ -140,6 +145,11 @@ function App() {
         <Route
           path="/familiares/:idBeneficiario"
           element={<Familiares />}
+        />
+
+        <Route
+          path="/prescricoes"
+          element={<Prescricao />}
         />
 
         {/* OCORRÊNCIAS */}

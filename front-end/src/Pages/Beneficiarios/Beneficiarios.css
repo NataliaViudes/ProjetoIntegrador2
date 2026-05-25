@@ -1,324 +1,374 @@
-.pagina-funcionario {
+/* =========================
+   PALETA
+   #1F4F61 - azul escuro
+   #2E6B82 - azul médio
+   #5493AB - azul claro
+   #D2E7EF - azul bem claro
+   #667C51 - verde escuro
+   #9AAF85 - verde médio
+   #E0E7DA - verde claro
+   #FBFBFA - fundo claro
+========================= */
+
+.pagina-funcionario,
+.beneficiario-page {
+  background-color: #d2e7ef;
   min-height: 100vh;
-  background-color: #d9d9d9;
-  padding: 16px;
-  box-sizing: border-box;
   font-family: Arial, sans-serif;
+  color: #1f4f61;
 }
 
-.topo {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: #a6a6a6;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border: 1px solid #8d8d8d;
-}
+/* =========================
+   TOPO / BUSCA / FILTROS
+========================= */
 
-
-.topo input {
-  width: 220px;
-  padding: 10px;
-  border: 1px solid #8f8f8f;
-  background-color: #f5f5f5;
-}
-
-.tabela {
-  background-color: #a6a6a6;
-  border: 1px solid #8d8d8d;
-  padding: 18px;
-
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  background-color: #dcdcdc;
-  border: 1px solid #8f8f8f;
-  padding: 10px;
-}
-
-td {
-  border: 1px solid #8f8f8f;
-  padding: 10px;
-  background-color: #dcdcdc;
-}
-
-button {
-  background-color: #e6e6e6;
-  border: 1px solid #8f8f8f;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #d0d0d0;
-}
-
-.rodape {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-.form-funcionario {
-  background-color: #a6a6a6;
-  border: 1px solid #8d8d8d;
-  padding: 18px;
-
+.topbar {
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: #fbfbfa;
+  padding: 20px;
+  border: 1px solid #5493ab;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
-.form-funcionario input {
+.topbar input {
   padding: 10px;
-  border: 1px solid #8f8f8f;
-  background-color: #f5f5f5;
-  width: 100%;
-  box-sizing: border-box;
+  border: 1px solid #5493ab;
+  background-color: #fbfbfa;
+  color: #1f4f61;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.botoes {
+.topbar input:focus,
+.topbar select:focus {
+  outline: none;
+  border-color: #1f4f61;
+  box-shadow: 0 0 0 2px #d2e7ef;
+}
+
+.relatorio-beneficiario {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.relatorio-beneficiario select {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #5493ab;
+  background-color: #fbfbfa;
+  color: #1f4f61;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.relatorio-beneficiario button {
+  height: 38px;
+  padding: 0 15px;
+  border: 1px solid #1f4f61;
+  background-color: #2e6b82;
+  color: #fbfbfa;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.relatorio-beneficiario button:hover {
+  background-color: #1f4f61;
+}
+
+/* =========================
+   TABELA
+========================= */
+
+.table-card {
+  max-width: 1100px;
+  margin: 20px auto;
+  background-color: #fbfbfa;
+  padding: 15px;
+  border: 1px solid #5493ab;
+}
+
+.table-card table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fbfbfa;
+}
+
+.table-card th {
+  background-color: #1f4f61;
+  color: #fbfbfa;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #2e6b82;
+}
+
+.table-card td {
+  padding: 10px;
+  border: 1px solid #d2e7ef;
+  color: #1f4f61;
+}
+
+.table-card tbody tr:nth-child(even) {
+  background-color: #e0e7da;
+}
+
+.table-card tbody tr:hover {
+  background-color: #d2e7ef;
+}
+
+.table-card td button {
+  padding: 6px 10px;
+  margin: 2px;
+  border: 1px solid #667c51;
+  background-color: #9aaf85;
+  color: #1f4f61;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.table-card td button:hover {
+  background-color: #667c51;
+  color: #fbfbfa;
+}
+
+/* =========================
+   RODAPÉ DA TABELA
+========================= */
+
+.rodape {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 30px;
+}
+
+.rodape button {
+  padding: 10px 30px;
+  border: 1px solid #1f4f61;
+  background-color: #2e6b82;
+  color: #fbfbfa;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.rodape button:hover {
+  background-color: #1f4f61;
+}
+
+/* =========================
+   CABEÇALHO DO FORMULÁRIO
+========================= */
+
+.form-header {
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: #fbfbfa;
+  padding: 20px;
+  border: 1px solid #5493ab;
+}
+
+.form-header h1 {
+  text-align: center;
+  margin-bottom: 8px;
+  color: #1f4f61;
+}
+
+.form-header p {
+  text-align: center;
+  margin: 0;
+  color: #2e6b82;
+}
+
+/* =========================
+   CARD DO FORMULÁRIO
+========================= */
+
+.form-card {
+  max-width: 1100px;
+  margin: 20px auto;
+  background-color: #fbfbfa;
+  padding: 20px;
+  border: 1px solid #5493ab;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 15px;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
 .campo label {
-  margin-bottom: 6px;
-  margin-top: 10px;
+  font-size: 14px;
   font-weight: bold;
+  color: #1f4f61;
 }
 
-.campo select {
-  padding: 10px;
-  border: 1px solid #8f8f8f;
-  background-color: #f5f5f5;
+.campo input {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #5493ab;
+  background-color: #fbfbfa;
+  color: #1f4f61;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.titulo-form {
-  text-align: center;
-  margin-bottom: 20px;
+.campo input:focus {
+  outline: none;
+  border-color: #1f4f61;
+  box-shadow: 0 0 0 2px #d2e7ef;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+.campo input:disabled {
+  background-color: #e0e7da;
+  color: #667c51;
+  cursor: not-allowed;
 }
 
-.campo.full {
-  grid-column: span 2;
-}
+/* Tamanhos usados no JSX */
 
-.input-erro {
-  border: 2px solid red !important;
-}
-
-.erro-texto {
-  color: red;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .topo {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .topo input {
-    width: 100%;
-  }
-}
-
-.pagina-alimentos {
-  min-height: 100vh;
-  background-color: #d9d9d9;
-  padding: 16px;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-.topo-menu {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #a6a6a6;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border: 1px solid #8d8d8d;
-}
-
-.grupo-botoes {
-  display: flex;
-  gap: 10px;
-}
-
-.grupo-botoes button,
-.acoes-formulario button,
-.botoes-item button {
-  background-color: #e6e6e6;
-  border: 1px solid #8f8f8f;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-
-.area-pesquisa-topo input,
-.painel-esquerdo input,
-.painel-esquerdo select,
-.cabecalho-lista input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  border: 1px solid #8f8f8f;
-  background-color: #f5f5f5;
-}
-
-.area-pesquisa-topo {
-  width: 220px;
-}
-
-.conteudo-alimentos {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 20px;
-  align-items: start;
-}
-
-.painel-esquerdo,
-.painel-direito {
-  background-color: #a6a6a6;
-  border: 1px solid #8d8d8d;
-  padding: 18px;
-}
-
-.painel-esquerdo h2,
-.painel-direito h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-}
-
-.painel-esquerdo label {
-  display: block;
-  margin-bottom: 6px;
-  margin-top: 12px;
-  font-weight: bold;
-}
-
-.acoes-formulario {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.cabecalho-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.lista-alimentos {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.item-alimento {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #dcdcdc;
-  border: 1px solid #8f8f8f;
-  padding: 12px;
-}
-
-.info-alimento {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.botoes-item {
-  display: flex;
-  gap: 8px;
-}
-
-@media (max-width: 900px) {
-  .conteudo-alimentos {
-    grid-template-columns: 1fr;
-  }
-
-  .topo-menu {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-
-  .grupo-botoes {
-    flex-wrap: wrap;
-  }
-
-  .area-pesquisa-topo {
-    width: 100%;
-  }
-
-  .item-alimento {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 12px;
-}
-
-/* Base */
-.campo {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Tamanhos */
-.campo.mini {
-    grid-column: span 1;
-}
-
-.campo.pequeno {
-    grid-column: span 2;
+.campo.grande {
+  grid-column: span 6;
 }
 
 .campo.medio {
-    grid-column: span 3;
+  grid-column: span 4;
 }
 
-.campo.grande {
-    grid-column: span 6;
+.campo.pequeno {
+  grid-column: span 3;
 }
 
-.campo.full {
+.campo.mini {
+  grid-column: span 2;
+}
+
+/* =========================
+   ERROS
+========================= */
+
+.erro {
+  font-size: 12px;
+  color: #d33;
+  font-weight: bold;
+}
+
+.campo input:has(+ .erro) {
+  border-color: #d33;
+}
+
+/* Caso queira aplicar erro manualmente */
+.input-erro {
+  border: 2px solid #d33 !important;
+  background-color: #ffe6e6 !important;
+}
+
+/* =========================
+   BOTÕES DO FORMULÁRIO
+========================= */
+
+.acoes-form {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: #2e6b82;
+  color: #fbfbfa;
+  border-color: #1f4f61;
+}
+
+.btn-primary:hover {
+  background-color: #1f4f61;
+}
+
+.btn-success {
+  background-color: #9aaf85;
+  color: #1f4f61;
+  border-color: #667c51;
+}
+
+.btn-success:hover {
+  background-color: #667c51;
+  color: #fbfbfa;
+}
+
+.btn-secondary {
+  background-color: #d2e7ef;
+  color: #1f4f61;
+  border-color: #5493ab;
+}
+
+.btn-secondary:hover {
+  background-color: #5493ab;
+  color: #fbfbfa;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 900px) {
+  .topbar,
+  .table-card,
+  .form-header,
+  .form-card,
+  .rodape,
+  .acoes-form {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  .relatorio-beneficiario {
+    flex-direction: column;
+  }
+
+  .relatorio-beneficiario select,
+  .relatorio-beneficiario button {
+    width: 100%;
+  }
+
+  .campo.grande,
+  .campo.medio,
+  .campo.pequeno,
+  .campo.mini {
     grid-column: span 12;
-}
+  }
 
-/* Inputs */
-.campo input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  .table-card {
+    overflow-x: auto;
+  }
+
+  .acoes-form {
+    flex-direction: column;
+  }
+
+  .acoes-form button {
+    width: 100%;
+  }
 }

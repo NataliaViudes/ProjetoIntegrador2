@@ -1,5 +1,7 @@
 package pi2.example.back_end.RestController;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pi2.example.back_end.Control.BeneficiarioControl;
@@ -58,4 +60,67 @@ public class BeneficiarioRestController {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         return controll.delete(id);
     }
+
+    // ================= PDF INDIVIDUAL =================
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<?> gerarPdf(
+            @PathVariable Integer id
+    ) {
+
+        byte[] pdf = controll.gerarPdf(id);
+
+        if (pdf == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Erro ao gerar PDF");
+        }
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=beneficiario_" + id + ".pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    // ================= RELATÓRIO =================
+
+    @GetMapping("/relatorio")
+    public ResponseEntity<byte[]> gerarRelatorioBeneficiarios(
+
+            @RequestParam(required = false)
+            Boolean ativo,
+
+            @RequestParam(required = false)
+            String faixaEtaria,
+
+            @RequestParam(required = false)
+            Boolean ordemJudicial,
+
+            @RequestParam(required = false)
+            String atividade
+    ) {
+
+        byte[] pdf = controll.gerarRelatorioBeneficiarios(
+                ativo,
+                faixaEtaria,
+                ordemJudicial,
+                atividade
+        );
+
+        if (pdf == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=Relatorio_Beneficiarios.pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
 }
