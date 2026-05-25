@@ -94,3 +94,16 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(22px);
 }
+
+.card-alerta {
+    border: 2px solid red;
+    background: #fff5f5;
+}
+
+.faltas-lista {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    margin-top: 4px;
+    color: #b00000;
+}

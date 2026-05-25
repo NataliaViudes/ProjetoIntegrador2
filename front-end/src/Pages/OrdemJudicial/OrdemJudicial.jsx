@@ -18,17 +18,55 @@ function OrdemJudicial() {
             api.get("/ordem-judicial")
         ]);
 
-        // 🔥 CORRIGIDO: agora usa beneficiarioId
         const idsComOrdem = new Set(
             ordens.data.map(o => o.beneficiarioId)
         );
 
-        const merged = benef.data.map(b => ({
-            ...b,
-            ordemJudicial: idsComOrdem.has(b.id)
-        }));
+        const hoje = new Date();
+        const limite = new Date();
+        limite.setDate(hoje.getDate() - 30);
+
+        const merged = await Promise.all(
+            benef.data.map(async (b) => {
+
+                const registros = await carregarFaltas(b.id);
+
+                const faltasFiltradas = registros
+                    .filter(r => !r.presente && r.dataInicio)
+                    .filter(r => {
+                        const d = new Date(r.dataInicio);
+                        return d >= limite && d <= hoje;
+                    })
+                    .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+
+                const faltasConsecutivas = faltasFiltradas.length;
+
+                const ultimasFaltas = faltasFiltradas.map(f => ({
+                    data: f.dataInicio
+                }));
+
+                return {
+                    ...b,
+                    ordemJudicial: idsComOrdem.has(b.id),
+                    faltasConsecutivas,
+                    ultimasFaltas
+                };
+            })
+        );
 
         setLista(merged);
+    }
+
+    async function carregarFaltas(idBeneficiario) {
+        try {
+            const resp = await api.get(
+                `/presencas/relatorio/beneficiario/${idBeneficiario}`
+            );
+
+            return Array.isArray(resp.data) ? resp.data : [];
+        } catch (err) {
+            return [];
+        }
     }
 
     async function toggleOrdem(b) {
@@ -38,10 +76,8 @@ function OrdemJudicial() {
             setLoadingId(b.id);
 
             if (temOrdem) {
-                // REMOVE ordem judicial
                 await api.delete(`/ordem-judicial/${b.id}`);
             } else {
-                // CRIA ordem judicial
                 await api.post("/ordem-judicial", {
                     beneficiarioId: b.id,
                     possuiOrdem: true,
@@ -49,7 +85,6 @@ function OrdemJudicial() {
                 });
             }
 
-            // atualiza UI local
             setLista(prev =>
                 prev.map(item =>
                     item.id === b.id
@@ -85,28 +120,56 @@ function OrdemJudicial() {
             </div>
 
             <div className="lista">
-                {filtrados.map(b => (
-                    <div key={b.id} className="card">
-                        <div className="info">
-                            <strong>{b.nome}</strong>
-                            <span>CPF: {b.cpf}</span>
-                        </div>
+                {filtrados.map(b => {
 
-                        <div className="toggle-area">
-                            <span>Ordem Judicial</span>
+                    const temAlerta =
+                        b.ordemJudicial &&
+                        b.faltasConsecutivas >= 2;
 
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={!!b.ordemJudicial}
-                                    disabled={loadingId === b.id}
-                                    onChange={() => toggleOrdem(b)}
-                                />
-                                <span className="slider" />
-                            </label>
+                    return (
+                        <div
+                            key={b.id}
+                            className={`card ${temAlerta ? "card-alerta" : ""}`}
+                        >
+                            <div className="info">
+                                <strong>{b.nome}</strong>
+                                <span>CPF: {b.cpf}</span>
+
+                                {b.ordemJudicial && (
+                                    <>
+                                        <span>
+                                            Faltas nos últimos 30 dias: {b.faltasConsecutivas}
+                                        </span>
+
+                                        {b.ultimasFaltas?.length > 0 && (
+                                            <div className="faltas-lista">
+                                                {b.ultimasFaltas.map((f, i) => (
+                                                    <span key={i}>
+                                                        ❌ {new Date(f.data).toLocaleDateString()}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="toggle-area">
+                                <span>Ordem Judicial</span>
+
+                                <label className="switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={!!b.ordemJudicial}
+                                        disabled={loadingId === b.id}
+                                        onChange={() => toggleOrdem(b)}
+                                    />
+                                    <span className="slider" />
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
