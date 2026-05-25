@@ -12,6 +12,8 @@ import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 import { ReactComponent as Salad } from "../../assets/icons/salad.svg";
 
+
+
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
 
@@ -220,153 +222,148 @@ function Cardapio() {
   function estiloEvento(evento) {
     if (evento.tipo === "atividade") {
       return {
-        style: {
-          backgroundColor: "#3174ad",
-          color: "white",
-          borderRadius: "5px",
-        },
+        className: "evento-atividade",
       };
     }
 
     if (evento.tipo === "cardapio") {
       return {
-        style: {
-          backgroundColor: "#28a745",
-          color: "white",
-          borderRadius: "5px",
-        },
+        className: "evento-cardapio",
       };
     }
+
+    return {};
   }
 
-  function getNomeAtividade(idAgendamento) {
-    const ag = agendamentos.find((a) => a.id === idAgendamento);
-    return ag?.atividade?.descricao || "Sem descrição";
-  }
 
-  return (
-    <div className="pagina-cardapio">
-      <Menu />
+function getNomeAtividade(idAgendamento) {
+  const ag = agendamentos.find((a) => a.id === idAgendamento);
+  return ag?.atividade?.descricao || "Sem descrição";
+}
 
-      <div className="conteudo-cardapio">
-        <section className="painel-formulario">
-          <h2>Cardápios</h2>
+return (
+  <div className="pagina-cardapio">
+    <Menu />
 
-          <label>Data</label>
-          <input
-            type="date"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-            className={erros.data ? "input-erro" : ""}
-          />
+    <div className="conteudo-cardapio">
+      <section className="painel-formulario">
+        <h2>Cardápios</h2>
 
-          <label>Hora</label>
-          <input
-            type="time"
-            value={hora}
-            onChange={(e) => setHora(e.target.value)}
-            className={erros.hora || erros.horaForaAtividade ? "input-erro" : ""}
-          />
+        <label>Data</label>
+        <input
+          type="date"
+          value={data}
+          onChange={(e) => setData(e.target.value)}
+          className={erros.data ? "input-erro" : ""}
+        />
 
-          <label>Atividades do dia</label>
-          <select
-            value={idAgendamento}
-            onChange={(e) => setIdAgendamento(e.target.value)}
-            className={erros.idAgendamento ? "input-erro" : ""}
-          >
-            <option value="">Selecione uma atividade</option>
-            {atividadesDia.length === 0 ? (
-              <option disabled>Nenhuma atividade neste dia</option>
-            ) : (
-              atividadesDia.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.atividade?.descricao}
-                </option>
-              ))
-            )}
-          </select>
+        <label>Hora</label>
+        <input
+          type="time"
+          value={hora}
+          onChange={(e) => setHora(e.target.value)}
+          className={erros.hora || erros.horaForaAtividade ? "input-erro" : ""}
+        />
 
-          <label>Nome</label>
-          <input
-            type="text"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            className={erros.nome ? "input-erro" : ""}
-          />
+        <label>Atividades do dia</label>
+        <select
+          value={idAgendamento}
+          onChange={(e) => setIdAgendamento(e.target.value)}
+          className={erros.idAgendamento ? "input-erro" : ""}
+        >
+          <option value="">Selecione uma atividade</option>
+          {atividadesDia.length === 0 ? (
+            <option disabled>Nenhuma atividade neste dia</option>
+          ) : (
+            atividadesDia.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.atividade?.descricao}
+              </option>
+            ))
+          )}
+        </select>
 
-          <div className="acoes-formulario">
-            <button onClick={salvar}>
-              {cardapioEditando ? "Atualizar" : "Salvar"}
-            </button>
+        <label>Nome</label>
+        <input
+          type="text"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          className={erros.nome ? "input-erro" : ""}
+        />
 
-            <button onClick={limparFormulario}>Limpar</button>
-          </div>
+        <div className="acoes-formulario">
+          <button onClick={salvar}>
+            {cardapioEditando ? "Atualizar" : "Salvar"}
+          </button>
 
-          <div className="lista-cardapio">
-            <h3>Cardápios Agendados</h3>
+          <button onClick={limparFormulario}>Limpar</button>
+        </div>
 
-            {cardapio.length === 0 ? (
-              <p>Nenhum cardápio agendado.</p>
-            ) : (
-              cardapio.map((c) => (
-                <div key={c.id} className="item-cardapio">
-                  <div>
-                    <strong>{c.nome}</strong>
-                    <div>{c.data}</div>
-                    <div>{c.hora}</div>
-                    <div>Atividade: {getNomeAtividade(c.agendamento?.id)}</div>
-                  </div>
+        <div className="lista-cardapio">
+          <h3>Cardápios Agendados</h3>
 
-                  <div className="acoes-item">
-                    <button onClick={() => abrirItens(c)} title="Itens">
-                      <Salad />
-                    </button>
-
-                    <button onClick={() => editar(c)} title="Editar">
-                      <Pencil />
-                    </button>
-
-                    <button onClick={() => excluir(c.id)} title="Excluir">
-                      <Trash />
-                    </button>
-                  </div>
+          {cardapio.length === 0 ? (
+            <p>Nenhum cardápio agendado.</p>
+          ) : (
+            cardapio.map((c) => (
+              <div key={c.id} className="item-cardapio">
+                <div>
+                  <strong>{c.nome}</strong>
+                  <div>{c.data}</div>
+                  <div>{c.hora}</div>
+                  <div>Atividade: {getNomeAtividade(c.agendamento?.id)}</div>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
 
-        {modo === "itens" && cardapioSelecionado && (
-          <ItensCardapio
-            cardapio={cardapioSelecionado}
-            voltar={() => setModo("lista")}
-            agendamentos={agendamentos}
-          />
-        )}
+                <div className="acoes-item">
+                  <button onClick={() => abrirItens(c)} title="Itens">
+                    <Salad />
+                  </button>
 
-        <section className="painel-calendario">
-          <Calendar
-            localizer={localizer}
-            events={eventosCalendario}
-            startAccessor="start"
-            endAccessor="end"
-            selectable
-            popup
-            date={dataAtual}
-            view={viewAtual}
-            onNavigate={setDataAtual}
-            onView={setViewAtual}
-            views={["month", "week", "day", "agenda"]}
-            defaultView="month"
-            onSelectSlot={selecionarSlot}
-            onSelectEvent={selecionarEvento}
-            eventPropGetter={estiloEvento}
-            style={{ height: "80vh" }}
-          />
-        </section>
-      </div>
+                  <button onClick={() => editar(c)} title="Editar">
+                    <Pencil />
+                  </button>
+
+                  <button onClick={() => excluir(c.id)} title="Excluir">
+                    <Trash />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {modo === "itens" && cardapioSelecionado && (
+        <ItensCardapio
+          cardapio={cardapioSelecionado}
+          voltar={() => setModo("lista")}
+          agendamentos={agendamentos}
+        />
+      )}
+
+      <section className="painel-calendario">
+        <Calendar
+          localizer={localizer}
+          events={eventosCalendario}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          popup
+          date={dataAtual}
+          view={viewAtual}
+          onNavigate={setDataAtual}
+          onView={setViewAtual}
+          views={["month", "week", "day", "agenda"]}
+          defaultView="month"
+          onSelectSlot={selecionarSlot}
+          onSelectEvent={selecionarEvento}
+          eventPropGetter={estiloEvento}
+          style={{ height: "80vh" }}
+        />
+      </section>
     </div>
-  );
+  </div>
+);
 }
 
 export default Cardapio;  

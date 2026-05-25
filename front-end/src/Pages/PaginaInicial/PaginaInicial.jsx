@@ -128,21 +128,13 @@ ${slotInfo.end.toLocaleString()}`
   function estiloEvento(evento) {
     if (evento.tipo === "atividade") {
       return {
-        style: {
-          backgroundColor: "#3174ad",
-          color: "white",
-          borderRadius: "5px",
-        },
+        className: "evento-atividade",
       };
     }
 
     if (evento.tipo === "cardapio") {
       return {
-        style: {
-          backgroundColor: "#28a745",
-          color: "white",
-          borderRadius: "5px",
-        },
+        className: "evento-cardapio",
       };
     }
 

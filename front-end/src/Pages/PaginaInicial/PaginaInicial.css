@@ -201,3 +201,17 @@
   color: #374151;
   font-size: 14px;
 }
+
+.evento-atividade {
+  background-color: #2E6B82 !important;
+  color: white !important;
+  border-radius: 5px;
+  border: none !important;
+}
+
+.evento-cardapio {
+  background-color: #9AAF85 !important;
+  color: white !important;
+  border-radius: 5px;
+  border: none !important;
+}
