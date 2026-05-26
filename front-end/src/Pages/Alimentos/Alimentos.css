@@ -38,7 +38,8 @@
 .area-pesquisa-topo input,
 .painel-esquerdo input,
 .painel-esquerdo select,
-.cabecalho-lista input {
+.cabecalho-lista input,
+.cabecalho-lista select {
   width: 100%;
   box-sizing: border-box;
   padding: 10px;

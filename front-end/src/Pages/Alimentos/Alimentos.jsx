@@ -8,11 +8,13 @@ function Alimentos() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const nivelUsuario = usuario?.funcionario?.cargo?.nivelAcesso || 1;
 
-
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState("");
   const [descricao, setDescricao] = useState("");
+
   const [busca, setBusca] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("Todos");
+
   const [alimentos, setAlimentos] = useState([]);
   const [alimentoEditando, setAlimentoEditando] = useState(null);
 
@@ -65,9 +67,11 @@ function Alimentos() {
   async function excluirAlimento(id) {
     try {
       await api.delete(`/alimento/${id}`);
+
       if (alimentoEditando && alimentoEditando.id === id) {
         limparFormulario();
       }
+
       carregarTudo();
     } catch (error) {
       console.error("Erro ao excluir:", error);
@@ -82,15 +86,36 @@ function Alimentos() {
     setDescricao("");
   }
 
-  const alimentosFiltrados = alimentos.filter((alimento) =>
-    (alimento.nome || "").toLowerCase().includes(busca.toLowerCase())
-  );
+  const tiposUnicos = [
+    "Todos",
+    ...new Set(
+      alimentos
+        .map((alimento) => alimento.tipo)
+        .filter(Boolean)
+    ),
+  ];
+
+  const alimentosFiltrados = alimentos.filter((alimento) => {
+
+    const nomeValido =
+      (alimento.nome || "")
+        .toLowerCase()
+        .includes(busca.toLowerCase());
+
+    const tipoValido =
+      filtroTipo === "Todos"
+        ? true
+        : alimento.tipo === filtroTipo;
+
+    return nomeValido && tipoValido;
+  });
 
   if (nivelUsuario < 3) {
 
     return (
       <div>
         <Menu />
+
         <h2 style={{ padding: "20px" }}>
           Você não possui acesso a esta página.
         </h2>
@@ -98,16 +123,17 @@ function Alimentos() {
     );
   }
 
-
   return (
     <div className="pagina-alimentos" translate="no">
       <Menu />
 
       <main className="conteudo-alimentos">
+
         <section className="painel-esquerdo">
           <h2>Cadastro de Alimentos</h2>
 
           <label>Nome</label>
+
           <input
             type="text"
             placeholder="Digite o nome do alimento"
@@ -116,6 +142,7 @@ function Alimentos() {
           />
 
           <label>Tipo</label>
+
           <input
             type="text"
             placeholder="Ex: Prato, Salgado, Doce, Bebida..."
@@ -124,6 +151,7 @@ function Alimentos() {
           />
 
           <label>Descrição</label>
+
           <input
             type="text"
             placeholder="Descrição do alimento"
@@ -132,6 +160,7 @@ function Alimentos() {
           />
 
           <div className="acoes-formulario">
+
             <button onClick={salvarOuAtualizar}>
               {alimentoEditando ? "Atualizar" : "Confirmar"}
             </button>
@@ -139,45 +168,83 @@ function Alimentos() {
             <button type="button" onClick={limparFormulario}>
               Limpar
             </button>
+
           </div>
         </section>
 
         <section className="painel-direito">
+
           <div className="cabecalho-lista">
+
             <h2>Alimentos cadastrados</h2>
+
             <input
               type="text"
               placeholder="Buscar por nome..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
             />
+
+            {/* FILTRO POR TIPO */}
+            <select
+              value={filtroTipo}
+              onChange={(e) => setFiltroTipo(e.target.value)}
+            >
+              {tiposUnicos.map((tipoItem) => (
+                <option key={tipoItem} value={tipoItem}>
+                  {tipoItem}
+                </option>
+              ))}
+            </select>
+
           </div>
 
           <div className="lista-alimentos">
+
             {alimentosFiltrados.length === 0 ? (
+
               <p>Nenhum alimento encontrado.</p>
+
             ) : (
+
               alimentosFiltrados.map((alimento) => (
+
                 <div className="item-alimento" key={alimento.id}>
+
                   <div className="info-alimento">
                     <strong>{alimento.nome}</strong>
-                    <span>Tipo: {alimento.tipo}</span>
-                    <span>Descrição: {alimento.descricao}</span>
+
+                    <span>
+                      Tipo: {alimento.tipo}
+                    </span>
+
+                    <span>
+                      Descrição: {alimento.descricao}
+                    </span>
                   </div>
 
                   <div className="botoes-item">
-                    <button onClick={() => editarAlimento(alimento)}>
+
+                    <button
+                      onClick={() => editarAlimento(alimento)}
+                    >
                       Editar
                     </button>
-                    <button onClick={() => excluirAlimento(alimento.id)}>
+
+                    <button
+                      onClick={() => excluirAlimento(alimento.id)}
+                    >
                       Excluir
                     </button>
+
                   </div>
                 </div>
               ))
             )}
           </div>
+
         </section>
+
       </main>
     </div>
   );

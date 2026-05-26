@@ -347,25 +347,43 @@ function Cardapio() {
 
         {modo !== "itens" && (
           <section className="painel-calendario">
-            <Calendar
-              localizer={localizer}
-              events={eventosCalendario}
-              startAccessor="start"
-              endAccessor="end"
-              selectable
-              popup
-              date={dataAtual}
-              view={viewAtual}
-              onNavigate={setDataAtual}
-              onView={setViewAtual}
-              views={["month", "week", "day", "agenda"]}
-              defaultView="month"
-              onSelectSlot={selecionarSlot}
-              onSelectEvent={selecionarEvento}
-              eventPropGetter={estiloEvento}
-              style={{ height: "80vh" }}
-            />
-          </section>
+  <Calendar
+    localizer={localizer}
+    events={eventosCalendario}
+    startAccessor="start"
+    endAccessor="end"
+    selectable
+    popup
+    date={dataAtual}
+    view={viewAtual}
+    onNavigate={setDataAtual}
+    onView={setViewAtual}
+    views={["month", "week", "day", "agenda"]}
+    defaultView="month"
+    onSelectSlot={selecionarSlot}
+    onSelectEvent={selecionarEvento}
+    eventPropGetter={estiloEvento}
+    style={{ height: "80vh" }}
+  />
+
+  <div className="legenda-calendario">
+    <div className="item-legenda">
+      <span
+        className="cor-legenda"
+        style={{ backgroundColor: "#9AAF85" }}
+      ></span>
+      <span>Cardápios</span>
+    </div>
+
+    <div className="item-legenda">
+      <span
+        className="cor-legenda"
+        style={{ backgroundColor: "#2E6B82" }}
+      ></span>
+      <span>Atividades</span>
+    </div>
+  </div>
+</section>
         )}
       </div>
     </div>

@@ -212,17 +212,47 @@
     box-sizing: border-box;
 }
 
+.legenda-calendario {
+    display: flex;
+    align-items: center;
+    gap: 28px;
 
+    margin-top: 18px;
+    padding: 14px 18px;
 
+    background-color: #91b3c3;
+    border-radius: 14px;
 
+    border: 1px solid rgb(99, 129, 141);
 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 
+    flex-wrap: wrap;
+}
 
+.item-legenda {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
 
+.cor-legenda {
+    width: 18px;
+    height: 18px;
 
+    border-radius: 5px;
 
+    border: 1px solid rgba(255,255,255,0.6);
 
+    display: inline-block;
+}
+.legenda-calendario {
+    justify-content: center;
+}
 
 
 
