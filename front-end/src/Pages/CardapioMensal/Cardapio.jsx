@@ -8,10 +8,14 @@ import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
+
+//import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
+//import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
+//import { ReactComponent as Salad } from "../../assets/icons/salad.svg";
+
 import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 import { ReactComponent as Salad } from "../../assets/icons/salad.svg";
-
 
 
 moment.locale("pt-br");
