@@ -210,3 +210,93 @@
     width: 100%;
     box-sizing: border-box;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.filtros-alimentos {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filtros-alimentos input,
+.filtros-alimentos select {
+    padding: 10px;
+    border: 1px solid #8f8f8f;
+    background-color: #f5f5f5;
+    min-width: 220px;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.controle-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.controle-quantidade button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #8f8f8f;
+    background-color: #d9d9d9;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.controle-quantidade button:hover {
+    background-color: #bfbfbf;
+}
+
+
+.filtros-alimentos {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filtros-alimentos input,
+.filtros-alimentos select {
+    padding: 10px;
+    border: 1px solid #8f8f8f;
+    background-color: #f5f5f5;
+    min-width: 220px;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.controle-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.controle-quantidade button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #8f8f8f;
+    background-color: #d9d9d9;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.controle-quantidade button:hover {
+    background-color: #bfbfbf;
+}
