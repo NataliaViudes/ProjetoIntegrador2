@@ -130,26 +130,32 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
       </section>
 
       <section className="painel-itens2">
-        <div className="filtros-alimentos">
-          <input
-            type="text"
-            placeholder="Pesquisar alimento..."
-            value={pesquisa}
-            onChange={(e) => setPesquisa(e.target.value)}
-          />
+        <div className="topo-itens">
+          <div className="filtros-alimentos">
+            <input
+              type="text"
+              placeholder="Pesquisar alimento..."
+              value={pesquisa}
+              onChange={(e) => setPesquisa(e.target.value)}
+            />
 
-          <select
-            value={categoriaSelecionada}
-            onChange={(e) => setCategoriaSelecionada(e.target.value)}
-          >
-            <option value="">Todas categorias</option>
+            <select
+              value={categoriaSelecionada}
+              onChange={(e) => setCategoriaSelecionada(e.target.value)}
+            >
+              <option value="">Todas categorias</option>
 
-            {categorias.map((categoria) => (
-              <option key={categoria} value={categoria}>
-                {categoria}
-              </option>
-            ))}
-          </select>
+              {categorias.map((categoria) => (
+                <option key={categoria} value={categoria}>
+                  {categoria}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button className="botao-itens" onClick={salvarTudo}>
+            Salvar tudo
+          </button>
         </div>
 
         <div className="lista-alimentos">
@@ -224,10 +230,6 @@ function ItensCardapio({ cardapio, voltar, agendamentos }) {
             })
           )}
         </div>
-
-        <button className="botao-itens" onClick={salvarTudo}>
-          Salvar tudo
-        </button>
       </section>
     </div>
   );
