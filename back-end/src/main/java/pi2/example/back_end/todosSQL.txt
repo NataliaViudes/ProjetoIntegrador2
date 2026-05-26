@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS CAT_EVENTO(
         UNIQUE (categoria)
 
 );
+
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião','Todos os funcionarios presentes');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião PAIF','Todos os funcionarios presentes menos o Savoldi');
 INSERT INTO CAT_EVENTO(categoria,descricao) VALUES('Reunião Socioeducativa','Venham todos');
@@ -205,10 +206,6 @@ DECLARE
     diferenca INT;
 BEGIN
 
-    -- =====================================================
-    -- INSERT
-    -- =====================================================
-
     IF TG_OP = 'INSERT' THEN
 
         SELECT qtd
@@ -228,10 +225,6 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    -- =====================================================
-    -- DELETE
-    -- =====================================================
-
     IF TG_OP = 'DELETE' THEN
 
         UPDATE estoque
@@ -240,10 +233,6 @@ BEGIN
 
         RETURN OLD;
     END IF;
-
-    -- =====================================================
-    -- UPDATE
-    -- =====================================================
 
     IF TG_OP = 'UPDATE' THEN
 
@@ -1109,10 +1098,6 @@ VALUES
     2
 );
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 24f3bd6c15db4315dc57a4e5b2f67b7d8a087119
 -- =========================================
 -- REMEDIO
 -- =========================================
@@ -1162,7 +1147,7 @@ VALUES
 -- =========================================
 -- PRESCRICAO
 -- =========================================
-<<<<<<< HEAD
+
 
 CREATE TABLE IF NOT EXISTS prescricao (
     id SERIAL,
@@ -1317,8 +1302,6 @@ VALUES
     4
 );
 
-=======
->>>>>>> 24f3bd6c15db4315dc57a4e5b2f67b7d8a087119
 
 CREATE TABLE IF NOT EXISTS prescricao (
     id SERIAL,
@@ -1473,7 +1456,7 @@ VALUES
     4
 );
 
-=======
+
 CREATE TABLE ordem_judicial (
     id SERIAL PRIMARY KEY,
     beneficiario_id INTEGER NOT NULL UNIQUE,
@@ -1485,4 +1468,3 @@ CREATE TABLE ordem_judicial (
         REFERENCES beneficiario(id)
         ON DELETE CASCADE
 );
->>>>>>> 1ccdea0006a1dd0d72831b1ac44e00a0a27dc101
